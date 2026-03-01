@@ -4,5 +4,5 @@ node_modules/
 .env
 # Archivos del sistema 
 .DS_Store
-
+# Archivos de bloqueo de dependencias
 package-lock.json
