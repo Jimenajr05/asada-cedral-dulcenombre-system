@@ -1,15 +1,18 @@
 const express = require("express");
 const router = express.Router();
 
-const authenticateToken = require("../middlewares/auth.middleware");
+const authenticateToken = require("../middlewares/authMiddleware");
 const vehicleController = require("../controllers/vehicle.controller");
-const authMiddleware = require("../middlewares/auth.middleware");
-
-router.post("/", authenticateToken, vehicleController.createVehicle);
-router.patch("/:id/status", authenticateToken, vehicleController.updateVehicleStatus);
+const authMiddleware = require("../middlewares/authMiddleware");
  
 //POST Vehiculo
 router.post("/", authMiddleware, vehicleController.createVehicle);
+
+//PUT Vehiculo
+router.put("/:id", authMiddleware, vehicleController.updateVehicle);
+
+// Delete Vehiculo
+router.delete("/:id", authMiddleware, vehicleController.deleteVehicle);
 
 //Marca el auto como vendido
 router.patch("/:id/sold", authMiddleware, vehicleController.markAsSold);
