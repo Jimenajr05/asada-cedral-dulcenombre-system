@@ -4,6 +4,7 @@ import Navbar from "./components/public/Navbar";
 import Footer from "./components/public/Footer";
 
 import Home from "./pages/public/Home";
+import About from "./pages/public/About";
 
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminRegister from "./pages/admin/AdminRegister";
@@ -12,6 +13,8 @@ import AdminAvisos from "./pages/admin/AdminAvisos";
 
 import ProtectedRoute from "./components/admin/ProtectedRoute";
 import AdminLayout from "./components/admin/AdminLayout";
+import AdminFotos from "./pages/admin/AdminFotos";
+import AdminContenido from "./pages/admin/AdminContenido";
 
 function PublicLayout({ children }) {
   return (
@@ -32,6 +35,15 @@ function App() {
         element={
           <PublicLayout>
             <Home />
+          </PublicLayout>
+        }
+      />
+
+      <Route
+        path="/sobre-nosotros"
+        element={
+          <PublicLayout>
+            <About />
           </PublicLayout>
         }
       />
@@ -63,7 +75,29 @@ function App() {
           </ProtectedRoute>
         }
       />
-    </Routes>
+
+      <Route
+        path="/admin/fotos"
+        element={
+          <ProtectedRoute>
+            <AdminLayout>
+              <AdminFotos />
+            </AdminLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/contenido"
+        element={
+          <ProtectedRoute>
+            <AdminLayout>
+              <AdminContenido />
+            </AdminLayout>
+          </ProtectedRoute>
+        }
+      />
+      
+    </Routes> 
   );
 }
 

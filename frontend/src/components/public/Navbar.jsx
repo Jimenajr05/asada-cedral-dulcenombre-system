@@ -1,8 +1,24 @@
+import { NavLink } from "react-router-dom";
+
+const links = [
+  { to: "/", label: "Inicio" },
+  { to: "/sobre-nosotros", label: "Sobre Nosotros" },
+  { to: "/gestion-del-agua", label: "Gestión del Agua" },
+  { to: "/sostenibilidad", label: "Sostenibilidad" },
+  { to: "/tramites", label: "Trámites" },
+  { to: "/avisos", label: "Avisos" },
+  { to: "/contacto", label: "Contacto" },
+];
+
 export default function Navbar() {
+  const linkClass = ({ isActive }) =>
+    isActive
+      ? "text-primary font-semibold"
+      : "text-slate-600 hover:text-primary transition";
+
   return (
     <div className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur">
       <div className="navbar mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        
         <div className="navbar-start">
           <div className="dropdown lg:hidden">
             <label tabIndex={0} className="btn btn-ghost btn-circle">
@@ -26,42 +42,42 @@ export default function Navbar() {
               tabIndex={0}
               className="menu menu-sm dropdown-content mt-3 w-64 rounded-box border border-slate-200 bg-white p-2 shadow-lg"
             >
-              <li><a className="text-primary font-semibold">Inicio</a></li>
-              <li><a>Sobre Nosotros</a></li>
-              <li><a>Gestión del Agua</a></li>
-              <li><a>Sostenibilidad</a></li>
-              <li><a>Trámites</a></li>
-              <li><a>Avisos</a></li>
-              <li><a>Contacto</a></li>
+              {links.map((link) => (
+                <li key={link.to}>
+                  <NavLink to={link.to} className={linkClass}>
+                    {link.label}
+                  </NavLink>
+                </li>
+              ))}
             </ul>
           </div>
 
-          <div className="ml-2 sm:ml-3 lg:ml-0">
+          <NavLink to="/" className="ml-2 sm:ml-3 lg:ml-0">
             <h1 className="text-lg font-bold leading-none text-slate-900 sm:text-xl lg:text-2xl">
               ASADA
             </h1>
             <p className="-mt-0.5 text-[11px] text-slate-500 sm:text-xs lg:text-sm">
               Comunidad
             </p>
-          </div>
+          </NavLink>
         </div>
 
         <div className="navbar-center hidden lg:flex">
-          <ul className="menu menu-horizontal gap-1 px-1 text-sm font-medium text-slate-600 xl:text-base">
-            <li><a className="text-primary font-semibold">Inicio</a></li>
-            <li><a>Sobre Nosotros</a></li>
-            <li><a>Gestión del Agua</a></li>
-            <li><a>Sostenibilidad</a></li>
-            <li><a>Trámites</a></li>
-            <li><a>Avisos</a></li>
-            <li><a>Contacto</a></li>
+          <ul className="menu menu-horizontal gap-1 px-1 text-sm font-medium xl:text-base">
+            {links.map((link) => (
+              <li key={link.to}>
+                <NavLink to={link.to} className={linkClass}>
+                  {link.label}
+                </NavLink>
+              </li>
+            ))}
           </ul>
         </div>
 
         <div className="navbar-end">
-          <button className="btn btn-primary btn-sm sm:btn-md">
+          <NavLink to="/contacto" className="btn btn-primary btn-sm sm:btn-md">
             Contáctanos
-          </button>
+          </NavLink>
         </div>
       </div>
     </div>
