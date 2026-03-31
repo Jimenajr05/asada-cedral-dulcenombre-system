@@ -1,14 +1,20 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Upload, Image as ImageIcon, Star, Trash2 } from "lucide-react";
+import {
+  Upload,
+  Image as ImageIcon,
+  Star,
+  Trash2,
+  Pencil,
+} from "lucide-react";
 import {
   getFotos,
   createFoto,
+  updateFoto,
   toggleDestacada,
   deleteFoto,
 } from "../../services/fotoService";
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:4000";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
 function AdminFotos() {
   const fileInputRef = useRef(null);
@@ -16,9 +22,11 @@ function AdminFotos() {
   const [filtroSeccion, setFiltroSeccion] = useState("todas");
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [modoEdicion, setModoEdicion] = useState(false);
+  const [fotoEditandoId, setFotoEditandoId] = useState("");
 
   const [form, setForm] = useState({
-    seccion: "pagina-principal",
+    seccion: "junta-presidente",
     titulo: "",
     archivo: null,
   });
@@ -26,11 +34,17 @@ function AdminFotos() {
   const [fotos, setFotos] = useState([]);
 
   const secciones = [
-    { value: "pagina-principal", label: "Página Principal" },
-    { value: "sobre-nosotros", label: "Sobre Nosotros" },
-    { value: "gestion-del-agua", label: "Gestión del Agua" },
-    { value: "sostenibilidad", label: "Sostenibilidad" },
-    { value: "galeria", label: "Galería" },
+    { value: "junta-presidente", label: "Junta Directiva - Presidente" },
+    {
+      value: "junta-vicepresidenta",
+      label: "Junta Directiva - Vicepresidenta",
+    },
+    { value: "junta-tesorero", label: "Junta Directiva - Tesorero" },
+    { value: "junta-secretario", label: "Junta Directiva - Secretario" },
+    { value: "junta-vocal-1", label: "Junta Directiva - Vocal 1" },
+    { value: "junta-vocal-2", label: "Junta Directiva - Vocal 2" },
+    { value: "junta-vocal-3", label: "Junta Directiva - Vocal 3" },
+    { value: "junta-fiscal", label: "Junta Directiva - Fiscal" },
   ];
 
   const cargarFotos = async () => {
@@ -56,11 +70,14 @@ function AdminFotos() {
 
   const resetForm = () => {
     setForm({
-      seccion: "pagina-principal",
+      seccion: "junta-presidente",
       titulo: "",
       archivo: null,
     });
+
     setPreview(null);
+    setModoEdicion(false);
+    setFotoEditandoId("");
 
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
@@ -106,8 +123,8 @@ function AdminFotos() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!form.titulo || !form.seccion || !form.archivo) {
-      alert("Completa todos los campos y selecciona una imagen");
+    if (!form.titulo || !form.seccion) {
+      alert("Completa el título y la sección");
       return;
     }
 
@@ -115,14 +132,28 @@ function AdminFotos() {
       const formData = new FormData();
       formData.append("titulo", form.titulo);
       formData.append("seccion", form.seccion);
-      formData.append("imagen", form.archivo);
 
-      await createFoto(formData);
+      if (form.archivo) {
+        formData.append("imagen", form.archivo);
+      }
+
+      if (modoEdicion) {
+        await updateFoto(fotoEditandoId, formData);
+        alert("Foto actualizada correctamente");
+      } else {
+        if (!form.archivo) {
+          alert("Debes seleccionar una imagen");
+          return;
+        }
+
+        await createFoto(formData);
+        alert("Foto subida correctamente");
+      }
+
       resetForm();
       await cargarFotos();
-      alert("Foto subida correctamente");
     } catch (error) {
-      alert(error.message || "Error al subir foto");
+      alert(error.message || "Error al guardar foto");
     }
   };
 
@@ -137,6 +168,12 @@ function AdminFotos() {
     try {
       await deleteFoto(id);
       await cargarFotos();
+
+      if (fotoEditandoId === id) {
+        resetForm();
+      }
+
+      alert("Foto eliminada correctamente");
     } catch (error) {
       alert(error.message || "Error al eliminar foto");
     }
@@ -149,6 +186,28 @@ function AdminFotos() {
     } catch (error) {
       alert(error.message || "Error al destacar foto");
     }
+  };
+
+  const handleEditar = (foto) => {
+    setModoEdicion(true);
+    setFotoEditandoId(foto._id);
+
+    setForm({
+      seccion: foto.seccion || "junta-presidente",
+      titulo: foto.titulo || "",
+      archivo: null,
+    });
+
+    setPreview(construirUrlImagen(foto.url));
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   };
 
   const getNombreSeccion = (seccion) => {
@@ -169,12 +228,14 @@ function AdminFotos() {
           Gestión de Fotos
         </h1>
         <p className="mt-2 text-lg text-slate-700">
-          Subir y administrar imágenes del sitio web
+          Subir, editar y administrar imágenes de la junta directiva
         </p>
       </div>
 
       <div className="mb-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-6 text-3xl font-bold text-black">Subir Nueva Foto</h2>
+        <h2 className="mb-6 text-3xl font-bold text-black">
+          {modoEdicion ? "Editar Foto" : "Subir Nueva Foto"}
+        </h2>
 
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
@@ -213,7 +274,7 @@ function AdminFotos() {
 
           <div className="mt-5">
             <label className="mb-2 block text-sm font-semibold text-black">
-              Archivo de Imagen
+              {modoEdicion ? "Nueva imagen (opcional)" : "Archivo de Imagen"}
             </label>
 
             <div
@@ -227,6 +288,7 @@ function AdminFotos() {
               <p className="text-lg text-slate-700">
                 Click para seleccionar o arrastra una imagen aquí
               </p>
+
               <p className="mt-2 text-sm text-slate-500">PNG, JPG hasta 5MB</p>
 
               {form.archivo && (
@@ -260,7 +322,7 @@ function AdminFotos() {
               type="submit"
               className="rounded-2xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700"
             >
-              Subir Foto
+              {modoEdicion ? "Guardar Cambios" : "Subir Foto"}
             </button>
 
             <button
@@ -268,7 +330,7 @@ function AdminFotos() {
               onClick={handleCancelar}
               className="rounded-2xl bg-slate-200 px-6 py-3 font-semibold text-slate-700 transition hover:bg-slate-300"
             >
-              Cancelar
+              {modoEdicion ? "Cancelar Edición" : "Cancelar"}
             </button>
           </div>
         </form>
@@ -283,7 +345,7 @@ function AdminFotos() {
           <select
             value={filtroSeccion}
             onChange={(e) => setFiltroSeccion(e.target.value)}
-            className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-base text-black outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200 md:w-[260px]"
+            className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-base text-black outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200 md:w-[320px]"
           >
             <option value="todas">Todas las secciones</option>
             {secciones.map((seccion) => (
@@ -337,7 +399,7 @@ function AdminFotos() {
                   Subida: {new Date(foto.createdAt).toLocaleDateString("es-CR")}
                 </p>
 
-                <div className="mt-5 flex items-center gap-3">
+                <div className="mt-5 flex flex-wrap items-center gap-3">
                   <button
                     type="button"
                     onClick={() => handleDestacar(foto)}
@@ -353,8 +415,18 @@ function AdminFotos() {
 
                   <button
                     type="button"
+                    onClick={() => handleEditar(foto)}
+                    className="rounded-2xl bg-blue-50 px-4 py-3 text-blue-600 transition hover:bg-blue-100"
+                    title="Editar foto"
+                  >
+                    <Pencil className="h-5 w-5" />
+                  </button>
+
+                  <button
+                    type="button"
                     onClick={() => handleEliminar(foto._id)}
                     className="rounded-2xl bg-red-50 px-4 py-3 text-red-600 transition hover:bg-red-100"
+                    title="Eliminar foto"
                   >
                     <Trash2 className="h-5 w-5" />
                   </button>
@@ -371,10 +443,10 @@ function AdminFotos() {
         </h3>
 
         <div className="space-y-3 text-base text-blue-800">
-          <p>• Use imágenes de alta calidad (mínimo 1920x1080px para banners)</p>
-          <p>• Los archivos se optimizan automáticamente para web</p>
-          <p>• Marque como "destacada" la foto principal de cada sección</p>
-          <p>• Formatos recomendados: JPG para fotos, PNG para gráficos</p>
+          <p>• Usa una foto para cada cargo de la junta directiva</p>
+          <p>• En contenido usa una línea por cada miembro</p>
+          <p>• Formato: Nombre|Cargo|clave-foto</p>
+          <p>• Ejemplo: José Luis Vega Alfaro|Fiscal|junta-fiscal</p>
         </div>
       </div>
     </div>
