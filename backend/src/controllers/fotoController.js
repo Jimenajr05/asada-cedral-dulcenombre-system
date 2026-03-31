@@ -15,22 +15,80 @@ const crearFoto = async (req, res) => {
 
     await nuevaFoto.save();
 
-    res.status(201).json(nuevaFoto);
+    return res.status(201).json({
+      message: "Foto subida correctamente",
+      foto: nuevaFoto,
+    });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       message: "Error al subir foto",
       error: error.message,
     });
   }
 };
 
-// OBTENER
+// OBTENER TODAS
 const getFotos = async (req, res) => {
   try {
     const fotos = await Foto.find().sort({ createdAt: -1 });
-    res.json(fotos);
+    return res.status(200).json(fotos);
   } catch (error) {
-    res.status(500).json({ message: "Error al obtener fotos" });
+    return res.status(500).json({
+      message: "Error al obtener fotos",
+      error: error.message,
+    });
+  }
+};
+
+// OBTENER POR ID
+const getFotoById = async (req, res) => {
+  try {
+    const foto = await Foto.findById(req.params.id);
+
+    if (!foto) {
+      return res.status(404).json({
+        message: "Foto no encontrada",
+      });
+    }
+
+    return res.status(200).json(foto);
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error al obtener foto",
+      error: error.message,
+    });
+  }
+};
+
+// ACTUALIZAR FOTO
+const updateFoto = async (req, res) => {
+  try {
+    const foto = await Foto.findById(req.params.id);
+
+    if (!foto) {
+      return res.status(404).json({
+        message: "Foto no encontrada",
+      });
+    }
+
+    foto.titulo = req.body.titulo ?? foto.titulo;
+    foto.seccion = req.body.seccion ?? foto.seccion;
+
+    if (req.file) {
+      foto.url = `/uploads/fotos/${req.file.filename}`;
+    }
+
+    await foto.save();
+
+    return res.status(200).json({
+      message: "Foto actualizada correctamente",
+      foto,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error al actualizar foto",
+      error: error.message,
+    });
   }
 };
 
@@ -40,39 +98,57 @@ const toggleDestacada = async (req, res) => {
     const foto = await Foto.findById(req.params.id);
 
     if (!foto) {
-      return res.status(404).json({ message: "No encontrada" });
+      return res.status(404).json({ message: "Foto no encontrada" });
     }
 
-    // quitar destacada de misma sección
     if (!foto.destacada) {
-      await Foto.updateMany(
-        { seccion: foto.seccion },
-        { destacada: false }
-      );
+      await Foto.updateMany({ seccion: foto.seccion }, { destacada: false });
     }
 
     foto.destacada = !foto.destacada;
     await foto.save();
 
-    res.json(foto);
+    return res.status(200).json({
+      message: "Estado destacada actualizado correctamente",
+      foto,
+    });
   } catch (error) {
-    res.status(500).json({ message: "Error al actualizar" });
+    return res.status(500).json({
+      message: "Error al actualizar foto",
+      error: error.message,
+    });
   }
 };
 
 // ELIMINAR
 const deleteFoto = async (req, res) => {
   try {
+    const foto = await Foto.findById(req.params.id);
+
+    if (!foto) {
+      return res.status(404).json({
+        message: "Foto no encontrada",
+      });
+    }
+
     await Foto.findByIdAndDelete(req.params.id);
-    res.json({ message: "Eliminada" });
+
+    return res.status(200).json({
+      message: "Foto eliminada correctamente",
+    });
   } catch (error) {
-    res.status(500).json({ message: "Error al eliminar" });
+    return res.status(500).json({
+      message: "Error al eliminar foto",
+      error: error.message,
+    });
   }
 };
 
 module.exports = {
   crearFoto,
   getFotos,
+  getFotoById,
+  updateFoto,
   toggleDestacada,
   deleteFoto,
 };
