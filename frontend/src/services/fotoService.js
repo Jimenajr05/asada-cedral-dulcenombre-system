@@ -1,5 +1,6 @@
-const API_URL =
-  `${import.meta.env.VITE_API_URL || "http://localhost:4000"}/api/fotos`;
+const API_URL = `${
+  import.meta.env.VITE_API_URL || "http://localhost:4000"
+}/api/fotos`;
 
 const getToken = () => localStorage.getItem("token");
 
@@ -24,6 +25,17 @@ export const getFotos = async () => {
   return data;
 };
 
+export const getFotoById = async (id) => {
+  const response = await fetch(`${API_URL}/${id}`);
+  const data = await parseResponse(response);
+
+  if (!response.ok) {
+    throw new Error(data.message || "Error al obtener foto");
+  }
+
+  return data;
+};
+
 export const createFoto = async (formData) => {
   const response = await fetch(API_URL, {
     method: "POST",
@@ -37,6 +49,24 @@ export const createFoto = async (formData) => {
 
   if (!response.ok) {
     throw new Error(data.message || "Error al subir foto");
+  }
+
+  return data;
+};
+
+export const updateFoto = async (id, formData) => {
+  const response = await fetch(`${API_URL}/${id}`, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
+    },
+    body: formData,
+  });
+
+  const data = await parseResponse(response);
+
+  if (!response.ok) {
+    throw new Error(data.message || "Error al actualizar foto");
   }
 
   return data;
