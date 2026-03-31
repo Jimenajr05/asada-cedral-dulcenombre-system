@@ -26,14 +26,7 @@ const paginas = [
 ];
 
 const seccionesPorPagina = {
-  about: [
-    { slug: "about-hero", titulo: "Hero Sobre Nosotros" },
-    { slug: "historia", titulo: "Nuestra Historia" },
-    { slug: "mision", titulo: "Misión" },
-    { slug: "vision", titulo: "Visión" },
-    { slug: "valores", titulo: "Valores" },
-    { slug: "junta-directiva", titulo: "Junta Directiva" },
-  ],
+  about: [{ slug: "junta-directiva", titulo: "Junta Directiva" }],
   home: [
     { slug: "home-hero", titulo: "Hero Inicio" },
     { slug: "home-bienvenida", titulo: "Bienvenida" },
@@ -59,6 +52,16 @@ const seccionesPorPagina = {
     { slug: "contact-info", titulo: "Información de Contacto" },
   ],
 };
+
+const contenidoInicialJunta =
+  "Francisco Esquivel Arrieta|Presidente|junta-presidente\n" +
+  "Yamilet Picado Ramírez|Vicepresidenta|junta-vicepresidenta\n" +
+  "Marvin Peraza Montoya|Tesorero|junta-tesorero\n" +
+  "Randall Vásquez García|Secretario|junta-secretario\n" +
+  "Luz Marín Aguilar|Vocal 1|junta-vocal-1\n" +
+  "Ademar Cerdas Rojas|Vocal 2|junta-vocal-2\n" +
+  "Miriam Carranza Alfaro|Vocal 3|junta-vocal-3\n" +
+  "José Luis Vega Alfaro|Fiscal|junta-fiscal";
 
 function AdminContenido() {
   const [paginaSeleccionada, setPaginaSeleccionada] = useState("about");
@@ -86,8 +89,8 @@ function AdminContenido() {
 
   const [nuevoContenido, setNuevoContenido] = useState({
     titulo: "",
-    slug: "about-hero",
-    contenido: "",
+    slug: "junta-directiva",
+    contenido: contenidoInicialJunta,
     activo: true,
     pagina: "about",
   });
@@ -98,12 +101,21 @@ function AdminContenido() {
     try {
       setLoading(true);
       const data = await getContenidos(paginaActual);
-      setContenidos(Array.isArray(data) ? data : []);
 
-      if (data.length > 0) {
+      const seccionesPermitidas = seccionesPorPagina[paginaActual]?.map(
+        (item) => item.slug
+      );
+
+      const contenidosFiltrados = Array.isArray(data)
+        ? data.filter((item) => seccionesPermitidas?.includes(item.slug))
+        : [];
+
+      setContenidos(contenidosFiltrados);
+
+      if (contenidosFiltrados.length > 0) {
         setSelectedId((prev) => {
-          const existe = data.some((item) => item._id === prev);
-          return existe ? prev : data[0]._id;
+          const existe = contenidosFiltrados.some((item) => item._id === prev);
+          return existe ? prev : contenidosFiltrados[0]._id;
         });
       } else {
         setSelectedId("");
@@ -123,7 +135,7 @@ function AdminContenido() {
     setNuevoContenido({
       titulo: primeraSeccion?.titulo || "",
       slug: primeraSeccion?.slug || "",
-      contenido: "",
+      contenido: paginaSeleccionada === "about" ? contenidoInicialJunta : "",
       activo: true,
       pagina: paginaSeleccionada,
     });
@@ -225,9 +237,7 @@ function AdminContenido() {
       return;
     }
 
-    const yaExiste = contenidos.some(
-      (item) => item.slug === nuevoContenido.slug
-    );
+    const yaExiste = contenidos.some((item) => item.slug === nuevoContenido.slug);
 
     if (yaExiste) {
       alert("Esa sección ya existe en esta página");
@@ -242,7 +252,7 @@ function AdminContenido() {
       setNuevoContenido({
         titulo: primeraSeccion?.titulo || "",
         slug: primeraSeccion?.slug || "",
-        contenido: "",
+        contenido: paginaSeleccionada === "about" ? contenidoInicialJunta : "",
         activo: true,
         pagina: paginaSeleccionada,
       });
@@ -280,6 +290,7 @@ function AdminContenido() {
   };
 
   const cantidadCaracteres = form.contenido.length;
+  const esPaginaAbout = paginaSeleccionada === "about";
 
   return (
     <div className="bg-slate-100 p-7">
@@ -409,7 +420,7 @@ function AdminContenido() {
                 value={nuevoContenido.contenido}
                 onChange={handleNuevoChange}
                 placeholder="Contenido inicial"
-                rows="4"
+                rows="10"
                 className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-black outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
               />
             </div>
@@ -462,13 +473,16 @@ function AdminContenido() {
 
               <div className="mb-4">
                 <label className="mb-2 block text-sm font-semibold text-slate-700">
-                  Contenido
+                  {esPaginaAbout
+                    ? "Miembros de Junta Directiva"
+                    : "Contenido"}
                 </label>
+
                 <textarea
                   name="contenido"
                   value={form.contenido}
                   onChange={handleFormChange}
-                  rows="14"
+                  rows={esPaginaAbout ? 12 : 14}
                   className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-base text-black outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
                 />
               </div>
@@ -534,10 +548,21 @@ function AdminContenido() {
             </h3>
 
             <div className="space-y-3 text-base text-blue-800">
-              <p>• Selecciona la página y luego la sección a editar</p>
-              <p>• Las secciones nuevas se crean desde el combo box predefinido</p>
-              <p>• Así evitas errores escribiendo slugs manualmente</p>
-              <p>• Los cambios se reflejan en el sitio público al guardar</p>
+              {esPaginaAbout ? (
+                <>
+                  <p>• En Sobre Nosotros solo se edita Junta Directiva</p>
+                  <p>• Usa una línea por cada miembro</p>
+                  <p>• Formato: Nombre|Cargo|clave-foto</p>
+                  <p>• Ejemplo: Francisco Esquivel Arrieta|Presidente|junta-presidente</p>
+                </>
+              ) : (
+                <>
+                  <p>• Selecciona la página y luego la sección a editar</p>
+                  <p>• Las secciones nuevas se crean desde el combo box predefinido</p>
+                  <p>• Así evitas errores escribiendo slugs manualmente</p>
+                  <p>• Los cambios se reflejan en el sitio público al guardar</p>
+                </>
+              )}
             </div>
           </div>
         </aside>
