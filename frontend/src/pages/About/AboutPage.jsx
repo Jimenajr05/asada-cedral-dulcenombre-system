@@ -78,19 +78,13 @@ const cargoBadgeClass = {
 
 const badgeDefault = "bg-slate-100 text-slate-700";
 
-/* ─── Fondo decorativo ──────────────────────────────────── */
+/* ─── Fondo decorativo animado ─────────────────────────── */
 const WaterDropBg = () => (
-  <svg
-    className="absolute inset-0 w-full h-full opacity-[0.05] pointer-events-none"
-    viewBox="0 0 800 400"
-    xmlns="http://www.w3.org/2000/svg"
-    preserveAspectRatio="xMidYMid slice"
-    aria-hidden="true"
-  >
-    <circle cx="660" cy="70" r="200" fill="white" />
-    <circle cx="100" cy="330" r="130" fill="white" />
-    <circle cx="390" cy="210" r="80" fill="white" />
-  </svg>
+  <div className="absolute inset-0 overflow-hidden pointer-events-none">
+    <div className="absolute -left-20 top-32 h-72 w-72 rounded-full bg-white/6 animate-floatSlow" />
+    <div className="absolute left-1/3 top-12 h-72 w-72 rounded-full bg-white/6 animate-floatMedium" />
+    <div className="absolute right-[-80px] top-[-30px] h-[24rem] w-[24rem] rounded-full bg-white/6 animate-floatSlow" />
+  </div>
 );
 
 /* ─── Etiqueta de sección ───────────────────────────────── */
@@ -117,16 +111,16 @@ export default function AboutPage() {
       >
         <WaterDropBg />
 
-        <div className="absolute bottom-0 left-0 right-0" aria-hidden="true">
+        {/* ola */}
+        <div className="absolute bottom-0 left-0 right-0 leading-none" aria-hidden="true">
           <svg
-            viewBox="0 0 1440 56"
-            fill="none"
+            viewBox="0 0 1440 80"
             xmlns="http://www.w3.org/2000/svg"
             preserveAspectRatio="none"
-            className="block w-full"
+            className="block w-full h-20"
           >
             <path
-              d="M0 56V28C240 0 480 56 720 28C960 0 1200 56 1440 28V56H0Z"
+              d="M0,32L48,37.3C96,43,192,53,288,58.7C384,64,480,64,576,58.7C672,53,768,43,864,42.7C960,43,1056,53,1152,58.7C1248,64,1344,64,1392,64L1440,64L1440,80L1392,80C1344,80,1248,80,1152,80C1056,80,960,80,864,80C768,80,672,80,576,80C480,80,384,80,288,80C192,80,96,80,48,80L0,80Z"
               fill="#f8fafc"
             />
           </svg>

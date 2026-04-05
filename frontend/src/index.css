@@ -1,2 +1,36 @@
 @import "tailwindcss";
 @plugin "daisyui";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  @keyframes floatSlow {
+    0%,
+    100% {
+      transform: translateY(0px) translateX(0px);
+    }
+    50% {
+      transform: translateY(-10px) translateX(8px);
+    }
+  }
+
+  @keyframes floatMedium {
+    0%,
+    100% {
+      transform: translateY(0px) translateX(0px);
+    }
+    50% {
+      transform: translateY(8px) translateX(-10px);
+    }
+  }
+
+  .animate-floatSlow {
+    animation: floatSlow 10s ease-in-out infinite;
+  }
+
+  .animate-floatMedium {
+    animation: floatMedium 8s ease-in-out infinite;
+  }
+}
