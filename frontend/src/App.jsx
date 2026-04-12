@@ -1,8 +1,9 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ScrollToTop from "./components/ScrollToTop";
 
+// Pública
 import Home from "./pages/Inicio/HomePage";
 import AboutPage from "./pages/About/AboutPage";
 import GestionAguaPage from "./pages/GestionAgua/GestionAguaPage";
@@ -11,11 +12,20 @@ import TramitesPage from "./pages/Tramites/TramitesPage";
 import AvisosPage from "./pages/Avisos/AvisosPage";
 import ContactoPage from "./pages/Contacto/ContactoPage";
 
-function App() {
+// Admin
+import AdminLoginPage from "./pages/Admin/AdminloginPage";
+import AdminAvisosPage from "./pages/Admin/AdminAvisosPage";
+
+function AppContent() {
+  const location = useLocation();
+
+  const esRutaAdmin = location.pathname.startsWith("/admin");
+
   return (
     <>
       <ScrollToTop />
-      <Navbar />
+
+      {!esRutaAdmin && <Navbar />}
 
       <Routes>
         <Route path="/" element={<Home />} />
@@ -25,11 +35,13 @@ function App() {
         <Route path="/tramites" element={<TramitesPage />} />
         <Route path="/avisos" element={<AvisosPage />} />
         <Route path="/contacto" element={<ContactoPage />} />
+        <Route path="/admin/login" element={<AdminLoginPage />} />
+        <Route path="/admin/avisos" element={<AdminAvisosPage />} />
       </Routes>
 
-      <Footer />
+      {!esRutaAdmin && <Footer />}
     </>
   );
 }
 
-export default App;
+export default AppContent;
