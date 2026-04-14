@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 const links = [
   { to: "/", label: "Inicio" },
   { to: "/sobre-nosotros", label: "Sobre Nosotros" },
-  { to: "/gestion-del-agua", label: "Gestión del Agua" },
+  { to: "/gestion-agua", label: "Gestión del Agua" },
   { to: "/sostenibilidad", label: "Sostenibilidad" },
   { to: "/tramites", label: "Trámites" },
   { to: "/avisos", label: "Avisos" },
