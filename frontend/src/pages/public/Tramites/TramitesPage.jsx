@@ -1,17 +1,18 @@
+import { useEffect, useMemo, useState } from "react";
 import {
   hero,
-  tramites,
   formasPago,
-  formularios,
   ayuda,
   recibos,
   notaLegal,
+  sinpeMovilInfo,
 } from "./TramitesData";
+import { getTramites } from "../../../services/tramiteService";
 
 /* ─── Fondo decorativo ───────────────────────── */
 const WaterDropBg = () => (
   <svg
-    className="absolute inset-0 w-full h-full opacity-[0.05] pointer-events-none"
+    className="absolute inset-0 h-full w-full pointer-events-none opacity-[0.05]"
     viewBox="0 0 800 400"
     preserveAspectRatio="xMidYMid slice"
   >
@@ -21,14 +22,14 @@ const WaterDropBg = () => (
   </svg>
 );
 
-/* ─── Iconos simples ─────────────────────────── */
+/* ─── Iconos ─────────────────────────────────── */
 const IconFile = () => (
   <svg
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
     strokeWidth="1.8"
-    className="w-5 h-5"
+    className="h-5 w-5"
     aria-hidden="true"
   >
     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -44,7 +45,7 @@ const IconCard = () => (
     fill="none"
     stroke="currentColor"
     strokeWidth="1.8"
-    className="w-5 h-5"
+    className="h-5 w-5"
     aria-hidden="true"
   >
     <rect x="2" y="5" width="20" height="14" rx="2" />
@@ -58,7 +59,7 @@ const IconBank = () => (
     fill="none"
     stroke="currentColor"
     strokeWidth="1.8"
-    className="w-5 h-5"
+    className="h-5 w-5"
     aria-hidden="true"
   >
     <path d="M3 10h18" />
@@ -77,7 +78,7 @@ const IconReceipt = () => (
     fill="none"
     stroke="currentColor"
     strokeWidth="1.8"
-    className="w-6 h-6"
+    className="h-6 w-6"
     aria-hidden="true"
   >
     <path d="M6 3h12v18l-2-1.5L14 21l-2-1.5L10 21l-2-1.5L6 21V3z" />
@@ -93,7 +94,7 @@ const IconInfo = () => (
     fill="none"
     stroke="currentColor"
     strokeWidth="1.8"
-    className="w-5 h-5"
+    className="h-5 w-5"
     aria-hidden="true"
   >
     <circle cx="12" cy="12" r="10" />
@@ -108,7 +109,7 @@ const IconPhone = () => (
     fill="none"
     stroke="currentColor"
     strokeWidth="1.8"
-    className="w-5 h-5"
+    className="h-5 w-5"
     aria-hidden="true"
   >
     <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.78.63 2.61a2 2 0 0 1-.45 2.11L8 9.91a16 16 0 0 0 6.09 6.09l1.47-1.29a2 2 0 0 1 2.11-.45c.83.3 1.71.51 2.61.63A2 2 0 0 1 22 16.92z" />
@@ -121,7 +122,7 @@ const IconMail = () => (
     fill="none"
     stroke="currentColor"
     strokeWidth="1.8"
-    className="w-5 h-5"
+    className="h-5 w-5"
     aria-hidden="true"
   >
     <path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" />
@@ -129,24 +130,85 @@ const IconMail = () => (
   </svg>
 );
 
-const paymentIcons = [IconCard, IconCard, IconBank, IconBank, IconBank, IconCard];
+const IconSearch = () => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    className="h-5 w-5"
+    aria-hidden="true"
+  >
+    <circle cx="11" cy="11" r="7" />
+    <path d="m20 20-3.5-3.5" />
+  </svg>
+);
 
-/* ═══════════════════════════════════════════════
-   COMPONENTE
-═══════════════════════════════════════════════ */
-export default function ProceduresPage() {
+const paymentIcons = [
+  IconCard,
+  IconBank,
+  IconBank,
+  IconBank,
+  IconBank,
+  IconCard,
+];
+
+export default function TramitesPage() {
+  const [tramites, setTramites] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [busqueda, setBusqueda] = useState("");
+
+  const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+
+  const construirUrlArchivo = (url) => {
+    if (!url) return "";
+    if (url.startsWith("http")) return url;
+    return `${API_BASE_URL}${url}`;
+  };
+
+  useEffect(() => {
+    const cargarTramites = async () => {
+      try {
+        setLoading(true);
+        const data = await getTramites();
+        setTramites(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error("Error al cargar trámites:", error);
+        setTramites([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    cargarTramites();
+  }, []);
+
+  const tramitesFiltrados = useMemo(() => {
+    const texto = busqueda.trim().toLowerCase();
+
+    if (!texto) return tramites;
+
+    return tramites.filter((tramite) => {
+      const titulo = tramite.titulo?.toLowerCase() || "";
+      const requisitos = Array.isArray(tramite.requisitos)
+        ? tramite.requisitos.map((r) => r.texto?.toLowerCase() || "").join(" ")
+        : "";
+
+      return titulo.includes(texto) || requisitos.includes(texto);
+    });
+  }, [tramites, busqueda]);
+
   return (
     <div className="bg-slate-50">
-      {/* ───────── HERO ───────── */}
-      <section className="relative bg-gradient-to-br from-blue-900 via-blue-800 to-blue-700 overflow-hidden">
+      {/* HERO */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-blue-900 via-blue-800 to-blue-700">
         <WaterDropBg />
 
-        {/* OLA */}
         <div className="absolute bottom-0 left-0 right-0 leading-none">
           <svg
             viewBox="0 0 1440 80"
             preserveAspectRatio="none"
-            className="w-full h-20"
+            className="h-20 w-full"
           >
             <path
               d="M0,32L48,37.3C96,43,192,53,288,58.7C384,64,480,64,576,58.7C672,53,768,43,864,42.7C960,43,1056,53,1152,58.7C1248,64,1344,64,1392,64L1440,64L1440,80L0,80Z"
@@ -155,61 +217,131 @@ export default function ProceduresPage() {
           </svg>
         </div>
 
-        <div className="relative max-w-5xl mx-auto px-4 pt-16 pb-24 text-center">
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-white mb-4">
+        <div className="relative mx-auto max-w-5xl px-4 pb-24 pt-16 text-center">
+          <h1 className="mb-4 text-4xl font-extrabold text-white sm:text-5xl">
             {hero.title}
           </h1>
-          <p className="text-blue-100 text-lg max-w-2xl mx-auto">
+          <p className="mx-auto max-w-2xl text-lg text-blue-100">
             {hero.subtitle}
           </p>
         </div>
       </section>
 
-      {/* ───────── TRÁMITES ───────── */}
-      <section className="max-w-7xl mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {tramites.map((t, i) => (
-            <div
-              key={i}
-              className="bg-white rounded-xl shadow-sm border border-slate-200 p-6"
-            >
-              <div className="flex items-start gap-4 mb-4">
-                <div className="w-11 h-11 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center flex-shrink-0">
-                  <IconFile />
-                </div>
-
-                <div>
-                  <h3 className="text-xl font-bold text-slate-800 mb-1">
-                    {t.title}
-                  </h3>
-                  <p className="text-sm text-slate-500">{t.description}</p>
-                </div>
-              </div>
-
-              <p className="text-sm font-semibold text-slate-800 mb-3">
-                Requisitos:
-              </p>
-
-              <ul className="text-sm text-slate-600 space-y-2 mb-6">
-                {t.requisitos.map((r, index) => (
-                  <li key={index} className="flex items-start gap-2">
-                    <span className="text-blue-600 mt-[2px]">•</span>
-                    <span>{r}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <button className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition">
-                {t.buttonText}
-              </button>
-            </div>
-          ))}
+      {/* TRÁMITES DINÁMICOS */}
+      <section className="mx-auto max-w-7xl px-4 py-16">
+        <div className="mb-8 text-center">
+          <h2 className="text-3xl font-bold text-slate-800">
+            Trámites disponibles
+          </h2>
+          <p className="mt-2 text-slate-600">
+            Consulte los requisitos y descargue el formulario correspondiente.
+          </p>
         </div>
+
+        <div className="mb-8 flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:flex-row md:items-center md:justify-between">
+          <div>
+            <p className="text-sm font-medium text-slate-500">Resultados</p>
+            <p className="text-lg font-semibold text-slate-800">
+              {tramitesFiltrados.length} trámite
+              {tramitesFiltrados.length !== 1 ? "s" : ""}
+            </p>
+          </div>
+
+          <div className="relative w-full md:max-w-md">
+            <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+              <IconSearch />
+            </span>
+            <input
+              type="text"
+              value={busqueda}
+              onChange={(e) => setBusqueda(e.target.value)}
+              placeholder="Buscar trámite o requisito..."
+              className="w-full rounded-xl border border-slate-300 py-3 pl-12 pr-4 text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+            />
+          </div>
+        </div>
+
+        {loading ? (
+          <div className="rounded-xl border border-slate-200 bg-white p-8 text-center text-slate-500">
+            Cargando trámites...
+          </div>
+        ) : tramites.length === 0 ? (
+          <div className="rounded-xl border border-slate-200 bg-white p-8 text-center text-slate-500">
+            No hay trámites disponibles en este momento.
+          </div>
+        ) : tramitesFiltrados.length === 0 ? (
+          <div className="rounded-xl border border-slate-200 bg-white p-8 text-center text-slate-500">
+            No se encontraron trámites con esa búsqueda.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+            {tramitesFiltrados.map((t) => (
+              <article
+                key={t._id}
+                className="flex h-full flex-col rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+              >
+                <div className="mb-5 flex items-start gap-4">
+                  <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl bg-blue-100 text-blue-700">
+                    <IconFile />
+                  </div>
+
+                  <div className="min-w-0">
+                    <h3 className="text-2xl font-bold leading-tight text-slate-800">
+                      {t.titulo}
+                    </h3>
+                  </div>
+                </div>
+
+                <div className="mb-4">
+                  <p className="text-sm font-semibold uppercase tracking-wide text-slate-700">
+                    Requisitos
+                  </p>
+                </div>
+
+                <div className="mb-6 min-h-[180px] flex-1 rounded-2xl bg-slate-50 p-4">
+                  {Array.isArray(t.requisitos) && t.requisitos.length > 0 ? (
+                    <ul className="max-h-56 space-y-3 overflow-y-auto pr-2 text-sm text-slate-700">
+                      {t.requisitos.map((r, index) => (
+                        <li key={index} className="flex items-start gap-3">
+                          <span className="mt-[6px] h-2 w-2 flex-shrink-0 rounded-full bg-blue-600" />
+                          <span className="leading-relaxed">{r.texto}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-sm text-slate-500">
+                      Sin requisitos registrados.
+                    </p>
+                  )}
+                </div>
+
+                {t.archivoUrl ? (
+                  <a
+                    href={construirUrlArchivo(t.archivoUrl)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-auto block w-full rounded-2xl bg-blue-600 py-3 text-center font-semibold text-white transition hover:bg-blue-700"
+                  >
+                    Descargar Formulario
+                  </a>
+                ) : (
+                  <button
+                    type="button"
+                    disabled
+                    className="mt-auto w-full cursor-not-allowed rounded-2xl bg-slate-300 py-3 font-semibold text-slate-600"
+                  >
+                    Formulario no disponible
+                  </button>
+                )}
+              </article>
+            ))}
+          </div>
+        )}
       </section>
 
-      {/* ───────── NOTA LEGAL ───────── */}
-      <section className="max-w-5xl mx-auto px-4 pb-10">
-        <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg text-sm text-slate-700">
+      {/* NOTA LEGAL */}
+      <section className="mx-auto max-w-5xl px-4 pb-8">
+        <div className="rounded-xl border border-blue-200 bg-blue-50 p-5 text-sm leading-relaxed text-slate-700">
           <span className="font-semibold text-blue-700">
             {notaLegal.title}:
           </span>{" "}
@@ -217,48 +349,78 @@ export default function ProceduresPage() {
         </div>
       </section>
 
-      {/* ───────── FORMAS DE PAGO ───────── */}
-      <section className="max-w-6xl mx-auto px-4 py-16 text-center">
-        <h2 className="text-2xl font-bold text-slate-800 mb-10">
+      {/* FORMAS DE PAGO */}
+      <section className="mx-auto max-w-6xl px-4 py-16 text-center">
+        <h2 className="mb-10 text-3xl font-bold text-slate-800">
           Formas de Pago
         </h2>
 
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {formasPago.map((p, i) => {
             const Icon = paymentIcons[i] || IconCard;
 
             return (
               <div
                 key={i}
-                className="bg-white p-6 rounded-xl shadow-sm border border-slate-200"
+                className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
               >
-                <div className="mx-auto mb-4 w-11 h-11 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center">
+                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-blue-700">
                   <Icon />
                 </div>
 
                 <h3 className="font-semibold text-slate-800">{p.title}</h3>
-                <p className="text-sm text-slate-600 mt-2">{p.detail}</p>
-                <p className="text-xs mt-3 text-slate-500 leading-relaxed">
+                <p className="mt-2 text-sm text-slate-600">{p.detail}</p>
+                <p className="mt-3 text-xs leading-relaxed text-slate-500">
                   {p.extra}
                 </p>
               </div>
             );
           })}
         </div>
+      </section>
 
-        {/* consulta recibos mejorada */}
-        <div className="mt-10 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-6 md:p-8 shadow-sm">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 text-left">
+      {/* SINPE MÓVIL */}
+      <section className="mx-auto max-w-6xl px-4 pb-16">
+        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm md:p-8">
+          <div className="mb-8 text-center">
+            <h2 className="text-3xl font-bold text-slate-800">
+              {sinpeMovilInfo.title}
+            </h2>
+            <p className="mt-2 text-slate-600">
+              Siga estos pasos para cancelar su recibo correctamente.
+            </p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-3">
+            {sinpeMovilInfo.pasos.map((paso, index) => (
+              <div
+                key={index}
+                className="rounded-2xl border border-green-200 bg-green-50 p-6 text-left"
+              >
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-700 text-xl font-bold text-white">
+                  {index + 1}
+                </div>
+                <p className="text-sm leading-relaxed text-slate-700">{paso}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CONSULTA DE RECIBOS */}
+      <section className="mx-auto max-w-6xl px-4 py-6">
+        <div className="rounded-2xl border border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 p-6 shadow-sm md:p-8">
+          <div className="flex flex-col gap-6 text-left md:flex-row md:items-center md:justify-between">
             <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-blue-600 text-white flex items-center justify-center flex-shrink-0">
+              <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white">
                 <IconReceipt />
               </div>
 
               <div>
-                <h3 className="text-xl font-bold text-slate-800 mb-2">
+                <h3 className="mb-2 text-xl font-bold text-slate-800">
                   {recibos.title}
                 </h3>
-                <p className="text-slate-600 leading-relaxed max-w-2xl">
+                <p className="max-w-2xl leading-relaxed text-slate-600">
                   {recibos.text}
                 </p>
               </div>
@@ -269,7 +431,7 @@ export default function ProceduresPage() {
                 href={recibos.url}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-6 py-3 text-white font-medium shadow hover:bg-blue-700 transition"
+                className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-6 py-3 font-medium text-white shadow transition hover:bg-blue-700"
               >
                 {recibos.linkLabel}
               </a>
@@ -278,46 +440,19 @@ export default function ProceduresPage() {
         </div>
       </section>
 
-      {/* ───────── FORMULARIOS ───────── */}
-      <section className="max-w-6xl mx-auto px-4 py-16">
-        <h2 className="text-2xl font-bold text-center text-slate-800 mb-10">
-          Formularios Descargables
-        </h2>
+      {/* AYUDA */}
+      <section className="mx-auto max-w-4xl px-4 pb-20 pt-16">
+        <div className="rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 p-10 text-center text-white shadow-sm">
+          <h3 className="mb-2 text-2xl font-bold">{ayuda.title}</h3>
+          <p className="mx-auto mb-6 max-w-2xl text-blue-100">{ayuda.text}</p>
 
-        <div className="grid md:grid-cols-3 gap-4">
-          {formularios.map((f, i) => (
-            <div
-              key={i}
-              className="bg-white p-5 rounded-lg shadow-sm border border-slate-200 hover:border-blue-300 hover:shadow transition"
-            >
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center flex-shrink-0">
-                  <IconFile />
-                </div>
-
-                <div>
-                  <p className="font-medium text-slate-800">{f}</p>
-                  <p className="text-xs text-slate-500 mt-1">PDF disponible</p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ───────── CTA ───────── */}
-      <section className="max-w-4xl mx-auto px-4 pb-20">
-        <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-2xl p-10 text-center shadow-sm">
-          <h3 className="text-2xl font-bold mb-2">{ayuda.title}</h3>
-          <p className="mb-6 text-blue-100 max-w-2xl mx-auto">{ayuda.text}</p>
-
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <button className="inline-flex items-center justify-center gap-2 bg-white text-blue-700 px-6 py-3 rounded-lg font-medium hover:bg-blue-50 transition">
+          <div className="flex flex-col justify-center gap-4 sm:flex-row">
+            <button className="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-6 py-3 font-medium text-blue-700 transition hover:bg-blue-50">
               <IconPhone />
               <span>{ayuda.primaryText}</span>
             </button>
 
-            <button className="inline-flex items-center justify-center gap-2 bg-blue-500 px-6 py-3 rounded-lg font-medium hover:bg-blue-400 transition">
+            <button className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-500 px-6 py-3 font-medium transition hover:bg-blue-400">
               <IconMail />
               <span>{ayuda.secondaryText}</span>
             </button>
@@ -325,17 +460,18 @@ export default function ProceduresPage() {
         </div>
       </section>
 
-      {/* ───────── AYUDA EXTRA / RECORDATORIO ───────── */}
-      <section className="max-w-6xl mx-auto px-4 pb-20">
-        <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex items-start gap-3">
-          <div className="w-10 h-10 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center flex-shrink-0">
+      {/* RECORDATORIO */}
+      <section className="mx-auto max-w-6xl px-4 pb-20">
+        <div className="flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+          <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-700">
             <IconInfo />
           </div>
           <div>
-            <p className="font-semibold text-slate-800 mb-1">Recordatorio</p>
-            <p className="text-sm text-slate-600 leading-relaxed">
+            <p className="mb-1 font-semibold text-slate-800">Recordatorio</p>
+            <p className="text-sm leading-relaxed text-slate-600">
               Antes de presentar un trámite, verifica que la documentación esté
-              completa y actualizada para agilizar el proceso de atención.
+              completa, actualizada y que el propietario o solicitante se
+              encuentre al día con sus obligaciones ante la ASADA.
             </p>
           </div>
         </div>

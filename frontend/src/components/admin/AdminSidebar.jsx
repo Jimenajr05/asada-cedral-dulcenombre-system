@@ -5,6 +5,7 @@ import {
   Users,
   FileText,
   ArrowLeft,
+  FolderOpen,
 } from "lucide-react";
 
 function AdminSidebar() {
@@ -27,9 +28,9 @@ function AdminSidebar() {
       path: "/admin/sobre-nosotros",
     },
     {
-      name: "Contenido",
-      icon: FileText,
-      path: "/admin/contenido",
+      name: "Trámites",
+      icon: FolderOpen,
+      path: "/admin/tramites",
     },
   ];
 

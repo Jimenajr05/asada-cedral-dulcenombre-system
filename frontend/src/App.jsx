@@ -19,7 +19,7 @@ import AdminRegister from "./pages/admin/AdminRegister";
 import AdminPanel from "./pages/admin/AdminPanel";
 import AdminAvisos from "./pages/admin/AdminAvisos";
 import AdminSobreNosotros from "./pages/admin/AdminSobreNosotros";
-import AdminContenido from "./pages/admin/AdminContenido";
+import AdminTramites from "./pages/admin/AdminTramites";
 
 // COMPONENTES ADMIN
 import ProtectedRoute from "./components/admin/ProtectedRoute";
@@ -84,11 +84,11 @@ function App() {
         />
 
         <Route
-          path="/admin/contenido"
+          path="/admin/tramites"
           element={
             <ProtectedRoute>
               <AdminLayout>
-                <AdminContenido />
+                <AdminTramites />
               </AdminLayout>
             </ProtectedRoute>
           }
