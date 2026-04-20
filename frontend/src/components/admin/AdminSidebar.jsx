@@ -6,6 +6,7 @@ import {
   FileText,
   ArrowLeft,
   FolderOpen,
+  Waves,
 } from "lucide-react";
 
 function AdminSidebar() {
@@ -26,6 +27,11 @@ function AdminSidebar() {
       name: "Sobre Nosotros",
       icon: Users,
       path: "/admin/sobre-nosotros",
+    },
+    {
+      name: "Gestión del Agua",
+      icon: Waves,
+      path: "/admin/gestion-agua",
     },
     {
       name: "Trámites",

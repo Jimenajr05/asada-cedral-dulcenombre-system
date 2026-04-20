@@ -19,6 +19,7 @@ import AdminRegister from "./pages/admin/AdminRegister";
 import AdminPanel from "./pages/admin/AdminPanel";
 import AdminAvisos from "./pages/admin/AdminAvisos";
 import AdminSobreNosotros from "./pages/admin/AdminSobreNosotros";
+import AdminGestionAgua from "./pages/admin/AdminGestionAgua";
 import AdminTramites from "./pages/admin/AdminTramites";
 
 // COMPONENTES ADMIN
@@ -78,6 +79,17 @@ function App() {
             <ProtectedRoute>
               <AdminLayout>
                 <AdminSobreNosotros />
+              </AdminLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/gestion-agua"
+          element={
+            <ProtectedRoute>
+              <AdminLayout>
+                <AdminGestionAgua />
               </AdminLayout>
             </ProtectedRoute>
           }
