@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export default function Footer() {
   const year = new Date().getFullYear();
 
@@ -26,10 +28,31 @@ export default function Footer() {
 
           <div>
             <h3 className="mb-3 text-lg font-bold sm:text-xl">Enlaces</h3>
-            <div className="space-y-2 text-sm text-slate-300 sm:text-base">
-              <p>Trámites y Servicios</p>
-              <p>Avisos Importantes</p>
-              <p>Panel Administrativo</p>
+            <div className="space-y-2 text-sm sm:text-base">
+              <p>
+                <Link
+                  to="/tramites"
+                  className="text-slate-300 transition hover:text-white hover:underline"
+                >
+                  Trámites y Servicios
+                </Link>
+              </p>
+              <p>
+                <Link
+                  to="/avisos"
+                  className="text-slate-300 transition hover:text-white hover:underline"
+                >
+                  Avisos Importantes
+                </Link>
+              </p>
+              <p>
+                <Link
+                  to="/admin/login"
+                  className="text-slate-300 transition hover:text-white hover:underline"
+                >
+                  Panel Administrativo
+                </Link>
+              </p>
             </div>
           </div>
         </div>

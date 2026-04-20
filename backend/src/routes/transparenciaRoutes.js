@@ -1,12 +1,27 @@
-import express from "express";
-import { getAll, create, remove } from "../controllers/transparencia.controller.js";
-import upload from "../middlewares/upload.js";
-import auth from "../middlewares/authMiddleware.js";
+const express    = require("express");
+const router     = express.Router();
+const auth       = require("../middlewares/authMiddleware");
+const uploadCert = require("../middlewares/uploadCertificados");
 
-const router = express.Router();
+const {
+  getTransparencia,
+  addReunion,
+  updateReunion,
+  deleteReunion,
+  addCertificado,
+  deleteCertificado,
+} = require("../controllers/transparenciaController");
 
-router.get("/", getAll);
-router.post("/", auth, upload.single("archivo"), create);
-router.delete("/:id", auth, remove);
+// ── Público ──────────────────────────────────────────────────────────────────
+router.get("/", getTransparencia);
 
-export default router;
+// ── Reuniones (protegido) ────────────────────────────────────────────────────
+router.post("/reuniones",     auth, addReunion);
+router.put("/reuniones/:id",  auth, updateReunion);
+router.delete("/reuniones/:id", auth, deleteReunion);
+
+// ── Certificados (protegido) ─────────────────────────────────────────────────
+router.post("/certificados",      auth, uploadCert.single("imagen"), addCertificado);
+router.delete("/certificados/:id", auth, deleteCertificado);
+
+module.exports = router;

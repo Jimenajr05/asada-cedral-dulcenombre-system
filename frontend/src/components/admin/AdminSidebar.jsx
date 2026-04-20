@@ -6,6 +6,8 @@ import {
   FileText,
   ArrowLeft,
   FolderOpen,
+  Waves,      
+  ShieldCheck
 } from "lucide-react";
 
 function AdminSidebar() {

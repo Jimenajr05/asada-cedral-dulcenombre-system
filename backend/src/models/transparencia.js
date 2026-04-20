@@ -1,26 +1,31 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
-const transparenciaSchema = new mongoose.Schema({
-  titulo: {
-    type: String,
-    required: true
+// ── Reuniones de Junta Directiva ──────────────────────────────────────────────
+const reunionSchema = new mongoose.Schema(
+  {
+    descripcion: { type: String, required: true, trim: true },
+    fecha:       { type: String, required: true, trim: true }, // ej: "Martes 6 de mayo, 2025 – 7:00 p.m."
+    tipo:        { type: String, enum: ["ordinaria", "extraordinaria"], default: "ordinaria" },
   },
-  descripcion: String,
-  tipo: {
-    type: String,
-    enum: ["financiero", "acta", "reglamento", "otro"],
-    default: "otro"
-  },
-  archivo: String, // ruta del archivo
-  link: String,
-  fechaPublicacion: {
-    type: Date,
-    default: Date.now
-  },
-  estado: {
-    type: Boolean,
-    default: true
-  }
-}, { timestamps: true });
+  { _id: true }
+);
 
-export default mongoose.model("Transparencia", transparenciaSchema);
+// ── Certificados (imágenes subidas) ───────────────────────────────────────────
+const certificadoSchema = new mongoose.Schema(
+  {
+    titulo:    { type: String, required: true, trim: true },
+    imagenUrl: { type: String, required: true, trim: true }, // ruta en /uploads/certificados/
+  },
+  { _id: true }
+);
+
+// ── Documento único de Transparencia ─────────────────────────────────────────
+const transparenciaSchema = new mongoose.Schema(
+  {
+    reuniones:    { type: [reunionSchema],    default: [] },
+    certificados: { type: [certificadoSchema], default: [] },
+  },
+  { timestamps: true }
+);
+
+module.exports = mongoose.model("Transparencia", transparenciaSchema);
