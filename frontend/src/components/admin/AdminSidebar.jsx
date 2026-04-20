@@ -3,10 +3,11 @@ import {
   LayoutGrid,
   Bell,
   Users,
-  FileText,
   ArrowLeft,
   FolderOpen,
   Waves,
+  ShieldCheck,
+  Leaf,
 } from "lucide-react";
 
 function AdminSidebar() {
@@ -32,6 +33,11 @@ function AdminSidebar() {
       name: "Gestión del Agua",
       icon: Waves,
       path: "/admin/gestion-agua",
+    },
+    {
+      name: "Sostenibilidad",
+      icon: Leaf,
+      path: "/admin/sostenibilidad",
     },
     {
       name: "Trámites",
