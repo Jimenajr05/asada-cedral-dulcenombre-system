@@ -27,51 +27,20 @@ export const calidad = [
   {
     titulo: "Análisis Regular",
     descripcion:
-      "Se realizan análisis físicos, químicos y bacteriológicos del agua.",
+      "Realizamos análisis físicos, químicos y bacteriológicos periódicos del agua.",
+    icono: "shield",
   },
   {
-    titulo: "Monitoreo Continuo",
+    titulo: "Monitoreo Diario",
     descripcion:
-      "Control periódico de parámetros como cloro residual y turbidez.",
+      "Monitoreo diario de los niveles de cloro y turbidez para garantizar la calidad del agua.",
+    icono: "wave",
   },
   {
     titulo: "Laboratorio Certificado",
     descripcion:
-      "Resultados validados mediante laboratorios certificados.",
-  },
-];
-
-export const parametros = [
-  { nombre: "pH", valor: "7.2", rango: "6.5 - 8.5" },
-  { nombre: "Cloro Residual", valor: "0.5 mg/L" },
-  { nombre: "Turbidez", valor: "0.8 NTU" },
-  { nombre: "Calidad Bacteriológica", valor: "Apto" },
-];
-
-export const infraestructura = [
-  {
-    titulo: "Nacientes",
-    items: [
-      "2 concesiones de agua",
-      "Fuente con aforo registrado",
-      "Protección de áreas de recarga",
-    ],
-  },
-  {
-    titulo: "Tanques de Almacenamiento",
-    items: [
-      "3 tanques operativos",
-      "Capacidad total: 1 027 m³",
-      "Sistema de operación por gravedad",
-    ],
-  },
-  {
-    titulo: "Red de Distribución",
-    items: [
-      "7,69 km de conducción",
-      "43,94 km de red de distribución",
-      "Sistema con quiebra gradientes",
-    ],
+      "Trabajamos con laboratorios certificados para garantizar resultados confiables.",
+    icono: "lab",
   },
 ];
 
