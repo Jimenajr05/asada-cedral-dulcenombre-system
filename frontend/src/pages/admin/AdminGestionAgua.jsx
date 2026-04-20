@@ -1,0 +1,854 @@
+import { useEffect, useState } from "react";
+import {
+  obtenerGestionAgua,
+  actualizarGestionAgua,
+  subirFotoAnalisis,
+  eliminarFotoAnalisis,
+  BASE_URL,
+} from "../../services/gestionAguaService";
+
+/* =========================
+   UTILIDADES
+========================= */
+const crearParametroVacio = () => ({
+  nombre: "",
+  valor: "",
+  rango: "",
+  porcentaje: "0%",
+});
+
+const crearInfraestructuraVacia = () => ({
+  titulo: "",
+  items: [""],
+});
+
+const crearAforoVacio = () => ({
+  lugar: "",
+  produccion: "",
+});
+
+const formatearFechaActual = () => {
+  return new Date().toLocaleDateString("es-CR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+};
+
+const normalizarPorcentaje = (valor) => {
+  if (!valor) return "0%";
+
+  const limpio = String(valor).replace("%", "").trim();
+  const numero = Number(limpio);
+
+  if (Number.isNaN(numero)) return "0%";
+  if (numero < 0) return "0%";
+  if (numero > 100) return "100%";
+
+  return `${numero}%`;
+};
+
+/* =========================
+   COMPONENTES
+========================= */
+function SectionCard({ title, subtitle, children, actions }) {
+  return (
+    <section className="rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div className="border-b border-slate-200 px-6 py-5">
+        <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+          <div>
+            <h2 className="text-2xl font-bold text-slate-900">{title}</h2>
+            {subtitle ? (
+              <p className="mt-1 max-w-3xl text-sm text-slate-600">
+                {subtitle}
+              </p>
+            ) : null}
+          </div>
+
+          {actions ? <div className="flex flex-wrap gap-2">{actions}</div> : null}
+        </div>
+      </div>
+
+      <div className="p-6">{children}</div>
+    </section>
+  );
+}
+
+function ActionButton({
+  children,
+  onClick,
+  type = "button",
+  variant = "primary",
+  disabled = false,
+  className = "",
+}) {
+  const styles = {
+    primary: "bg-blue-600 text-white hover:bg-blue-700",
+    secondary: "bg-slate-100 text-slate-800 hover:bg-slate-200",
+    success: "bg-emerald-600 text-white hover:bg-emerald-700",
+    danger: "bg-red-500 text-white hover:bg-red-600",
+  };
+
+  return (
+    <button
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
+      className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition ${styles[variant]} disabled:cursor-not-allowed disabled:opacity-60 ${className}`}
+    >
+      {children}
+    </button>
+  );
+}
+
+function Input({ className = "", ...props }) {
+  return (
+    <input
+      {...props}
+      className={`w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 placeholder:text-slate-400 ${className}`}
+    />
+  );
+}
+
+function Label({ children }) {
+  return (
+    <label className="mb-2 block text-sm font-semibold text-slate-700">
+      {children}
+    </label>
+  );
+}
+
+function ParameterPreview({ parametro }) {
+  const width = normalizarPorcentaje(parametro.porcentaje);
+
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+      <div className="mb-2 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-sm font-semibold text-slate-900">
+          {parametro.nombre || "Nombre del parámetro"}
+        </p>
+
+        <div className="text-sm text-slate-600">
+          <span className="font-semibold text-slate-900">
+            {parametro.valor || "0"}
+          </span>
+          {parametro.rango ? <span className="ml-2">({parametro.rango})</span> : null}
+        </div>
+      </div>
+
+      <div className="h-3 overflow-hidden rounded-full bg-slate-200">
+        <div
+          className="h-full rounded-full bg-green-500 transition-all"
+          style={{ width }}
+        />
+      </div>
+
+      <p className="mt-2 text-xs font-medium text-slate-500">
+        Vista previa: {width}
+      </p>
+    </div>
+  );
+}
+
+/* =========================
+   COMPONENTE PRINCIPAL
+========================= */
+function AdminGestionAgua() {
+  const [form, setForm] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const [guardandoParametros, setGuardandoParametros] = useState(false);
+  const [guardandoAforos, setGuardandoAforos] = useState(false);
+  const [guardandoInfraestructura, setGuardandoInfraestructura] =
+    useState(false);
+  const [subiendoFoto, setSubiendoFoto] = useState(false);
+
+  const [nuevaImagen, setNuevaImagen] = useState(null);
+
+  useEffect(() => {
+    cargarDatos();
+  }, []);
+
+  const cargarDatos = async () => {
+    try {
+      const data = await obtenerGestionAgua();
+
+      setForm({
+        ...data,
+        parametros: data.parametros || [],
+        infraestructura: data.infraestructura || [],
+        aforos: {
+          fecha: data.aforos?.fecha || "",
+          total: data.aforos?.total || "",
+          registros: data.aforos?.registros || [],
+        },
+        analisisCalidadAgua: {
+          titulo:
+            data.analisisCalidadAgua?.titulo || "Análisis de calidad del agua",
+          fotos: data.analisisCalidadAgua?.fotos || [],
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      alert("Error al cargar gestión del agua");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /* =========================
+     GUARDADOS
+  ========================= */
+  const guardarParametros = async () => {
+    try {
+      setGuardandoParametros(true);
+
+      await actualizarGestionAgua({
+        parametros: form.parametros.map((p) => ({
+          ...p,
+          porcentaje: normalizarPorcentaje(p.porcentaje),
+        })),
+      });
+
+      await cargarDatos();
+      alert("Parámetros guardados correctamente");
+    } catch (error) {
+      console.error(error);
+      alert("Error al guardar parámetros");
+    } finally {
+      setGuardandoParametros(false);
+    }
+  };
+
+  const guardarAforos = async () => {
+    try {
+      setGuardandoAforos(true);
+
+      await actualizarGestionAgua({
+        aforos: form.aforos,
+      });
+
+      await cargarDatos();
+      alert("Aforos guardados correctamente");
+    } catch (error) {
+      console.error(error);
+      alert("Error al guardar aforos");
+    } finally {
+      setGuardandoAforos(false);
+    }
+  };
+
+  const guardarInfraestructura = async () => {
+    try {
+      setGuardandoInfraestructura(true);
+
+      await actualizarGestionAgua({
+        infraestructura: form.infraestructura,
+      });
+
+      await cargarDatos();
+      alert("Infraestructura guardada correctamente");
+    } catch (error) {
+      console.error(error);
+      alert("Error al guardar infraestructura");
+    } finally {
+      setGuardandoInfraestructura(false);
+    }
+  };
+
+  /* =========================
+     PARÁMETROS
+  ========================= */
+  const handleParametroChange = (index, campo, valor) => {
+    const nuevos = [...form.parametros];
+    nuevos[index][campo] = valor;
+
+    setForm((prev) => ({
+      ...prev,
+      parametros: nuevos,
+    }));
+  };
+
+  const agregarParametro = () => {
+    setForm((prev) => ({
+      ...prev,
+      parametros: [...prev.parametros, crearParametroVacio()],
+    }));
+  };
+
+  const eliminarParametro = (index) => {
+    const nuevos = [...form.parametros];
+    nuevos.splice(index, 1);
+
+    setForm((prev) => ({
+      ...prev,
+      parametros: nuevos,
+    }));
+  };
+
+  /* =========================
+     FOTOS
+  ========================= */
+  const handleSubirImagen = async (e) => {
+    e.preventDefault();
+
+    if (!nuevaImagen) {
+      alert("Seleccione una imagen");
+      return;
+    }
+
+    try {
+      setSubiendoFoto(true);
+
+      const formData = new FormData();
+      formData.append("fecha", formatearFechaActual());
+      formData.append("imagen", nuevaImagen);
+
+      await subirFotoAnalisis(formData);
+
+      setNuevaImagen(null);
+      await cargarDatos();
+      alert("Foto subida correctamente");
+    } catch (error) {
+      console.error(error);
+      alert("Error al subir foto");
+    } finally {
+      setSubiendoFoto(false);
+    }
+  };
+
+  const handleEliminarFoto = async (fotoId) => {
+    const confirmar = window.confirm("¿Desea eliminar esta foto?");
+    if (!confirmar) return;
+
+    try {
+      await eliminarFotoAnalisis(fotoId);
+      await cargarDatos();
+      alert("Foto eliminada correctamente");
+    } catch (error) {
+      console.error(error);
+      alert("Error al eliminar foto");
+    }
+  };
+
+  /* =========================
+     AFOROS
+  ========================= */
+  const handleAforoChange = (campo, valor) => {
+    setForm((prev) => ({
+      ...prev,
+      aforos: {
+        ...prev.aforos,
+        [campo]: valor,
+      },
+    }));
+  };
+
+  const handleAforoRegistroChange = (index, campo, valor) => {
+    const nuevos = [...form.aforos.registros];
+    nuevos[index][campo] = valor;
+
+    setForm((prev) => ({
+      ...prev,
+      aforos: {
+        ...prev.aforos,
+        registros: nuevos,
+      },
+    }));
+  };
+
+  const agregarAforo = () => {
+    setForm((prev) => ({
+      ...prev,
+      aforos: {
+        ...prev.aforos,
+        registros: [...prev.aforos.registros, crearAforoVacio()],
+      },
+    }));
+  };
+
+  const eliminarAforo = (index) => {
+    const nuevos = [...form.aforos.registros];
+    nuevos.splice(index, 1);
+
+    setForm((prev) => ({
+      ...prev,
+      aforos: {
+        ...prev.aforos,
+        registros: nuevos,
+      },
+    }));
+  };
+
+  /* =========================
+     INFRAESTRUCTURA
+  ========================= */
+  const handleInfraTituloChange = (index, valor) => {
+    const nuevas = [...form.infraestructura];
+    nuevas[index].titulo = valor;
+
+    setForm((prev) => ({
+      ...prev,
+      infraestructura: nuevas,
+    }));
+  };
+
+  const handleInfraItemChange = (infraIndex, itemIndex, valor) => {
+    const nuevas = [...form.infraestructura];
+    nuevas[infraIndex].items[itemIndex] = valor;
+
+    setForm((prev) => ({
+      ...prev,
+      infraestructura: nuevas,
+    }));
+  };
+
+  const agregarBloqueInfraestructura = () => {
+    setForm((prev) => ({
+      ...prev,
+      infraestructura: [...prev.infraestructura, crearInfraestructuraVacia()],
+    }));
+  };
+
+  const eliminarBloqueInfraestructura = (index) => {
+    const nuevas = [...form.infraestructura];
+    nuevas.splice(index, 1);
+
+    setForm((prev) => ({
+      ...prev,
+      infraestructura: nuevas,
+    }));
+  };
+
+  const agregarItemInfraestructura = (index) => {
+    const nuevas = [...form.infraestructura];
+    nuevas[index].items.push("");
+
+    setForm((prev) => ({
+      ...prev,
+      infraestructura: nuevas,
+    }));
+  };
+
+  const eliminarItemInfraestructura = (infraIndex, itemIndex) => {
+    const nuevas = [...form.infraestructura];
+    nuevas[infraIndex].items.splice(itemIndex, 1);
+
+    setForm((prev) => ({
+      ...prev,
+      infraestructura: nuevas,
+    }));
+  };
+
+  if (loading) {
+    return <p className="p-6 text-slate-800">Cargando...</p>;
+  }
+
+  if (!form) {
+    return <p className="p-6 text-red-600">No se pudo cargar la información.</p>;
+  }
+
+  return (
+    <div className="bg-slate-100 p-7">
+      <div className="mb-6 flex items-start justify-between">
+        <div>
+          <h1 className="text-4xl font-bold text-slate-900 md:text-5xl">
+            Gestión del Agua
+          </h1>
+          <p className="mt-2 text-lg text-slate-700">
+            Administra los parámetros, aforos, infraestructura y análisis del
+            sistema.
+          </p>
+        </div>
+      </div>
+
+      <div className="mx-auto max-w-7xl space-y-8">
+        <SectionCard
+          title="1. Parámetros de Calidad"
+          subtitle="Aquí puede editar cada parámetro mostrado en la página pública. Cuando termine, presione el botón Guardar de esta sección."
+          actions={
+            <ActionButton
+              variant="success"
+              onClick={guardarParametros}
+              disabled={guardandoParametros}
+            >
+              {guardandoParametros ? "Guardando..." : "Guardar parámetros"}
+            </ActionButton>
+          }
+        >
+          <div className="mb-5 flex justify-start">
+            <ActionButton variant="primary" onClick={agregarParametro}>
+              + Agregar parámetro
+            </ActionButton>
+          </div>
+
+          <div className="grid gap-5 xl:grid-cols-2">
+            {form.parametros.map((parametro, index) => (
+              <div
+                key={index}
+                className="rounded-2xl border border-slate-200 bg-slate-50 p-4"
+              >
+                <div className="mb-4 flex items-center justify-between gap-3">
+                  <h3 className="font-bold text-slate-900">
+                    Parámetro {index + 1}
+                  </h3>
+                  <ActionButton
+                    variant="danger"
+                    onClick={() => eliminarParametro(index)}
+                  >
+                    Eliminar
+                  </ActionButton>
+                </div>
+
+                <div className="grid gap-3 md:grid-cols-2">
+                  <div>
+                    <Label>Nombre</Label>
+                    <Input
+                      type="text"
+                      value={parametro.nombre}
+                      onChange={(e) =>
+                        handleParametroChange(index, "nombre", e.target.value)
+                      }
+                      placeholder="Nombre"
+                    />
+                  </div>
+
+                  <div>
+                    <Label>Valor</Label>
+                    <Input
+                      type="text"
+                      value={parametro.valor}
+                      onChange={(e) =>
+                        handleParametroChange(index, "valor", e.target.value)
+                      }
+                      placeholder="Valor"
+                    />
+                  </div>
+
+                  <div>
+                    <Label>Rango</Label>
+                    <Input
+                      type="text"
+                      value={parametro.rango}
+                      onChange={(e) =>
+                        handleParametroChange(index, "rango", e.target.value)
+                      }
+                      placeholder="Rango"
+                    />
+                  </div>
+
+                  <div>
+                    <Label>Porcentaje</Label>
+                    <Input
+                      type="text"
+                      value={parametro.porcentaje}
+                      onChange={(e) =>
+                        handleParametroChange(
+                          index,
+                          "porcentaje",
+                          e.target.value
+                        )
+                      }
+                      placeholder="Ejemplo: 70%"
+                    />
+                  </div>
+                </div>
+
+                <div className="mt-4">
+                  <ParameterPreview parametro={parametro} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </SectionCard>
+
+        <SectionCard
+          title="2. Fotos de análisis"
+          subtitle="Primero seleccione una imagen y luego presione Agregar foto. Las imágenes guardadas aparecerán debajo."
+        >
+          <div className="grid gap-6 xl:grid-cols-[420px_1fr]">
+            <form
+              onSubmit={handleSubirImagen}
+              className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-5"
+            >
+              <h3 className="mb-4 text-lg font-bold text-slate-900">
+                Subir nueva foto
+              </h3>
+
+              <div>
+                <Label>Seleccionar imagen</Label>
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setNuevaImagen(e.target.files[0])}
+                />
+              </div>
+
+              <p className="mt-3 text-sm text-slate-500">
+                Fecha automática: {formatearFechaActual()}
+              </p>
+
+              <div className="mt-5">
+                <ActionButton
+                  type="submit"
+                  variant="primary"
+                  disabled={subiendoFoto}
+                  className="w-full"
+                >
+                  {subiendoFoto ? "Subiendo..." : "Agregar foto"}
+                </ActionButton>
+              </div>
+            </form>
+
+            <div>
+              <h3 className="mb-4 text-lg font-bold text-slate-900">
+                Fotos guardadas
+              </h3>
+
+              {form.analisisCalidadAgua?.fotos?.length === 0 ? (
+                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 text-sm text-slate-500">
+                  Aún no hay fotos registradas.
+                </div>
+              ) : (
+                <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-2">
+                  {form.analisisCalidadAgua?.fotos?.map((foto) => (
+                    <div
+                      key={foto._id}
+                      className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
+                    >
+                      <div className="relative h-56 bg-slate-100">
+                        <img
+                          src={`${BASE_URL}${foto.imagen}`}
+                          alt={foto.fecha}
+                          className="h-full w-full object-cover"
+                        />
+
+                        <div className="absolute right-3 top-3 rounded-full bg-white/95 px-3 py-1 text-xs font-bold text-slate-900 shadow">
+                          {foto.fecha}
+                        </div>
+                      </div>
+
+                      <div className="p-4">
+                        <ActionButton
+                          variant="danger"
+                          onClick={() => handleEliminarFoto(foto._id)}
+                        >
+                          Eliminar foto
+                        </ActionButton>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </SectionCard>
+
+        <SectionCard
+          title="3. Tabla de Aforos"
+          subtitle="Edite la fecha general, el total y cada registro de la tabla. Luego presione Guardar aforos."
+          actions={
+            <ActionButton
+              variant="success"
+              onClick={guardarAforos}
+              disabled={guardandoAforos}
+            >
+              {guardandoAforos ? "Guardando..." : "Guardar aforos"}
+            </ActionButton>
+          }
+        >
+          <div className="mb-5 flex justify-start">
+            <ActionButton variant="primary" onClick={agregarAforo}>
+              + Agregar registro
+            </ActionButton>
+          </div>
+
+          <div className="mb-5 grid gap-4 md:grid-cols-2">
+            <div>
+              <Label>Fecha general</Label>
+              <Input
+                type="text"
+                value={form.aforos.fecha}
+                onChange={(e) => handleAforoChange("fecha", e.target.value)}
+                placeholder="Ejemplo: Abril 2026"
+              />
+            </div>
+
+            <div>
+              <Label>Total</Label>
+              <Input
+                type="text"
+                value={form.aforos.total}
+                onChange={(e) => handleAforoChange("total", e.target.value)}
+                placeholder="Total de l/s"
+              />
+            </div>
+          </div>
+
+          <div className="overflow-hidden rounded-2xl border border-slate-200">
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[700px] border-collapse">
+                <thead className="bg-slate-100">
+                  <tr>
+                    <th className="border border-slate-200 px-4 py-3 text-left text-sm font-bold text-slate-900">
+                      Lugar
+                    </th>
+                    <th className="border border-slate-200 px-4 py-3 text-left text-sm font-bold text-slate-900">
+                      Producción
+                    </th>
+                    <th className="border border-slate-200 px-4 py-3 text-center text-sm font-bold text-slate-900">
+                      Acción
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {form.aforos.registros.map((registro, index) => (
+                    <tr key={index} className="bg-white">
+                      <td className="border border-slate-200 p-3">
+                        <Input
+                          type="text"
+                          value={registro.lugar}
+                          onChange={(e) =>
+                            handleAforoRegistroChange(
+                              index,
+                              "lugar",
+                              e.target.value
+                            )
+                          }
+                          placeholder="Lugar"
+                        />
+                      </td>
+
+                      <td className="border border-slate-200 p-3">
+                        <Input
+                          type="text"
+                          value={registro.produccion}
+                          onChange={(e) =>
+                            handleAforoRegistroChange(
+                              index,
+                              "produccion",
+                              e.target.value
+                            )
+                          }
+                          placeholder="Producción"
+                        />
+                      </td>
+
+                      <td className="border border-slate-200 p-3 text-center">
+                        <ActionButton
+                          variant="danger"
+                          onClick={() => eliminarAforo(index)}
+                        >
+                          Eliminar
+                        </ActionButton>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </SectionCard>
+
+        <SectionCard
+          title="4. Infraestructura del Sistema"
+          subtitle="Aquí puede crear bloques como Nacientes, Tanques o Red de distribución, y agregar los detalles dentro de cada uno."
+          actions={
+            <ActionButton
+              variant="success"
+              onClick={guardarInfraestructura}
+              disabled={guardandoInfraestructura}
+            >
+              {guardandoInfraestructura
+                ? "Guardando..."
+                : "Guardar infraestructura"}
+            </ActionButton>
+          }
+        >
+          <div className="mb-5 flex justify-start">
+            <ActionButton
+              variant="primary"
+              onClick={agregarBloqueInfraestructura}
+            >
+              + Agregar bloque
+            </ActionButton>
+          </div>
+
+          <div className="space-y-5">
+            {form.infraestructura.map((bloque, infraIndex) => (
+              <div
+                key={infraIndex}
+                className="rounded-2xl border border-slate-200 bg-slate-50 p-5"
+              >
+                <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                  <h3 className="text-lg font-bold text-slate-900">
+                    Bloque {infraIndex + 1}
+                  </h3>
+
+                  <ActionButton
+                    variant="danger"
+                    onClick={() => eliminarBloqueInfraestructura(infraIndex)}
+                  >
+                    Eliminar bloque
+                  </ActionButton>
+                </div>
+
+                <div className="mb-4">
+                  <Label>Título del bloque</Label>
+                  <Input
+                    type="text"
+                    value={bloque.titulo}
+                    onChange={(e) =>
+                      handleInfraTituloChange(infraIndex, e.target.value)
+                    }
+                    placeholder="Ejemplo: Nacientes"
+                  />
+                </div>
+
+                <div className="space-y-3">
+                  {bloque.items.map((item, itemIndex) => (
+                    <div key={itemIndex} className="flex gap-3">
+                      <Input
+                        type="text"
+                        value={item}
+                        onChange={(e) =>
+                          handleInfraItemChange(
+                            infraIndex,
+                            itemIndex,
+                            e.target.value
+                          )
+                        }
+                        placeholder="Detalle"
+                      />
+
+                      <ActionButton
+                        variant="danger"
+                        onClick={() =>
+                          eliminarItemInfraestructura(infraIndex, itemIndex)
+                        }
+                      >
+                        Eliminar
+                      </ActionButton>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-4">
+                  <ActionButton
+                    variant="secondary"
+                    onClick={() => agregarItemInfraestructura(infraIndex)}
+                  >
+                    + Agregar ítem
+                  </ActionButton>
+                </div>
+              </div>
+            ))}
+          </div>
+        </SectionCard>
+      </div>
+    </div>
+  );
+}
+
+export default AdminGestionAgua;
