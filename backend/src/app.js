@@ -10,6 +10,7 @@ const tramiteRoutes        = require("./routes/tramiteRoutes");
 const linkRoutes           = require("./routes/linkRoutes");
 const transparenciaRoutes  = require("./routes/transparenciaRoutes");
 const gestionAguaRoutes = require("./routes/gestionAguaRoutes");
+const sostenibilidadRoutes = require("./routes/sostenibilidadRoutes");
 
 const app = express();
 
@@ -24,11 +25,7 @@ app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 app.use("/api/auth",           authRoutes);
 app.use("/api/avisos",         avisoRoutes);
 app.use("/api/sobre-nosotros", sobreNosotrosRoutes);
-app.use("/api/tramites",       tramiteRoutes);
-app.use("/api/links",          linkRoutes);
-app.use("/api/transparencia",  transparenciaRoutes);
-app.use("/api/gestion-agua",   gestionAguaRoutes);
-
-
+app.use("/api/tramites", tramiteRoutes);
+app.use("/api/gestion-agua", gestionAguaRoutes);
 
 module.exports = app;

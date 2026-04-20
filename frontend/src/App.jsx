@@ -21,6 +21,7 @@ import AdminPanel from "./pages/admin/AdminPanel";
 import AdminAvisos from "./pages/admin/AdminAvisos";
 import AdminSobreNosotros from "./pages/admin/AdminSobreNosotros";
 import AdminGestionAgua from "./pages/admin/AdminGestionAgua";
+import AdminSostenibilidad from "./pages/admin/AdminSostenibilidad";
 import AdminTramites from "./pages/admin/AdminTramites";
 import AdminTransparencia from "./pages/admin/AdminTranspariencia";
 
@@ -93,6 +94,17 @@ function App() {
             <ProtectedRoute>
               <AdminLayout>
                 <AdminGestionAgua />
+              </AdminLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/sostenibilidad"
+          element={
+            <ProtectedRoute>
+              <AdminLayout>
+                <AdminSostenibilidad />
               </AdminLayout>
             </ProtectedRoute>
           }

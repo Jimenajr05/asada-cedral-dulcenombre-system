@@ -1,11 +1,6 @@
-import {
-  hero,
-  compromiso,
-  pilares,
-  programas,
-  impacto,
-  observaciones,
-} from "./SostenibilidadData";
+import { useEffect, useRef, useState } from "react";
+import { hero, compromiso, pilares } from "./SostenibilidadData";
+import { getSostenibilidad } from "../../../services/sostenibilidadService";
 
 /* ─── Íconos ─────────────────────────────────────────── */
 const IconShield = () => (
@@ -47,20 +42,6 @@ const IconWrench = () => (
   </svg>
 );
 
-const IconLeaf = () => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.8"
-    className="w-6 h-6"
-    aria-hidden="true"
-  >
-    <path d="M5 21c8 0 14-6 14-14-8 0-14 6-14 14z" />
-    <path d="M9 15c2-2 4-4 8-6" />
-  </svg>
-);
-
 const IconHydrant = () => (
   <svg
     viewBox="0 0 24 24"
@@ -76,6 +57,32 @@ const IconHydrant = () => (
     <path d="M6 9h12v6H6z" />
     <path d="M4 12h2" />
     <path d="M18 12h2" />
+  </svg>
+);
+
+const IconChevronLeft = () => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.2"
+    className="w-6 h-6"
+    aria-hidden="true"
+  >
+    <path d="M15 18l-6-6 6-6" />
+  </svg>
+);
+
+const IconChevronRight = () => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.2"
+    className="w-6 h-6"
+    aria-hidden="true"
+  >
+    <path d="M9 18l6-6-6-6" />
   </svg>
 );
 
@@ -95,53 +102,192 @@ const SectionLabel = ({ children }) => (
 );
 
 const pillarIcons = [IconShield, IconDrop, IconWrench];
-const programIcons = [IconShield, IconDrop, IconWrench];
-const impactIcons = [IconHydrant, IconShield, IconLeaf];
 
-/* ═══════════════════════════════════════════════════════
-   COMPONENTE PRINCIPAL
-═══════════════════════════════════════════════════════ */
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+
+const construirUrlImagen = (url) => {
+  if (!url) return "";
+  if (url.startsWith("http")) return url;
+  return `${API_BASE_URL}${url}`;
+};
+
+const GallerySection = ({ title, description, images = [], total = null }) => {
+  const scrollRef = useRef(null);
+
+  const scrollGallery = (direction) => {
+    if (!scrollRef.current) return;
+
+    const container = scrollRef.current;
+    const amount = container.clientWidth * 0.8;
+
+    container.scrollBy({
+      left: direction === "left" ? -amount : amount,
+      behavior: "smooth",
+    });
+  };
+
+  return (
+    <section className="py-16 lg:py-20">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-10">
+          <SectionLabel>Galería</SectionLabel>
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 mt-3 mb-4">
+            {title}
+          </h2>
+          <p className="text-slate-600 max-w-3xl mx-auto leading-relaxed">
+            {description}
+          </p>
+
+          {total && (
+            <div className="mt-5 inline-flex items-center gap-2 rounded-full bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700">
+              <IconHydrant />
+              <span>{total}</span>
+            </div>
+          )}
+        </div>
+
+        <div className="relative group">
+          <button
+            type="button"
+            onClick={() => scrollGallery("left")}
+            className="absolute left-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/95 p-3 text-slate-700 shadow-lg border border-slate-200 opacity-0 transition-all duration-300 group-hover:opacity-100 hover:scale-105 hover:bg-white"
+            aria-label={`Ver imágenes anteriores de ${title}`}
+          >
+            <IconChevronLeft />
+          </button>
+
+          <button
+            type="button"
+            onClick={() => scrollGallery("right")}
+            className="absolute right-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/95 p-3 text-slate-700 shadow-lg border border-slate-200 opacity-0 transition-all duration-300 group-hover:opacity-100 hover:scale-105 hover:bg-white"
+            aria-label={`Ver imágenes siguientes de ${title}`}
+          >
+            <IconChevronRight />
+          </button>
+
+          <div
+            ref={scrollRef}
+            className="flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-4 scrollbar-hide"
+          >
+            {images.map((image, index) => (
+              <div
+                key={`${image.alt || "imagen"}-${index}`}
+                className="min-w-[280px] sm:min-w-[320px] md:min-w-[340px] snap-start group/card overflow-hidden rounded-2xl bg-white border border-slate-100 shadow-sm flex-shrink-0"
+              >
+                <div className="h-72 overflow-hidden">
+                  <img
+                    src={construirUrlImagen(image.src)}
+                    alt={image.alt || "Imagen de galería"}
+                    className="h-full w-full object-cover transition duration-500 group-hover/card:scale-105"
+                  />
+                </div>
+                <div className="p-4">
+                  <p className="text-sm text-slate-600">
+                    {image.alt || "Imagen de galería"}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
 export default function SustainabilityPage() {
+  const [galeriasData, setGaleriasData] = useState({
+    culturaHidrica: {
+      title: "Actividades de Cultura Hídrica",
+      description: "",
+      images: [],
+    },
+    mantenimiento: {
+      title: "Mantenimiento de Estructuras",
+      description: "",
+      images: [],
+    },
+    hidrantes: {
+      title: "Hidrantes Instalados",
+      description: "",
+      total: "",
+      images: [],
+    },
+  });
+
+  useEffect(() => {
+    const cargarSostenibilidad = async () => {
+      try {
+        const data = await getSostenibilidad();
+
+        setGaleriasData(
+          data.galerias || {
+            culturaHidrica: {
+              title: "Actividades de Cultura Hídrica",
+              description: "",
+              images: [],
+            },
+            mantenimiento: {
+              title: "Mantenimiento de Estructuras",
+              description: "",
+              images: [],
+            },
+            hidrantes: {
+              title: "Hidrantes Instalados",
+              description: "",
+              total: "",
+              images: [],
+            },
+          }
+        );
+      } catch (error) {
+        console.error("Error al cargar sostenibilidad:", error);
+      }
+    };
+
+    cargarSostenibilidad();
+  }, []);
+
   return (
     <div className="bg-slate-50">
-      {/* HERO */}
-        <section className="relative h-[420px] overflow-hidden">
-            <img
-                src="https://images.unsplash.com/photo-1492496913980-501348b61469?auto=format&fit=crop&w=1600&q=80"
-                alt="Sostenibilidad"
-                className="absolute inset-0 h-full w-full object-cover"
+      <section className="relative h-[420px] overflow-hidden">
+        <img
+          src="https://images.unsplash.com/photo-1492496913980-501348b61469?auto=format&fit=crop&w=1600&q=80"
+          alt="Sostenibilidad"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-slate-900/55" />
+        <FloatingBg />
+
+        <div
+          className="absolute bottom-0 left-0 right-0 leading-none"
+          aria-hidden="true"
+        >
+          <svg
+            viewBox="0 0 1440 80"
+            xmlns="http://www.w3.org/2000/svg"
+            preserveAspectRatio="none"
+            className="block w-full h-20"
+          >
+            <path
+              d="M0,32L48,37.3C96,43,192,53,288,58.7C384,64,480,64,576,58.7C672,53,768,43,864,42.7C960,43,1056,53,1152,58.7C1248,64,1344,64,1392,64L1440,64L1440,80L1392,80C1344,80,1248,80,1152,80C1056,80,960,80,864,80C768,80,672,80,576,80C480,80,384,80,288,80C192,80,96,80,48,80L0,80Z"
+              fill="#f8fafc"
             />
-            <div className="absolute inset-0 bg-slate-900/55" />
-            <FloatingBg />
+          </svg>
+        </div>
 
-            {/* ola */}
-            <div className="absolute bottom-0 left-0 right-0 leading-none" aria-hidden="true">
-                <svg
-                viewBox="0 0 1440 80"
-                xmlns="http://www.w3.org/2000/svg"
-                preserveAspectRatio="none"
-                className="block w-full h-20"
-                >
-                <path
-                    d="M0,32L48,37.3C96,43,192,53,288,58.7C384,64,480,64,576,58.7C672,53,768,43,864,42.7C960,43,1056,53,1152,58.7C1248,64,1344,64,1392,64L1440,64L1440,80L1392,80C1344,80,1248,80,1152,80C1056,80,960,80,864,80C768,80,672,80,576,80C480,80,384,80,288,80C192,80,96,80,48,80L0,80Z"
-                    fill="#f8fafc"
-                />
-                </svg>
-            </div>
+        <div className="relative z-10 flex h-full items-center justify-center px-4 text-center">
+          <div className="max-w-3xl">
+            <h1 className="text-4xl sm:text-5xl font-extrabold text-white mb-5">
+              {hero.title}
+            </h1>
+            <p className="text-lg sm:text-xl text-white/90 leading-relaxed">
+              {hero.subtitle}
+            </p>
+          </div>
+        </div>
+      </section>
 
-            <div className="relative z-10 flex h-full items-center justify-center px-4 text-center">
-                <div className="max-w-3xl">
-                <h1 className="text-4xl sm:text-5xl font-extrabold text-white mb-5">
-                    {hero.title}
-                </h1>
-                <p className="text-lg sm:text-xl text-white/90 leading-relaxed">
-                    {hero.subtitle}
-                </p>
-                </div>
-            </div>
-        </section>
-
-      {/* COMPROMISO */}
       <section className="py-16 lg:py-20">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <SectionLabel>Compromiso ambiental</SectionLabel>
@@ -184,120 +330,26 @@ export default function SustainabilityPage() {
         </div>
       </section>
 
-      {/* PROGRAMAS */}
-      <section className="bg-white py-16 lg:py-20">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10">
-            <SectionLabel>Acciones institucionales</SectionLabel>
-            <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 mt-3">
-              Programas Ambientales
-            </h2>
-          </div>
+      <GallerySection
+        title={galeriasData.culturaHidrica?.title}
+        description={galeriasData.culturaHidrica?.description}
+        images={galeriasData.culturaHidrica?.images || []}
+      />
 
-          <div className="space-y-6">
-            {programas.map((programa, index) => {
-              const Icon = programIcons[index];
-              const tones = [
-                "bg-green-100 text-green-700",
-                "bg-blue-100 text-blue-700",
-                "bg-amber-100 text-amber-700",
-              ];
-
-              return (
-                <div
-                  key={programa.title}
-                  className="bg-slate-50 rounded-xl border border-slate-100 shadow-sm p-7"
-                >
-                  <div className="flex items-start gap-4">
-                    <div
-                      className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${tones[index]}`}
-                    >
-                      <Icon />
-                    </div>
-
-                    <div className="flex-1">
-                      <h3 className="text-2xl font-semibold text-slate-800 mb-3">
-                        {programa.title}
-                      </h3>
-                      <p className="text-slate-600 leading-relaxed mb-5">
-                        {programa.desc}
-                      </p>
-
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        {programa.notes.map((note) => (
-                          <div
-                            key={note}
-                            className={`rounded-lg px-4 py-3 text-sm ${
-                              index === 0
-                                ? "bg-green-50 text-green-800"
-                                : index === 1
-                                ? "bg-blue-50 text-blue-800"
-                                : "bg-amber-50 text-amber-800"
-                            }`}
-                          >
-                            {note}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+      <section className="bg-white">
+        <GallerySection
+          title={galeriasData.mantenimiento?.title}
+          description={galeriasData.mantenimiento?.description}
+          images={galeriasData.mantenimiento?.images || []}
+        />
       </section>
 
-      {/* IMPACTO */}
-      <section className="py-16 lg:py-20">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <SectionLabel>Indicadores visibles</SectionLabel>
-          <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 mt-3 mb-10">
-            Impacto Ambiental
-          </h2>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-            {impacto.map((item, index) => {
-              const Icon = impactIcons[index];
-              const iconColor = [
-                "text-blue-700",
-                "text-green-700",
-                "text-emerald-700",
-              ];
-
-              return (
-                <div
-                  key={item.label}
-                  className="bg-white rounded-xl border border-slate-100 shadow-sm p-8 text-center"
-                >
-                  <div className={`mx-auto mb-4 w-fit ${iconColor[index]}`}>
-                    <Icon />
-                  </div>
-                  <p className="text-4xl font-extrabold text-slate-800 mb-2">
-                    {item.value}
-                  </p>
-                  <p className="text-slate-600">{item.label}</p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* OBSERVACIONES */}
-      <section className="bg-slate-100 py-16 lg:py-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-8 text-center">
-            <SectionLabel>Contenido en crecimiento</SectionLabel>
-            <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 mt-3 mb-4">
-              {observaciones.title}
-            </h2>
-            <p className="text-slate-600 leading-relaxed">
-              {observaciones.text}
-            </p>
-          </div>
-        </div>
-      </section>
+      <GallerySection
+        title={galeriasData.hidrantes?.title}
+        description={galeriasData.hidrantes?.description}
+        total={galeriasData.hidrantes?.total}
+        images={galeriasData.hidrantes?.images || []}
+      />
     </div>
   );
 }

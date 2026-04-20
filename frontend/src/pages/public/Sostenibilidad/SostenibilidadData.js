@@ -1,73 +1,25 @@
 export const hero = {
   title: "Sostenibilidad",
   subtitle:
-    "Compromiso con la protección del recurso hídrico y el bienestar ambiental de nuestra comunidad.",
+    "Compromiso con la protección del recurso hídrico, la mejora continua y el bienestar ambiental de nuestra comunidad.",
 };
 
 export const compromiso = {
   title: "Nuestro Compromiso Ambiental",
-  text: "En la ASADA Cedral y Dulce Nombre entendemos que la gestión sostenible del agua es fundamental para garantizar este recurso a las futuras generaciones. Por eso, impulsamos acciones orientadas a la protección de las fuentes, el fortalecimiento de la cultura hídrica y el mantenimiento responsable de la infraestructura del sistema.",
+  text: "En la ASADA Cedral y Dulce Nombre entendemos que la sostenibilidad del recurso hídrico depende tanto de la educación comunitaria como del mantenimiento responsable de la infraestructura. Por ello, desarrollamos acciones orientadas a fortalecer la cultura hídrica, conservar las estructuras del sistema y respaldar iniciativas como el Programa Sello Calidad Sanitaria.",
 };
 
 export const pilares = [
   {
     title: "Sello Calidad Sanitaria",
-    desc: "Participamos en el Programa Sello Calidad Sanitaria como parte del compromiso institucional con la mejora continua y la gestión responsable del servicio.",
+    desc: "La ASADA participa en acciones orientadas al fortalecimiento de buenas prácticas sanitarias y ambientales, promoviendo una gestión responsable del recurso hídrico.",
   },
   {
     title: "Cultura Hídrica",
-    desc: "Promovemos actividades de educación y concientización para fortalecer el uso responsable del agua en la comunidad.",
+    desc: "Se impulsan actividades de sensibilización y educación para promover el uso responsable del agua y la protección de las fuentes.",
   },
   {
     title: "Mantenimiento de Estructuras",
-    desc: "Realizamos acciones de mantenimiento como parte del cuido del sistema y de la sostenibilidad operativa del acueducto.",
+    desc: "Se realizan labores de mantenimiento y mejora de infraestructura para asegurar la continuidad y calidad del servicio.",
   },
 ];
-
-export const programas = [
-  {
-    title: "Programa Sello Calidad Sanitaria",
-    desc: "Esta iniciativa fortalece la gestión ambiental y sanitaria de la ASADA, impulsando buenas prácticas y una mejora continua en la administración del recurso hídrico.",
-    notes: [
-      "Fortalecimiento de buenas prácticas sanitarias",
-      "Apoyo a la mejora continua del servicio",
-      "Compromiso institucional con la sostenibilidad",
-    ],
-  },
-  {
-    title: "Actividades de Cultura Hídrica",
-    desc: "La ASADA contempla actividades orientadas a la sensibilización y educación sobre la importancia del agua y su uso responsable.",
-    notes: [
-      "Espacio preparado para fotografías de actividades",
-      "Contenido actualizable desde panel administrativo",
-    ],
-  },
-  {
-    title: "Mantenimiento de Estructuras",
-    desc: "El mantenimiento de estructuras forma parte del enfoque sostenible de la ASADA, ya que contribuye a la conservación y funcionamiento adecuado del sistema.",
-    notes: [
-      "Espacio preparado para fotografías",
-      "Contenido visual actualizable",
-    ],
-  },
-];
-
-export const impacto = [
-  {
-    value: "20",
-    label: "Hidrantes instalados",
-  },
-  {
-    value: "1",
-    label: "Programa institucional destacado",
-  },
-  {
-    value: "3",
-    label: "Áreas clave de sostenibilidad",
-  },
-];
-
-export const observaciones = {
-  title: "Material en actualización",
-  text: "Esta sección está preparada para incorporar fotografías, evidencias y material complementario relacionado con cultura hídrica, mantenimiento de estructuras e hidrantes, conforme la ASADA lo vaya suministrando.",
-};
