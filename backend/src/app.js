@@ -7,6 +7,7 @@ const avisoRoutes = require("./routes/avisoRoutes");
 const sobreNosotrosRoutes = require("./routes/sobreNosotrosRoutes");
 const tramiteRoutes = require("./routes/tramiteRoutes");
 const gestionAguaRoutes = require("./routes/gestionAguaRoutes");
+const sostenibilidadRoutes = require("./routes/sostenibilidadRoutes");
 
 const app = express();
 
@@ -20,5 +21,6 @@ app.use("/api/avisos", avisoRoutes);
 app.use("/api/sobre-nosotros", sobreNosotrosRoutes);
 app.use("/api/tramites", tramiteRoutes);
 app.use("/api/gestion-agua", gestionAguaRoutes);
+app.use("/api/sostenibilidad", sostenibilidadRoutes);
 
 module.exports = app;
