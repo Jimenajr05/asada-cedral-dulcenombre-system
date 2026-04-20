@@ -6,6 +6,7 @@ import {
   FileText,
   ArrowLeft,
   FolderOpen,
+  ShieldCheck,
 } from "lucide-react";
 
 function AdminSidebar() {
@@ -31,6 +32,11 @@ function AdminSidebar() {
       name: "Trámites",
       icon: FolderOpen,
       path: "/admin/tramites",
+    },
+    {
+      name: "Transparencia",
+      icon: ShieldCheck,
+      path: "/admin/transparencia",
     },
   ];
 

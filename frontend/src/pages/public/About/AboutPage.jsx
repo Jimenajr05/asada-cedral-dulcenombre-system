@@ -133,8 +133,24 @@ export default function AboutPage() {
 
   return (
     <div className="bg-slate-50">
+      {/* HERO */}
       <section className="relative overflow-hidden bg-gradient-to-br from-blue-900 via-blue-800 to-blue-700">
         <WaterDropBg />
+
+        {/* OLA INFERIOR */}
+        <div className="absolute bottom-0 left-0 right-0 leading-none">
+          <svg
+            viewBox="0 0 1440 80"
+            preserveAspectRatio="none"
+            className="h-20 w-full"
+          >
+            <path
+              d="M0,32L48,37.3C96,43,192,53,288,58.7C384,64,480,64,576,58.7C672,53,768,43,864,42.7C960,43,1056,53,1152,58.7C1248,64,1344,64,1392,64L1440,64L1440,80L0,80Z"
+              fill="#f8fafc"
+            />
+          </svg>
+        </div>
+
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-24 text-center">
           <h1 className="text-4xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight mb-5">
             {heroContent.title}
@@ -145,6 +161,7 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* QUIÉNES SOMOS */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
         <div className="text-center mb-10">
           <SectionLabel>Identidad institucional</SectionLabel>
@@ -207,6 +224,7 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* RESEÑA HISTÓRICA */}
       <section className="bg-white py-16 lg:py-20">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -234,6 +252,7 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* JUNTA DIRECTIVA */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
         <div className="text-center mb-10">
           <SectionLabel>Gobierno institucional</SectionLabel>
@@ -300,6 +319,7 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* COBERTURA Y ALCANCE */}
       <section
         className="bg-slate-100 py-16 lg:py-20"
         aria-label="Cobertura y Alcance"
