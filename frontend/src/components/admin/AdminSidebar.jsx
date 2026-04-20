@@ -5,9 +5,6 @@ import {
   Users,
   ArrowLeft,
   FolderOpen,
-  Waves,
-  ShieldCheck,
-  Leaf,
 } from "lucide-react";
 
 function AdminSidebar() {

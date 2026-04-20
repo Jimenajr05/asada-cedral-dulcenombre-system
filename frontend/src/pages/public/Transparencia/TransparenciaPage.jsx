@@ -1,20 +1,9 @@
 import { useEffect, useState } from "react";
-import { hero, enlacesEstaticos } from "./TransparenciaData";
+import { hero } from "./TransparenciaData";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
-const WaterDropBg = () => (
-  <svg
-    className="absolute inset-0 h-full w-full pointer-events-none opacity-[0.05]"
-    viewBox="0 0 800 400"
-    preserveAspectRatio="xMidYMid slice"
-  >
-    <circle cx="660" cy="70" r="200" fill="white" />
-    <circle cx="100" cy="330" r="130" fill="white" />
-    <circle cx="390" cy="210" r="80" fill="white" />
-  </svg>
-);
-
+// ── Iconos ────────────────────────────────────────────────────────────────────
 const IconFile = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-6 h-6" aria-hidden="true">
     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -56,7 +45,27 @@ const IconExternal = () => (
   </svg>
 );
 
-const iconMap = { file: IconFile, chart: IconChart, tag: IconTag };
+const WaterDropBg = () => (
+  <svg
+    className="absolute inset-0 h-full w-full pointer-events-none opacity-[0.05]"
+    viewBox="0 0 800 400"
+    preserveAspectRatio="xMidYMid slice"
+  >
+    <circle cx="660" cy="70" r="200" fill="white" />
+    <circle cx="100" cy="330" r="130" fill="white" />
+    <circle cx="390" cy="210" r="80" fill="white" />
+  </svg>
+);
+
+// ── Mapeo de estilo por label ─────────────────────────────────────────────────
+// Asigna icono y color según el nombre del link guardado en BD
+const getLinkEstilo = (label = "") => {
+  const l = label.toLowerCase();
+  if (l.includes("asamblea"))    return { Icon: IconFile,  color: "blue" };
+  if (l.includes("financiero"))  return { Icon: IconChart, color: "emerald" };
+  if (l.includes("tarifa"))      return { Icon: IconTag,   color: "violet" };
+  return { Icon: IconFile, color: "blue" };
+};
 
 const colorMap = {
   blue:    { icon: "bg-blue-100 text-blue-700",       btn: "bg-blue-600 hover:bg-blue-700",       border: "border-blue-100" },
@@ -70,20 +79,20 @@ const SectionLabel = ({ children }) => (
   </span>
 );
 
-function EnlaceCard({ item }) {
-  const Icon = iconMap[item.icono] || IconFile;
-  const colors = colorMap[item.color] || colorMap.blue;
+// ── Sub-componentes ───────────────────────────────────────────────────────────
+function EnlaceCard({ link }) {
+  const { Icon, color } = getLinkEstilo(link.label);
+  const colors = colorMap[color];
   return (
     <div className={`bg-white rounded-xl border ${colors.border} shadow-sm p-7 flex flex-col gap-5`}>
       <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${colors.icon}`}>
         <Icon />
       </div>
       <div className="flex-1">
-        <h3 className="text-base font-bold text-slate-800 mb-1">{item.label}</h3>
-        <p className="text-sm text-slate-500 leading-relaxed">{item.descripcion}</p>
+        <h3 className="text-base font-bold text-slate-800 mb-1">{link.label}</h3>
       </div>
       <a
-        href={item.url}
+        href={link.url}
         target="_blank"
         rel="noreferrer"
         className={`inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-lg text-sm font-semibold text-white transition ${colors.btn}`}
@@ -102,9 +111,22 @@ function ReunionCard({ reunion }) {
         <IconCalendar />
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold text-slate-800 leading-snug">{reunion.descripcion}</p>
+        <div className="flex items-center gap-2 flex-wrap">
+          <p className="text-sm font-semibold text-slate-800 leading-snug">{reunion.descripcion}</p>
+          {reunion.tipo === "extraordinaria" && (
+            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700">
+              Extraordinaria
+            </span>
+          )}
+        </div>
         {reunion.fecha && (
-          <p className="text-xs text-slate-500 mt-1">{reunion.fecha}</p>
+          <p className="text-xs text-slate-500 mt-1">
+            {new Date(reunion.fecha + "T00:00:00").toLocaleDateString("es-CR", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            })}
+          </p>
         )}
       </div>
     </div>
@@ -134,30 +156,38 @@ function CertificadoCard({ cert }) {
   );
 }
 
+// ── Página principal ──────────────────────────────────────────────────────────
 export default function TransparenciaPage() {
-  const [reuniones, setReuniones] = useState([]);
+  const [enlaces,      setEnlaces]      = useState([]);
+  const [reuniones,    setReuniones]    = useState([]);
   const [certificados, setCertificados] = useState([]);
-  const [loadingReuniones, setLoadingReuniones] = useState(true);
-  const [loadingCerts, setLoadingCerts] = useState(true);
+  const [loading,      setLoading]      = useState(true);
 
   useEffect(() => {
-    const cargarTransparencia = async () => {
+    const cargar = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/api/transparencia`);
-        if (!res.ok) throw new Error("Endpoint no disponible");
-        const data = await res.json();
-        setReuniones(Array.isArray(data?.reuniones) ? data.reuniones : []);
-        setCertificados(Array.isArray(data?.certificados) ? data.certificados : []);
+        const [resTransparencia, resLinks] = await Promise.all([
+          fetch(`${API_BASE_URL}/api/transparencia`),
+          fetch(`${API_BASE_URL}/api/links`),
+        ]);
+
+        if (resTransparencia.ok) {
+          const data = await resTransparencia.json();
+          setReuniones(Array.isArray(data.reuniones)    ? data.reuniones    : []);
+          setCertificados(Array.isArray(data.certificados) ? data.certificados : []);
+        }
+
+        if (resLinks.ok) {
+          const linksData = await resLinks.json();
+          setEnlaces(Array.isArray(linksData) ? linksData : []);
+        }
       } catch (err) {
-        console.error("Transparencia backend no disponible aún:", err);
-        setReuniones([]);
-        setCertificados([]);
+        console.error("Error al cargar transparencia:", err);
       } finally {
-        setLoadingReuniones(false);
-        setLoadingCerts(false);
+        setLoading(false);
       }
     };
-    cargarTransparencia();
+    cargar();
   }, []);
 
   return (
@@ -188,7 +218,7 @@ export default function TransparenciaPage() {
         </div>
       </section>
 
-      {/* ENLACES ESTÁTICOS */}
+      {/* ENLACES */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
         <div className="text-center mb-10">
           <SectionLabel>Documentos institucionales</SectionLabel>
@@ -196,11 +226,19 @@ export default function TransparenciaPage() {
             Acceso a información
           </h2>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {enlacesEstaticos.map((item) => (
-            <EnlaceCard key={item.id} item={item} />
-          ))}
-        </div>
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-white rounded-xl border border-slate-100 shadow-sm p-7 h-48 animate-pulse" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {enlaces.map((link) => (
+              <EnlaceCard key={link._id} link={link} />
+            ))}
+          </div>
+        )}
       </section>
 
       {/* REUNIONES */}
@@ -215,13 +253,15 @@ export default function TransparenciaPage() {
               Calendario actualizado de sesiones ordinarias y extraordinarias.
             </p>
           </div>
-          {loadingReuniones ? (
+          {loading ? (
             <div className="rounded-xl border border-slate-200 bg-slate-50 p-8 text-center text-slate-500">
               Cargando reuniones...
             </div>
           ) : reuniones.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {reuniones.map((r, i) => <ReunionCard key={i} reunion={r} />)}
+              {reuniones.map((r) => (
+                <ReunionCard key={r._id} reunion={r} />
+              ))}
             </div>
           ) : (
             <div className="rounded-xl border border-slate-200 bg-slate-50 p-8 text-center text-slate-500">
@@ -242,13 +282,15 @@ export default function TransparenciaPage() {
             Documentos y acreditaciones oficiales de la ASADA.
           </p>
         </div>
-        {loadingCerts ? (
+        {loading ? (
           <div className="rounded-xl border border-slate-200 bg-white p-8 text-center text-slate-500">
             Cargando certificados...
           </div>
         ) : certificados.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            {certificados.map((cert, i) => <CertificadoCard key={i} cert={cert} />)}
+            {certificados.map((cert) => (
+              <CertificadoCard key={cert._id} cert={cert} />
+            ))}
           </div>
         ) : (
           <div className="rounded-xl border border-slate-200 bg-white p-8 text-center text-slate-500">

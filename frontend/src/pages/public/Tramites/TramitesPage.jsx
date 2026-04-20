@@ -447,15 +447,23 @@ export default function TramitesPage() {
           <p className="mx-auto mb-6 max-w-2xl text-blue-100">{ayuda.text}</p>
 
           <div className="flex flex-col justify-center gap-4 sm:flex-row">
-            <button className="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-6 py-3 font-medium text-blue-700 transition hover:bg-blue-50">
+            <a
+              href="tel:24609775"
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-6 py-3 font-medium text-blue-700 transition hover:bg-blue-50"
+            >
               <IconPhone />
-              <span>{ayuda.primaryText}</span>
-            </button>
+              <span>Llamar</span>
+            </a>
 
-            <button className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-500 px-6 py-3 font-medium transition hover:bg-blue-400">
+            <a
+              href="https://wa.me/50684976556"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-500 px-6 py-3 font-medium text-white transition hover:bg-blue-400"
+            >
               <IconMail />
-              <span>{ayuda.secondaryText}</span>
-            </button>
+              <span>Enviar mensaje</span>
+            </a>
           </div>
         </div>
       </section>
