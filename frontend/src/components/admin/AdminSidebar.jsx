@@ -38,6 +38,11 @@ function AdminSidebar() {
       icon: FolderOpen,
       path: "/admin/tramites",
     },
+    {
+      name: "Transparencia",
+      icon: ShieldCheck,
+      path: "/admin/transparencia",
+    },
   ];
 
   return (

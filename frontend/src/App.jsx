@@ -11,6 +11,7 @@ import AvisosPage from "./pages/public/Avisos/AvisosPage";
 import ContactoPage from "./pages/public/Contacto/ContactoPage";
 import GestionAguaPage from "./pages/public/GestionAgua/GestionAguaPage";
 import SostenibilidadPage from "./pages/public/Sostenibilidad/SostenibilidadPage";
+import TransparenciaPage from "./pages/public/Transparencia/TransparenciaPage";
 import TramitesPage from "./pages/public/Tramites/TramitesPage";
 
 // PÁGINAS ADMIN
@@ -21,6 +22,7 @@ import AdminAvisos from "./pages/admin/AdminAvisos";
 import AdminSobreNosotros from "./pages/admin/AdminSobreNosotros";
 import AdminGestionAgua from "./pages/admin/AdminGestionAgua";
 import AdminTramites from "./pages/admin/AdminTramites";
+import AdminTransparencia from "./pages/admin/AdminTranspariencia";
 
 // COMPONENTES ADMIN
 import ProtectedRoute from "./components/admin/ProtectedRoute";
@@ -44,6 +46,7 @@ function App() {
         <Route path="/contacto" element={<ContactoPage />} />
         <Route path="/gestion-agua" element={<GestionAguaPage />} />
         <Route path="/sostenibilidad" element={<SostenibilidadPage />} />
+         <Route path="/transparencia" element={<TransparenciaPage />} />
         <Route path="/tramites" element={<TramitesPage />} />
 
         {/* AUTH ADMIN */}
@@ -105,7 +108,20 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/admin/transparencia"
+          element={
+            <ProtectedRoute>
+              <AdminLayout>
+                <AdminTransparencia />
+              </AdminLayout>
+            </ProtectedRoute>
+          }
+        />
       </Routes>
+
+      
 
       {!esRutaAdmin && <Footer />}
     </>

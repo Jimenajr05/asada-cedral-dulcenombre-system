@@ -6,6 +6,7 @@ const links = [
   { to: "/gestion-agua", label: "Gestión del Agua" },
   { to: "/sostenibilidad", label: "Sostenibilidad" },
   { to: "/tramites", label: "Trámites" },
+  { to: "/transparencia", label: "Transparencia" },
   { to: "/avisos", label: "Avisos" },
   { to: "/contacto", label: "Contacto" },
 ];
