@@ -9,7 +9,7 @@ const sobreNosotrosRoutes  = require("./routes/sobreNosotrosRoutes");
 const tramiteRoutes        = require("./routes/tramiteRoutes");
 const linkRoutes           = require("./routes/linkRoutes");
 const transparenciaRoutes  = require("./routes/transparenciaRoutes");
-const gestionAguaRoutes = require("./routes/gestionAguaRoutes");
+const gestionAguaRoutes    = require("./routes/gestionAguaRoutes");
 const sostenibilidadRoutes = require("./routes/sostenibilidadRoutes");
 
 const app = express();
@@ -18,14 +18,17 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Servir archivos estáticos (Imágenes/Certificados)
+// Servir archivos estáticos
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 // Definición de rutas de la API
 app.use("/api/auth",           authRoutes);
 app.use("/api/avisos",         avisoRoutes);
 app.use("/api/sobre-nosotros", sobreNosotrosRoutes);
-app.use("/api/tramites", tramiteRoutes);
-app.use("/api/gestion-agua", gestionAguaRoutes);
+app.use("/api/tramites",       tramiteRoutes);
+app.use("/api/links",          linkRoutes);
+app.use("/api/transparencia",  transparenciaRoutes);
+app.use("/api/gestion-agua",   gestionAguaRoutes);
+app.use("/api/sostenibilidad", sostenibilidadRoutes);
 
 module.exports = app;
