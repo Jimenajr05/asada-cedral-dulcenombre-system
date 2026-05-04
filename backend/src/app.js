@@ -11,6 +11,8 @@ const linkRoutes           = require("./routes/linkRoutes");
 const transparenciaRoutes  = require("./routes/transparenciaRoutes");
 const gestionAguaRoutes    = require("./routes/gestionAguaRoutes");
 const sostenibilidadRoutes = require("./routes/sostenibilidadRoutes");
+const proyectoRoutes       = require("./routes/proyectoRoutes");
+const tareaRoutes = require("./routes/tareaRoutes");
 
 const app = express();
 
@@ -30,5 +32,7 @@ app.use("/api/links",          linkRoutes);
 app.use("/api/transparencia",  transparenciaRoutes);
 app.use("/api/gestion-agua",   gestionAguaRoutes);
 app.use("/api/sostenibilidad", sostenibilidadRoutes);
+app.use("/api/proyectos",      proyectoRoutes);
+app.use("/api/tareas", tareaRoutes);
 
 module.exports = app;

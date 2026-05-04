@@ -1,19 +1,12 @@
-import { Droplets, LogOut } from "lucide-react";
+import { LogOut } from "lucide-react";
+import logo from "../../assets/logo.jpeg";
 
 function AdminNavbar({ user, onLogout }) {
   return (
     <header className="h-20 bg-white border-b border-slate-200 px-6 flex items-center justify-between">
       <div className="flex items-center gap-3">
-        <div className="flex items-center justify-center">
-          <Droplets className="w-8 h-8 text-blue-600" strokeWidth={2.2} />
-        </div>
-
-        <div className="flex items-end gap-2">
-          <h1 className="text-[2rem] font-bold text-slate-900 leading-none">
-            ASADA
-          </h1>
-          <p className="text-sm text-slate-500 mb-1">Panel Administrativo</p>
-        </div>
+        <img src={logo} alt="ASADA Cedral y Dulce Nombre" className="h-12 w-auto" />
+        <p className="text-sm text-slate-500">Panel Administrativo</p>
       </div>
 
       <div className="flex items-center gap-8">

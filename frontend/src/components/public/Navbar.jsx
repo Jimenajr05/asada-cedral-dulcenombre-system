@@ -1,4 +1,6 @@
 import { NavLink } from "react-router-dom";
+import { useState } from "react";
+import logo from "../../assets/logo.jpeg";
 
 const links = [
   { to: "/", label: "Inicio" },
@@ -7,80 +9,101 @@ const links = [
   { to: "/sostenibilidad", label: "Sostenibilidad" },
   { to: "/tramites", label: "Trámites" },
   { to: "/transparencia", label: "Transparencia" },
+  { to: "/proyectos", label: "Proyectos" },
   { to: "/avisos", label: "Avisos" },
   { to: "/contacto", label: "Contacto" },
 ];
 
 export default function Navbar() {
-  const linkClass = ({ isActive }) =>
-    isActive
-      ? "text-primary font-semibold"
-      : "text-slate-600 hover:text-primary transition";
+  const [menuAbierto, setMenuAbierto] = useState(false);
 
   return (
     <div className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur">
-      <div className="navbar mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="navbar-start">
-          <div className="dropdown lg:hidden">
-            <label tabIndex={0} className="btn btn-ghost btn-circle">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 sm:h-6 sm:w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              </svg>
-            </label>
+      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
 
-            <ul
-              tabIndex={0}
-              className="menu menu-sm dropdown-content mt-3 w-64 rounded-box border border-slate-200 bg-white p-2 shadow-lg"
+        {/* Logo */}
+        <NavLink to="/" className="shrink-0">
+          <img
+            src={logo}
+            alt="ASADA Cedral y Dulce Nombre"
+            className="h-16 w-auto max-w-[180px] object-contain"
+          />
+        </NavLink>
+
+        {/* Links desktop */}
+        <nav className="hidden lg:flex items-center gap-0 text-[0.92rem] font-medium">
+          {links.map((link) => (
+            <NavLink
+              key={link.to}
+              to={link.to}
+              className={({ isActive }) =>
+                `px-2.5 py-2 rounded-lg transition whitespace-nowrap ${
+                  isActive
+                    ? "text-primary font-semibold"
+                    : "text-slate-600 hover:text-primary"
+                }`
+              }
             >
-              {links.map((link) => (
-                <li key={link.to}>
-                  <NavLink to={link.to} className={linkClass}>
-                    {link.label}
-                  </NavLink>
-                </li>
-              ))}
-            </ul>
-          </div>
+              {link.label}
+            </NavLink>
+          ))}
+        </nav>
 
-          <NavLink to="/" className="ml-2 sm:ml-3 lg:ml-0">
-            <h1 className="text-lg font-bold leading-none text-slate-900 sm:text-xl lg:text-2xl">
-              ASADA
-            </h1>
-            <p className="-mt-0.5 text-[11px] text-slate-500 sm:text-xs lg:text-sm">
-              Comunidad
-            </p>
+        {/* Derecha */}
+        <div className="flex items-center gap-3">
+          <NavLink
+            to="/contacto"
+            className="hidden sm:inline-flex btn btn-primary btn-sm sm:btn-md"
+          >
+            Contáctanos
           </NavLink>
-        </div>
 
-        <div className="navbar-center hidden lg:flex">
-          <ul className="menu menu-horizontal gap-1 px-1 text-sm font-medium xl:text-base">
+          {/* Hamburguesa mobile */}
+          <button
+            onClick={() => setMenuAbierto(!menuAbierto)}
+            className="lg:hidden flex items-center justify-center rounded-xl p-2 text-slate-600 hover:bg-slate-100 transition"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                d={menuAbierto ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      {/* Menú mobile */}
+      {menuAbierto && (
+        <div className="lg:hidden border-t border-slate-200 bg-white px-4 py-3 shadow-md">
+          <ul className="flex flex-col gap-1">
             {links.map((link) => (
               <li key={link.to}>
-                <NavLink to={link.to} className={linkClass}>
+                <NavLink
+                  to={link.to}
+                  onClick={() => setMenuAbierto(false)}
+                  className={({ isActive }) =>
+                    `block rounded-xl px-4 py-2.5 text-sm font-medium transition ${
+                      isActive
+                        ? "bg-blue-50 text-primary font-semibold"
+                        : "text-slate-700 hover:bg-slate-100"
+                    }`
+                  }
+                >
                   {link.label}
                 </NavLink>
               </li>
             ))}
+            <li className="mt-2 pt-2 border-t border-slate-100">
+              <NavLink
+                to="/contacto"
+                onClick={() => setMenuAbierto(false)}
+                className="block w-full rounded-xl bg-primary px-4 py-2.5 text-center text-sm font-semibold text-white"
+              >
+                Contáctanos
+              </NavLink>
+            </li>
           </ul>
         </div>
-
-        <div className="navbar-end">
-          <NavLink to="/contacto" className="btn btn-primary btn-sm sm:btn-md">
-            Contáctanos
-          </NavLink>
-        </div>
-      </div>
+      )}
     </div>
   );
 }
