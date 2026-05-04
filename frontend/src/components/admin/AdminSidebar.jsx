@@ -1,26 +1,21 @@
 import { Link, useLocation } from "react-router-dom";
 import {
-  LayoutGrid,
-  Bell,
-  Users,
-  ArrowLeft,
-  FolderOpen,
-  Waves,
-  Leaf,
-  ShieldCheck,
+  LayoutGrid, Bell, Users, ArrowLeft, FolderOpen,
+  Waves, Leaf, ShieldCheck, Hammer,
 } from "lucide-react";
 
 function AdminSidebar() {
   const location = useLocation();
 
   const menuItems = [
-    { name: "Dashboard",       icon: LayoutGrid,  path: "/admin/panel" },
-    { name: "Avisos",          icon: Bell,         path: "/admin/avisos" },
-    { name: "Sobre Nosotros",  icon: Users,        path: "/admin/sobre-nosotros" },
-    { name: "Gestión del Agua",icon: Waves,        path: "/admin/gestion-agua" },
-    { name: "Sostenibilidad",  icon: Leaf,         path: "/admin/sostenibilidad" },
-    { name: "Trámites",        icon: FolderOpen,   path: "/admin/tramites" },
-    { name: "Transparencia",   icon: ShieldCheck,  path: "/admin/transparencia" },
+    { name: "Dashboard",        icon: LayoutGrid,  path: "/admin/panel" },
+    { name: "Avisos",           icon: Bell,        path: "/admin/avisos" },
+    { name: "Sobre Nosotros",   icon: Users,       path: "/admin/sobre-nosotros" },
+    { name: "Gestión del Agua", icon: Waves,       path: "/admin/gestion-agua" },
+    { name: "Sostenibilidad",   icon: Leaf,        path: "/admin/sostenibilidad" },
+    { name: "Trámites",         icon: FolderOpen,  path: "/admin/tramites" },
+    { name: "Transparencia",    icon: ShieldCheck, path: "/admin/transparencia" },
+    { name: "Proyectos",        icon: Hammer,      path: "/admin/proyectos" },
   ];
 
   return (

@@ -271,16 +271,17 @@ export default function ContactoPage() {
               referrerPolicy="no-referrer-when-downgrade"
             />
           </div>
-          <p className="mt-3 text-center text-sm text-slate-500">
+          <div className="mt-5 flex justify-center">
             <a
-              href="https://maps.app.goo.gl/44S8Kq5Y9M9qb821A"
-              target="_blank"
-              rel="noreferrer"
-              className="text-blue-600 hover:underline"
-            >
-              Ver en Google Maps →
+                href="https://maps.app.goo.gl/44S8Kq5Y9M9qb821A"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-xl border border-blue-200 bg-white px-6 py-3 text-base font-semibold text-blue-700 shadow-sm transition hover:bg-blue-600 hover:text-white hover:border-blue-600 hover:shadow-md"
+              >
+                <FiMapPin className="text-lg" />
+                Abrir en Google Maps
             </a>
-          </p>
+        </div>
         </div>
       </section>
     </main>

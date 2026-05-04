@@ -13,6 +13,7 @@ import GestionAguaPage from "./pages/public/GestionAgua/GestionAguaPage";
 import SostenibilidadPage from "./pages/public/Sostenibilidad/SostenibilidadPage";
 import TransparenciaPage from "./pages/public/Transparencia/TransparenciaPage";
 import TramitesPage from "./pages/public/Tramites/TramitesPage";
+import ProyectosPage from "./pages/public/Proyectos/ProyectosPage";
 
 // PÁGINAS ADMIN
 import AdminLogin from "./pages/admin/AdminLogin";
@@ -24,6 +25,7 @@ import AdminGestionAgua from "./pages/admin/AdminGestionAgua";
 import AdminSostenibilidad from "./pages/admin/AdminSostenibilidad";
 import AdminTramites from "./pages/admin/AdminTramites";
 import AdminTransparencia from "./pages/admin/AdminTranspariencia";
+import AdminProyectos from "./pages/admin/AdminProyectos";
 
 // COMPONENTES ADMIN
 import ProtectedRoute from "./components/admin/ProtectedRoute";
@@ -47,93 +49,24 @@ function App() {
         <Route path="/contacto" element={<ContactoPage />} />
         <Route path="/gestion-agua" element={<GestionAguaPage />} />
         <Route path="/sostenibilidad" element={<SostenibilidadPage />} />
-         <Route path="/transparencia" element={<TransparenciaPage />} />
+        <Route path="/transparencia" element={<TransparenciaPage />} />
         <Route path="/tramites" element={<TramitesPage />} />
+        <Route path="/proyectos" element={<ProyectosPage />} />
 
         {/* AUTH ADMIN */}
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin/register" element={<AdminRegister />} />
 
         {/* ADMIN PROTEGIDO */}
-        <Route
-          path="/admin/panel"
-          element={
-            <ProtectedRoute>
-              <AdminLayout>
-                <AdminPanel />
-              </AdminLayout>
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/admin/avisos"
-          element={
-            <ProtectedRoute>
-              <AdminLayout>
-                <AdminAvisos />
-              </AdminLayout>
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/admin/sobre-nosotros"
-          element={
-            <ProtectedRoute>
-              <AdminLayout>
-                <AdminSobreNosotros />
-              </AdminLayout>
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/admin/gestion-agua"
-          element={
-            <ProtectedRoute>
-              <AdminLayout>
-                <AdminGestionAgua />
-              </AdminLayout>
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/admin/sostenibilidad"
-          element={
-            <ProtectedRoute>
-              <AdminLayout>
-                <AdminSostenibilidad />
-              </AdminLayout>
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/admin/tramites"
-          element={
-            <ProtectedRoute>
-              <AdminLayout>
-                <AdminTramites />
-              </AdminLayout>
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/admin/transparencia"
-          element={
-            <ProtectedRoute>
-              <AdminLayout>
-                <AdminTransparencia />
-              </AdminLayout>
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/admin/panel" element={<ProtectedRoute><AdminLayout><AdminPanel /></AdminLayout></ProtectedRoute>} />
+        <Route path="/admin/avisos" element={<ProtectedRoute><AdminLayout><AdminAvisos /></AdminLayout></ProtectedRoute>} />
+        <Route path="/admin/sobre-nosotros" element={<ProtectedRoute><AdminLayout><AdminSobreNosotros /></AdminLayout></ProtectedRoute>} />
+        <Route path="/admin/gestion-agua" element={<ProtectedRoute><AdminLayout><AdminGestionAgua /></AdminLayout></ProtectedRoute>} />
+        <Route path="/admin/sostenibilidad" element={<ProtectedRoute><AdminLayout><AdminSostenibilidad /></AdminLayout></ProtectedRoute>} />
+        <Route path="/admin/tramites" element={<ProtectedRoute><AdminLayout><AdminTramites /></AdminLayout></ProtectedRoute>} />
+        <Route path="/admin/transparencia" element={<ProtectedRoute><AdminLayout><AdminTransparencia /></AdminLayout></ProtectedRoute>} />
+        <Route path="/admin/proyectos" element={<ProtectedRoute><AdminLayout><AdminProyectos /></AdminLayout></ProtectedRoute>} />
       </Routes>
-
-      
 
       {!esRutaAdmin && <Footer />}
     </>

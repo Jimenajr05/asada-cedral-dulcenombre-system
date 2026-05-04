@@ -1,326 +1,360 @@
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import {
-  Bell,
-  Users,
-  AlertCircle,
-  Droplets,
-  TrendingUp,
-  Image as ImageIcon,
-  FileText,
-  CheckCircle2,
-  Pencil,
+  Bell, Users, Droplets, Leaf, FolderOpen, ShieldCheck,
+  Hammer, Plus, Trash2, Check, AlertCircle, Info, CheckCircle2,
 } from "lucide-react";
+import { getAvisos } from "../../services/avisoService";
+import { getProyectosAdmin } from "../../services/proyectoService";
+import { getTramitesAdmin } from "../../services/tramiteService";
+import { getTareas, crearTarea, toggleTarea, eliminarTarea } from "../../services/tareaService";
 
-function AdminPanel() {
-  const stats = [
-    {
-      title: "Avisos Activos",
-      value: "12",
-      description: "+2 esta semana",
-      icon: Bell,
-      boxColor: "bg-blue-500",
-    },
-    {
-      title: "Abonados",
-      value: "524",
-      description: "+8 este mes",
-      icon: Users,
-      boxColor: "bg-green-500",
-    },
-    {
-      title: "Avisos Urgentes",
-      value: "3",
-      description: "Requieren atención",
-      icon: AlertCircle,
-      boxColor: "bg-red-500",
-    },
-    {
-      title: "Consumo Promedio",
-      value: "18m³",
-      description: "-5% vs mes anterior",
-      icon: Droplets,
-      boxColor: "bg-blue-600",
-    },
-  ];
+const prioridadConfig = {
+  alta:  { color: "bg-red-50 border-l-4 border-red-500",    badge: "bg-red-100 text-red-600",    label: "Alta" },
+  media: { color: "bg-amber-50 border-l-4 border-amber-500", badge: "bg-amber-100 text-amber-600", label: "Media" },
+  baja:  { color: "bg-blue-50 border-l-4 border-blue-500",  badge: "bg-blue-100 text-blue-600",  label: "Baja" },
+};
 
-  const recentActivity = [
-    {
-      title: "Nuevo aviso publicado",
-      description: "Corte de agua programado",
-      time: "Hace 2 horas",
-      icon: Bell,
-      iconColor: "text-blue-600",
-      bg: "bg-blue-100",
-    },
-    {
-      title: "Foto actualizada",
-      description: "Banner principal cambiado",
-      time: "Hace 5 horas",
-      icon: ImageIcon,
-      iconColor: "text-purple-600",
-      bg: "bg-purple-100",
-    },
-    {
-      title: "Contenido editado",
-      description: "Sección Misión y Visión",
-      time: "Hace 1 día",
-      icon: FileText,
-      iconColor: "text-green-600",
-      bg: "bg-green-100",
-    },
-    {
-      title: "Aviso archivado",
-      description: "Mantenimiento completado",
-      time: "Hace 2 días",
-      icon: Bell,
-      iconColor: "text-blue-600",
-      bg: "bg-blue-100",
-    },
-  ];
-
-  const pendingTasks = [
-    {
-      title: "Revisar solicitudes de nuevo abonado",
-      count: 3,
-      style: "bg-red-50 border-l-[4px] border-red-500",
-      badge: "bg-red-100 text-red-500",
-    },
-    {
-      title: "Actualizar avisos caducados",
-      count: 2,
-      style: "bg-yellow-50 border-l-[4px] border-yellow-500",
-      badge: "bg-yellow-100 text-yellow-600",
-    },
-    {
-      title: "Responder consultas por email",
-      count: 5,
-      style: "bg-blue-50 border-l-[4px] border-blue-500",
-      badge: "bg-blue-100 text-blue-500",
-    },
-  ];
-
-  const quickActions = [
-    {
-      title: "Crear Aviso",
-      icon: Bell,
-      bg: "bg-blue-50",
-      iconColor: "text-blue-600",
-    },
-    {
-      title: "Subir Foto",
-      icon: ImageIcon,
-      bg: "bg-purple-50",
-      iconColor: "text-purple-600",
-    },
-    {
-      title: "Editar Contenido",
-      icon: Pencil,
-      bg: "bg-green-50",
-      iconColor: "text-green-600",
-    },
-    {
-      title: "Ver Abonados",
-      icon: Users,
-      bg: "bg-orange-50",
-      iconColor: "text-orange-500",
-    },
-  ];
-
-  const bottomCards = [
-    {
-      title: "Sistema Operativo",
-      description: "Todos los servicios funcionando",
-      icon: CheckCircle2,
-      bg: "bg-green-100",
-      iconColor: "text-green-600",
-    },
-    {
-      title: "Calidad del Agua",
-      description: "Parámetros normales",
-      icon: Droplets,
-      bg: "bg-blue-100",
-      iconColor: "text-blue-600",
-    },
-    {
-      title: "Usuarios Activos",
-      description: "524 abonados",
-      icon: Users,
-      bg: "bg-purple-100",
-      iconColor: "text-purple-600",
-    },
-  ];
-
+/* ========================= TOAST ========================= */
+function Toast({ toasts, removeToast }) {
   return (
-    <div className="p-7">
-      <div className="mb-8">
-        <h2 className="text-[3rem] font-bold text-slate-900 leading-tight">
-          Panel de Control
-        </h2>
-        <p className="text-slate-600 mt-2 text-[1.35rem]">
-          Resumen general del sistema ASADA
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
-        {stats.map((item) => {
-          const Icon = item.icon;
-
-          return (
-            <div
-              key={item.title}
-              className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6"
-            >
-              <div className="flex items-start justify-between mb-6">
-                <div
-                  className={`w-14 h-14 rounded-2xl ${item.boxColor} flex items-center justify-center`}
-                >
-                  <Icon className="w-7 h-7 text-white" strokeWidth={2.2} />
-                </div>
-
-                <TrendingUp
-                  className="w-5 h-5 text-green-500"
-                  strokeWidth={2.4}
-                />
-              </div>
-
-              <h3 className="text-slate-600 text-lg">{item.title}</h3>
-              <p className="text-[2.5rem] font-bold text-slate-900 mt-2 leading-none">
-                {item.value}
-              </p>
-              <p className="text-sm text-slate-500 mt-3">{item.description}</p>
+    <div className="fixed top-6 right-6 z-50 flex flex-col gap-3" style={{ minWidth: 300, maxWidth: 400 }}>
+      {toasts.map((t) => {
+        const isSuccess = t.type === "success";
+        const isConfirm = t.type === "confirm";
+        return (
+          <div key={t.id}
+            className={`flex items-start gap-3 rounded-2xl border px-5 py-4 shadow-2xl backdrop-blur-md
+              ${isSuccess ? "bg-emerald-50 border-emerald-200 text-emerald-800"
+                : isConfirm ? "bg-amber-50 border-amber-200 text-amber-800"
+                : "bg-red-50 border-red-200 text-red-800"}`}
+            style={{ animation: "slideIn 0.3s ease" }}>
+            <div className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-white text-sm font-bold
+              ${isSuccess ? "bg-emerald-500" : isConfirm ? "bg-amber-500" : "bg-red-500"}`}>
+              {isSuccess ? "✓" : isConfirm ? "?" : "✕"}
             </div>
-          );
-        })}
-      </div>
-
-      <div className="grid grid-cols-1 xl:grid-cols-[2fr_1fr] gap-6 mb-8">
-        <section className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-          <h3 className="text-[2rem] font-bold text-slate-900 mb-6">
-            Actividad Reciente
-          </h3>
-
-          <div className="space-y-0">
-            {recentActivity.map((activity, index) => {
-              const Icon = activity.icon;
-
-              return (
-                <div key={index}>
-                  <div className="flex items-start gap-4 py-5">
-                    <div
-                      className={`w-12 h-12 rounded-full ${activity.bg} flex items-center justify-center shrink-0`}
-                    >
-                      <Icon
-                        className={`w-5 h-5 ${activity.iconColor}`}
-                        strokeWidth={2.2}
-                      />
-                    </div>
-
-                    <div>
-                      <h4 className="text-[1.05rem] font-semibold text-slate-900">
-                        {activity.title}
-                      </h4>
-                      <p className="text-slate-600 text-base">
-                        {activity.description}
-                      </p>
-                      <p className="text-sm text-slate-500 mt-1">
-                        {activity.time}
-                      </p>
-                    </div>
-                  </div>
-
-                  {index !== recentActivity.length - 1 && (
-                    <div className="border-b border-slate-200" />
-                  )}
+            <div className="flex-1">
+              <p className="font-semibold text-sm">{isSuccess ? "¡Éxito!" : isConfirm ? "Confirmar" : "Error"}</p>
+              <p className="text-sm mt-0.5 opacity-80">{t.message}</p>
+              {isConfirm && (
+                <div className="flex gap-2 mt-3">
+                  <button onClick={() => t.onConfirm()} className="rounded-xl bg-red-600 px-4 py-1.5 text-xs font-bold text-white hover:bg-red-700 transition">Eliminar</button>
+                  <button onClick={() => t.onCancel()} className="rounded-xl bg-slate-200 px-4 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-300 transition">Cancelar</button>
                 </div>
-              );
-            })}
-          </div>
-        </section>
-
-        <section className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-          <h3 className="text-[2rem] font-bold text-slate-900 mb-6">
-            Tareas Pendientes
-          </h3>
-
-          <div className="space-y-4">
-            {pendingTasks.map((task, index) => (
-              <div
-                key={index}
-                className={`rounded-2xl px-4 py-4 flex items-center justify-between ${task.style}`}
-              >
-                <span className="text-[1rem] font-medium text-slate-900">
-                  {task.title}
-                </span>
-
-                <span
-                  className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${task.badge}`}
-                >
-                  {task.count}
-                </span>
-              </div>
-            ))}
-          </div>
-        </section>
-      </div>
-
-      <section className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 mb-8">
-        <h3 className="text-[2rem] font-bold text-slate-900 mb-6">
-          Acciones Rápidas
-        </h3>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-          {quickActions.map((action) => {
-            const Icon = action.icon;
-
-            return (
-              <button
-                key={action.title}
-                className={`${action.bg} rounded-2xl px-5 py-5 flex items-center gap-3 text-left hover:opacity-90 transition`}
-              >
-                <Icon
-                  className={`w-5 h-5 ${action.iconColor}`}
-                  strokeWidth={2.2}
-                />
-                <span className="text-[1.05rem] font-medium text-slate-900">
-                  {action.title}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </section>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {bottomCards.map((card) => {
-          const Icon = card.icon;
-
-          return (
-            <div
-              key={card.title}
-              className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 flex items-center gap-4"
-            >
-              <div
-                className={`w-12 h-12 rounded-full ${card.bg} flex items-center justify-center shrink-0`}
-              >
-                <Icon
-                  className={`w-5 h-5 ${card.iconColor}`}
-                  strokeWidth={2.2}
-                />
-              </div>
-
-              <div>
-                <h4 className="text-[1.05rem] font-semibold text-slate-900">
-                  {card.title}
-                </h4>
-                <p className="text-slate-600 text-base">
-                  {card.description}
-                </p>
-              </div>
+              )}
             </div>
-          );
-        })}
-      </div>
+          </div>
+        );
+      })}
+      <style>{`@keyframes slideIn { from { opacity:0; transform:translateX(40px); } to { opacity:1; transform:translateX(0); } }`}</style>
     </div>
   );
 }
 
-export default AdminPanel;
+export default function AdminPanel() {
+  const [avisos,    setAvisos]    = useState([]);
+  const [proyectos, setProyectos] = useState([]);
+  const [tramites,  setTramites]  = useState([]);
+  const [tareas,    setTareas]    = useState([]);
+  const [loading,   setLoading]   = useState(true);
+  const [toasts,    setToasts]    = useState([]);
+
+  const [nuevaTarea,     setNuevaTarea]     = useState("");
+  const [prioridadNueva, setPrioridadNueva] = useState("media");
+
+  // ── Toast helpers ──
+  const removeToast = (id) => setToasts((p) => p.filter((t) => t.id !== id));
+  const addToast = (type, message, extra = {}) => {
+    const id = Date.now();
+    setToasts((p) => [...p, { id, type, message, ...extra }]);
+    if (type !== "confirm") setTimeout(() => removeToast(id), 3500);
+    return id;
+  };
+  const showSuccess = (msg) => addToast("success", msg);
+  const showError   = (msg) => addToast("error", msg);
+  const showConfirm = (msg) => new Promise((resolve) => {
+    const id = addToast("confirm", msg, {
+      onConfirm: () => { removeToast(id); resolve(true); },
+      onCancel:  () => { removeToast(id); resolve(false); },
+    });
+  });
+
+  useEffect(() => {
+    const cargar = async () => {
+      try {
+        const [a, p, tr, ta] = await Promise.all([
+          getAvisos(),
+          getProyectosAdmin(),
+          getTramitesAdmin(),
+          getTareas(),
+        ]);
+        setAvisos(a);
+        setProyectos(p);
+        setTramites(tr);
+        setTareas(ta);
+      } catch (e) {
+        showError("Error al cargar datos del dashboard");
+      } finally {
+        setLoading(false);
+      }
+    };
+    cargar();
+  }, []);
+
+  const handleCrearTarea = async () => {
+    if (!nuevaTarea.trim()) { showError("Escribe el texto de la tarea"); return; }
+    try {
+      const { tarea } = await crearTarea({ texto: nuevaTarea.trim(), prioridad: prioridadNueva });
+      setTareas((prev) => [tarea, ...prev]);
+      setNuevaTarea("");
+      showSuccess("Tarea creada");
+    } catch (e) { showError(e.message); }
+  };
+
+  const handleToggle = async (id) => {
+    try {
+      const { tarea } = await toggleTarea(id);
+      setTareas((prev) => prev.map((t) => t._id === id ? tarea : t));
+    } catch (e) { showError(e.message); }
+  };
+
+  const handleEliminar = async (id) => {
+    if (!await showConfirm("¿Eliminar esta tarea?")) return;
+    try {
+      await eliminarTarea(id);
+      setTareas((prev) => prev.filter((t) => t._id !== id));
+      showSuccess("Tarea eliminada");
+    } catch (e) { showError(e.message); }
+  };
+
+  // Stats calculadas
+  const avisosPublicados  = avisos.filter((a) => a.estado === "publicado").length;
+  const avisosUrgentes    = avisos.filter((a) => a.tipo === "urgente").length;
+  const proyectosActivos  = proyectos.filter((p) => p.estado === "En progreso").length;
+  const tareasCompletadas = tareas.filter((t) => t.completada).length;
+  const tareasPendientes  = tareas.filter((t) => !t.completada);
+  const ultimoAviso       = avisos[0];
+  const ultimoProyecto    = proyectos[0];
+
+  const stats = [
+    { label: "Avisos publicados",  value: avisosPublicados, icon: Bell,       color: "bg-blue-500",    sub: `${avisosUrgentes} urgente${avisosUrgentes !== 1 ? "s" : ""}` },
+    { label: "Proyectos activos",  value: proyectosActivos, icon: Hammer,     color: "bg-indigo-500",  sub: `${proyectos.length} en total` },
+    { label: "Trámites",           value: tramites.length,  icon: FolderOpen, color: "bg-emerald-500", sub: "disponibles" },
+    { label: "Tareas completadas", value: tareasCompletadas,icon: Check,      color: "bg-amber-500",   sub: `${tareas.length} en total` },
+  ];
+
+  const accesosRapidos = [
+    { label: "Nuevo aviso",    icon: Bell,       path: "/admin/avisos",         color: "bg-blue-50 text-blue-600 hover:bg-blue-100" },
+    { label: "Nuevo proyecto", icon: Hammer,     path: "/admin/proyectos",      color: "bg-indigo-50 text-indigo-600 hover:bg-indigo-100" },
+    { label: "Gestión Agua",   icon: Droplets,   path: "/admin/gestion-agua",   color: "bg-cyan-50 text-cyan-600 hover:bg-cyan-100" },
+    { label: "Sostenibilidad", icon: Leaf,       path: "/admin/sostenibilidad", color: "bg-emerald-50 text-emerald-600 hover:bg-emerald-100" },
+    { label: "Trámites",       icon: FolderOpen, path: "/admin/tramites",       color: "bg-orange-50 text-orange-600 hover:bg-orange-100" },
+    { label: "Transparencia",  icon: ShieldCheck,path: "/admin/transparencia",  color: "bg-purple-50 text-purple-600 hover:bg-purple-100" },
+  ];
+
+  if (loading) return (
+    <div className="flex min-h-[60vh] items-center justify-center">
+      <div className="h-10 w-10 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600" />
+    </div>
+  );
+
+  return (
+    <div className="bg-slate-100 p-7 space-y-8">
+      <Toast toasts={toasts} removeToast={removeToast} />
+
+      {/* Encabezado */}
+      <div>
+        <h1 className="text-4xl font-bold text-slate-900 md:text-5xl">Dashboard</h1>
+        <p className="mt-2 text-lg text-slate-600">Resumen general del sistema ASADA</p>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
+        {stats.map((stat) => {
+          const Icon = stat.icon;
+          return (
+            <div key={stat.label} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+              <div className="flex items-start justify-between mb-5">
+                <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${stat.color}`}>
+                  <Icon className="h-6 w-6 text-white" strokeWidth={2.2} />
+                </div>
+              </div>
+              <p className="text-slate-500 text-sm">{stat.label}</p>
+              <p className="text-5xl font-bold text-slate-900 mt-1 leading-none">{stat.value}</p>
+              <p className="text-xs text-slate-400 mt-3">{stat.sub}</p>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Fila principal */}
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1fr_380px]">
+
+        {/* Columna izquierda */}
+        <div className="space-y-6">
+
+          {/* Accesos rápidos */}
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h2 className="mb-5 text-2xl font-bold text-slate-900">Accesos Rápidos</h2>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {accesosRapidos.map((a) => {
+                const Icon = a.icon;
+                return (
+                  <Link key={a.label} to={a.path}
+                    className={`flex items-center gap-3 rounded-2xl px-4 py-4 font-medium transition ${a.color}`}>
+                    <Icon className="h-5 w-5 shrink-0" strokeWidth={2} />
+                    <span className="text-sm">{a.label}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Últimas novedades */}
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h2 className="mb-5 text-2xl font-bold text-slate-900">Últimas Novedades</h2>
+            <div className="space-y-4">
+
+              {/* Último aviso */}
+              {ultimoAviso && (
+                <div className="flex items-start gap-4 rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-100">
+                    {ultimoAviso.tipo === "urgente"
+                      ? <AlertCircle className="h-5 w-5 text-red-500" />
+                      : ultimoAviso.tipo === "completado"
+                      ? <CheckCircle2 className="h-5 w-5 text-emerald-500" />
+                      : <Info className="h-5 w-5 text-blue-500" />}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-semibold text-slate-400 mb-0.5">Último aviso</p>
+                    <p className="font-semibold text-slate-900 truncate">{ultimoAviso.titulo}</p>
+                    <p className="text-sm text-slate-500 line-clamp-1">{ultimoAviso.descripcion}</p>
+                    <p className="text-xs text-slate-400 mt-1">
+                      {new Date(ultimoAviso.createdAt).toLocaleDateString("es-CR", { day: "numeric", month: "long", year: "numeric" })}
+                    </p>
+                  </div>
+                  <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold
+                    ${ultimoAviso.estado === "publicado" ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-600"}`}>
+                    {ultimoAviso.estado}
+                  </span>
+                </div>
+              )}
+
+              {/* Último proyecto */}
+              {ultimoProyecto && (
+                <div className="flex items-start gap-4 rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-100">
+                    <Hammer className="h-5 w-5 text-indigo-500" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-semibold text-slate-400 mb-0.5">Último proyecto</p>
+                    <p className="font-semibold text-slate-900 truncate">{ultimoProyecto.titulo}</p>
+                    {ultimoProyecto.descripcion && (
+                      <p className="text-sm text-slate-500 line-clamp-1">{ultimoProyecto.descripcion}</p>
+                    )}
+                    <p className="text-xs text-slate-400 mt-1">
+                      {new Date(ultimoProyecto.createdAt).toLocaleDateString("es-CR", { day: "numeric", month: "long", year: "numeric" })}
+                    </p>
+                  </div>
+                  <span className="shrink-0 rounded-full bg-blue-100 px-2.5 py-1 text-xs font-semibold text-blue-700">
+                    {ultimoProyecto.estado}
+                  </span>
+                </div>
+              )}
+
+              {!ultimoAviso && !ultimoProyecto && (
+                <p className="text-slate-400 text-sm">No hay novedades recientes.</p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Columna derecha — Tareas */}
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 className="mb-5 text-2xl font-bold text-slate-900">Tareas Pendientes</h2>
+
+          {/* Crear tarea */}
+          <div className="mb-5 space-y-3">
+            <textarea
+              value={nuevaTarea}
+              onChange={(e) => setNuevaTarea(e.target.value)}
+              placeholder="Nueva tarea..."
+              rows={2}
+              className="w-full resize-none rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+            />
+            <div className="flex gap-2">
+              <select value={prioridadNueva} onChange={(e) => setPrioridadNueva(e.target.value)}
+                className="flex-1 rounded-2xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100">
+                <option value="alta">🔴 Alta</option>
+                <option value="media">🟡 Media</option>
+                <option value="baja">🔵 Baja</option>
+              </select>
+              <button onClick={handleCrearTarea}
+                className="flex items-center gap-1.5 rounded-2xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 transition">
+                <Plus className="h-4 w-4" /> Agregar
+              </button>
+            </div>
+          </div>
+
+          {/* Lista tareas pendientes */}
+          <div className="space-y-3 max-h-[420px] overflow-y-auto pr-1">
+            {tareasPendientes.length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-slate-200 py-8 text-center text-sm text-slate-400">
+                No hay tareas pendientes 🎉
+              </div>
+            ) : (
+              tareasPendientes.map((tarea) => {
+                const cfg = prioridadConfig[tarea.prioridad] || prioridadConfig.media;
+                return (
+                  <div key={tarea._id}
+                    className={`flex items-center justify-between gap-3 rounded-2xl px-4 py-3.5 ${cfg.color}`}>
+                    <div className="flex items-center gap-3 min-w-0">
+                      <button onClick={() => handleToggle(tarea._id)}
+                        className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 border-slate-400 hover:border-emerald-500 hover:bg-emerald-50 transition">
+                      </button>
+                      <p className="text-sm font-medium text-slate-800 line-clamp-2">{tarea.texto}</p>
+                    </div>
+                    <div className="flex shrink-0 items-center gap-2">
+                      <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${cfg.badge}`}>
+                        {cfg.label}
+                      </span>
+                      <button onClick={() => handleEliminar(tarea._id)}
+                        className="text-slate-400 hover:text-red-500 transition">
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+
+          {/* Tareas completadas */}
+          {tareasCompletadas > 0 && (
+            <div className="mt-5 pt-4 border-t border-slate-100">
+              <p className="text-xs font-semibold text-slate-400 mb-3">COMPLETADAS ({tareasCompletadas})</p>
+              <div className="space-y-2 max-h-[200px] overflow-y-auto pr-1">
+                {tareas.filter((t) => t.completada).map((tarea) => (
+                  <div key={tarea._id}
+                    className="flex items-center justify-between gap-3 rounded-2xl bg-slate-50 px-4 py-3 opacity-60">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <button onClick={() => handleToggle(tarea._id)}
+                        className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500 border-2 border-emerald-500 transition">
+                        <Check className="h-3 w-3 text-white" />
+                      </button>
+                      <p className="text-sm text-slate-500 line-through line-clamp-1">{tarea.texto}</p>
+                    </div>
+                    <button onClick={() => handleEliminar(tarea._id)}
+                      className="text-slate-300 hover:text-red-400 transition shrink-0">
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

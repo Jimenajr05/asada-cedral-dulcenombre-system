@@ -24,7 +24,7 @@ const updateLink = async (req, res) => {
     const actualizado = await Link.findByIdAndUpdate(
       req.params.id,
       req.body,
-      { new: true }
+      { returnDocument: 'after' }
     );
     res.json(actualizado);
   } catch (error) {
