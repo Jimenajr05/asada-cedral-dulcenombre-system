@@ -23,7 +23,7 @@ function Toast({ toasts, removeToast }) {
             className={`flex items-start gap-3 rounded-2xl border px-5 py-4 shadow-2xl backdrop-blur-md
               ${isSuccess ? "bg-emerald-50 border-emerald-200 text-emerald-800"
                 : isConfirm ? "bg-amber-50 border-amber-200 text-amber-800"
-                : "bg-red-50 border-red-200 text-red-800"}`}
+                  : "bg-red-50 border-red-200 text-red-800"}`}
             style={{ animation: "slideIn 0.3s ease" }}>
             <div className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-white text-sm font-bold
               ${isSuccess ? "bg-emerald-500" : isConfirm ? "bg-amber-500" : "bg-red-500"}`}>
@@ -52,8 +52,8 @@ const ESTADOS = ["En progreso", "Completado", "Pausado", "Planificado"];
 const estadoBadge = (estado) => {
   const map = {
     "En progreso": "bg-blue-100 text-blue-700",
-    "Completado":  "bg-emerald-100 text-emerald-700",
-    "Pausado":     "bg-amber-100 text-amber-700",
+    "Completado": "bg-emerald-100 text-emerald-700",
+    "Pausado": "bg-amber-100 text-amber-700",
     "Planificado": "bg-slate-100 text-slate-600",
   };
   return map[estado] || "bg-slate-100 text-slate-600";
@@ -62,29 +62,29 @@ const estadoBadge = (estado) => {
 /* ========================= COMPONENTE PRINCIPAL ========================= */
 export default function AdminProyectos() {
   const fotoRef = useRef(null);
-  const docRef  = useRef(null);
+  const docRef = useRef(null);
 
-  const [loading,    setLoading]    = useState(true);
-  const [proyectos,  setProyectos]  = useState([]);
-  const [toasts,     setToasts]     = useState([]);
-  const [expandido,  setExpandido]  = useState(null); // id del proyecto abierto
+  const [loading, setLoading] = useState(true);
+  const [proyectos, setProyectos] = useState([]);
+  const [toasts, setToasts] = useState([]);
+  const [expandido, setExpandido] = useState(null); // id del proyecto abierto
 
   // Formulario proyecto
-  const [showForm,      setShowForm]      = useState(false);
-  const [editandoId,    setEditandoId]    = useState(null);
-  const [proyectoForm,  setProyectoForm]  = useState({ titulo: "", descripcion: "", estado: "En progreso" });
+  const [showForm, setShowForm] = useState(false);
+  const [editandoId, setEditandoId] = useState(null);
+  const [proyectoForm, setProyectoForm] = useState({ titulo: "", descripcion: "", estado: "En progreso" });
 
   // Fotos
-  const [fotoFile,    setFotoFile]    = useState(null);
-  const [fotoAlt,     setFotoAlt]     = useState("");
+  const [fotoFile, setFotoFile] = useState(null);
+  const [fotoAlt, setFotoAlt] = useState("");
 
   // Documentos
-  const [docFile,     setDocFile]     = useState(null);
-  const [docNombre,   setDocNombre]   = useState("");
+  const [docFile, setDocFile] = useState(null);
+  const [docNombre, setDocNombre] = useState("");
 
   // Actualizaciones
-  const [actTexto,         setActTexto]         = useState("");
-  const [editandoActId,    setEditandoActId]    = useState(null);
+  const [actTexto, setActTexto] = useState("");
+  const [editandoActId, setEditandoActId] = useState(null);
   const [editandoActTexto, setEditandoActTexto] = useState("");
 
   // ── Toast helpers ──
@@ -96,11 +96,11 @@ export default function AdminProyectos() {
     return id;
   };
   const showSuccess = (msg) => addToast("success", msg);
-  const showError   = (msg) => addToast("error", msg);
+  const showError = (msg) => addToast("error", msg);
   const showConfirm = (msg) => new Promise((resolve) => {
     const id = addToast("confirm", msg, {
       onConfirm: () => { removeToast(id); resolve(true); },
-      onCancel:  () => { removeToast(id); resolve(false); },
+      onCancel: () => { removeToast(id); resolve(false); },
     });
   });
 
@@ -123,11 +123,11 @@ export default function AdminProyectos() {
     if (!proyectoForm.titulo.trim()) { showError("El título es obligatorio"); return; }
     try {
       const fd = new FormData();
-      fd.append("titulo",      proyectoForm.titulo.trim());
+      fd.append("titulo", proyectoForm.titulo.trim());
       fd.append("descripcion", proyectoForm.descripcion.trim());
-      fd.append("estado",      proyectoForm.estado);
+      fd.append("estado", proyectoForm.estado);
       if (editandoId) { await updateProyecto(editandoId, fd); showSuccess("Proyecto actualizado"); }
-      else            { await createProyecto(fd);              showSuccess("Proyecto creado"); }
+      else { await createProyecto(fd); showSuccess("Proyecto creado"); }
       resetForm(); await cargar();
     } catch (e) { showError(e.message); }
   };
@@ -210,10 +210,10 @@ export default function AdminProyectos() {
     catch (e) { showError(e.message); }
   };
 
-  if (loading) return <div className="bg-slate-100 p-7"><div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm text-slate-700">Cargando proyectos...</div></div>;
+  if (loading) return <div className="space-y-8"><div className="rounded-2xl border border-slate-200 bg-white p-8 text-slate-700">Cargando proyectos...</div></div>;
 
   return (
-    <div className="space-y-8 bg-slate-100 p-7">
+    <div className="space-y-8">
       <Toast toasts={toasts} removeToast={removeToast} />
 
       {/* Encabezado */}
@@ -232,7 +232,7 @@ export default function AdminProyectos() {
 
       {/* Formulario proyecto */}
       {showForm && (
-        <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <section className="rounded-2xl border border-slate-200 bg-white p-6">
           <div className="mb-6 flex items-center justify-between">
             <h2 className="text-2xl font-bold text-slate-900">{editandoId ? "Editar proyecto" : "Nuevo proyecto"}</h2>
             <button onClick={resetForm} className="rounded-xl bg-slate-100 p-2 text-slate-600 hover:bg-slate-200 transition"><X className="h-5 w-5" /></button>
@@ -240,14 +240,13 @@ export default function AdminProyectos() {
           <form onSubmit={handleSubmitProyecto} className="space-y-5">
             <div className="grid gap-5 md:grid-cols-2">
               <div>
-                <label className="mb-2 block text-sm font-semibold text-slate-800">Título *</label>
+                <label className="mb-2 block text-sm font-semibold text-slate-800">Nombre del proyecto:</label>
                 <input type="text" value={proyectoForm.titulo}
                   onChange={(e) => setProyectoForm((p) => ({ ...p, titulo: e.target.value }))}
-                  placeholder="Nombre del proyecto"
                   className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200" />
               </div>
               <div>
-                <label className="mb-2 block text-sm font-semibold text-slate-800">Estado</label>
+                <label className="mb-2 block text-sm font-semibold text-slate-800">Estado:</label>
                 <select value={proyectoForm.estado}
                   onChange={(e) => setProyectoForm((p) => ({ ...p, estado: e.target.value }))}
                   className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
@@ -256,7 +255,7 @@ export default function AdminProyectos() {
               </div>
             </div>
             <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-800">Descripción</label>
+              <label className="mb-2 block text-sm font-semibold text-slate-800">Descripción:</label>
               <textarea value={proyectoForm.descripcion} rows={4}
                 onChange={(e) => setProyectoForm((p) => ({ ...p, descripcion: e.target.value }))}
                 placeholder="Describe el proyecto..."
@@ -280,7 +279,7 @@ export default function AdminProyectos() {
           {proyectos.map((proyecto) => {
             const abierto = expandido === proyecto._id;
             return (
-              <div key={proyecto._id} className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+              <div key={proyecto._id} className="rounded-2xl border border-slate-200 bg-white overflow-hidden">
                 {/* Cabecera */}
                 <div className="flex items-center justify-between gap-4 px-6 py-5">
                   <div className="flex items-center gap-3 min-w-0">
@@ -322,6 +321,7 @@ export default function AdminProyectos() {
                         </button>
                       </div>
                       {proyecto.fotos?.length > 0 ? (
+                      <div className="max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
                         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
                           {proyecto.fotos.map((foto) => (
                             <div key={foto._id} className="relative group overflow-hidden rounded-2xl border border-slate-200 bg-white">
@@ -337,6 +337,7 @@ export default function AdminProyectos() {
                             </div>
                           ))}
                         </div>
+                      </div>
                       ) : <p className="text-sm text-slate-400">No hay fotos aún.</p>}
                     </div>
 
@@ -354,19 +355,21 @@ export default function AdminProyectos() {
                         </button>
                       </div>
                       {proyecto.documentos?.length > 0 ? (
-                        <div className="space-y-2">
-                          {proyecto.documentos.map((doc) => (
-                            <div key={doc._id} className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3">
-                              <a href={doc.url?.startsWith("http") ? doc.url : `${BASE_URL}${doc.url}`} target="_blank" rel="noreferrer"
-                                className="flex items-center gap-2 text-sm font-medium text-blue-600 hover:underline truncate">
-                                <FileText className="h-4 w-4 shrink-0" /> {doc.nombre}
-                              </a>
-                              <button onClick={() => handleEliminarDoc(proyecto._id, doc._id)}
-                                className="shrink-0 flex items-center gap-1 rounded-xl bg-red-50 px-3 py-1.5 text-xs text-red-600 hover:bg-red-100 transition">
-                                <Trash2 className="h-3.5 w-3.5" /> Eliminar
-                              </button>
-                            </div>
-                          ))}
+                        <div className="max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                          <div className="space-y-2">
+                            {proyecto.documentos.map((doc) => (
+                              <div key={doc._id} className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3">
+                                <a href={doc.url?.startsWith("http") ? doc.url : `${BASE_URL}${doc.url}`} target="_blank" rel="noreferrer"
+                                  className="flex items-center gap-2 text-sm font-medium text-blue-600 hover:underline truncate">
+                                  <FileText className="h-4 w-4 shrink-0" /> {doc.nombre}
+                                </a>
+                                <button onClick={() => handleEliminarDoc(proyecto._id, doc._id)}
+                                  className="shrink-0 flex items-center gap-1 rounded-xl bg-red-50 px-3 py-1.5 text-xs text-red-600 hover:bg-red-100 transition">
+                                  <Trash2 className="h-3.5 w-3.5" /> Eliminar
+                                </button>
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       ) : <p className="text-sm text-slate-400">No hay documentos aún.</p>}
                     </div>

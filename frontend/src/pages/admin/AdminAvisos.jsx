@@ -22,7 +22,7 @@ function Toast({ toasts }) {
             className={`flex items-start gap-3 rounded-2xl border px-5 py-4 shadow-2xl backdrop-blur-md transition-all duration-300
               ${isSuccess ? "bg-emerald-50 border-emerald-200 text-emerald-800"
                 : isConfirm ? "bg-amber-50 border-amber-200 text-amber-800"
-                : "bg-red-50 border-red-200 text-red-800"}`}
+                  : "bg-red-50 border-red-200 text-red-800"}`}
             style={{ animation: "slideIn 0.3s ease" }}>
             <div className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-white text-sm font-bold
               ${isSuccess ? "bg-emerald-500" : isConfirm ? "bg-amber-500" : "bg-red-500"}`}>
@@ -80,12 +80,12 @@ function AdminAvisos() {
   };
   const removeToast = (id) => setToasts((prev) => prev.filter((t) => t.id !== id));
   const showSuccess = (msg) => addToast("success", msg);
-  const showError   = (msg) => addToast("error", msg);
+  const showError = (msg) => addToast("error", msg);
   const showConfirm = (msg) =>
     new Promise((resolve) => {
       const id = addToast("confirm", msg, {
         onConfirm: () => { removeToast(id); resolve(true); },
-        onCancel:  () => { removeToast(id); resolve(false); },
+        onCancel: () => { removeToast(id); resolve(false); },
       });
     });
 
@@ -207,14 +207,14 @@ function AdminAvisos() {
       : <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600 whitespace-nowrap">Borrador</span>;
 
   return (
-    <div className="bg-slate-100 p-7">
+    <div className="space-y-8">
       <Toast toasts={toasts} />
 
       {/* ENCABEZADO */}
       <div className="mb-6 flex items-start justify-between">
         <div>
           <h1 className="text-4xl font-bold text-slate-900 md:text-5xl">Gestión de Avisos</h1>
-          <p className="mt-2 text-lg text-slate-700">Crear, editar y administrar avisos públicos</p>
+          <p className="mt-2 text-lg text-slate-700">Crear, editar y administrar avisos públicos.</p>
         </div>
         <button type="button" onClick={abrirNuevoFormulario}
           className="inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-6 py-4 font-semibold text-white shadow-sm transition hover:bg-blue-700">
@@ -224,18 +224,18 @@ function AdminAvisos() {
 
       {/* FORMULARIO */}
       {showForm && (
-        <div className="mb-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="mb-6 rounded-2xl border border-slate-200 bg-white p-6">
           <h2 className="mb-6 text-3xl font-bold text-black">{modoEdicion ? "Editar Aviso" : "Nuevo Aviso"}</h2>
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
               <div>
-                <label className="mb-2 block text-sm font-semibold text-black">Título *</label>
+                <label className="mb-2 block text-sm font-semibold text-black">Título del aviso:</label>
                 <input type="text" name="titulo" value={form.titulo} onChange={handleChange}
-                  placeholder="Título del aviso" required
+                  required
                   className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-base text-black placeholder:text-slate-400 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200" />
               </div>
               <div>
-                <label className="mb-2 block text-sm font-semibold text-black">Tipo *</label>
+                <label className="mb-2 block text-sm font-semibold text-black">Tipo:</label>
                 <select name="tipo" value={form.tipo} onChange={handleChange}
                   className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-base text-black outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
                   <option value="info">Información</option>
@@ -245,14 +245,14 @@ function AdminAvisos() {
               </div>
             </div>
             <div className="mt-5">
-              <label className="mb-2 block text-sm font-semibold text-black">Contenido *</label>
+              <label className="mb-2 block text-sm font-semibold text-black">Contenido:</label>
               <textarea name="descripcion" value={form.descripcion} onChange={handleChange}
-                placeholder="Contenido del aviso" rows="5" required
+                rows="5" required
                 className="w-full resize-none rounded-2xl border border-slate-300 bg-white px-4 py-3 text-base text-black placeholder:text-slate-400 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200" />
             </div>
             <div className="mt-5 grid grid-cols-1 gap-5 xl:grid-cols-[1.1fr_1fr_1fr]">
               <div>
-                <label className="mb-2 block text-sm font-semibold text-black">Fecha *</label>
+                <label className="mb-2 block text-sm font-semibold text-black">Fecha:</label>
                 <div className="relative">
                   <DatePicker selected={form.fecha}
                     onChange={(date) => setForm((prev) => ({ ...prev, fecha: date }))}
@@ -299,7 +299,7 @@ function AdminAvisos() {
       )}
 
       {/* TABLA */}
-      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
         <div className="hidden md:grid md:grid-cols-[1fr_auto_auto_auto_auto] border-b border-slate-200 px-6 py-4 text-xs font-semibold uppercase tracking-wide text-slate-500 gap-4">
           <div>Aviso</div>
           <div className="w-28">Tipo</div>

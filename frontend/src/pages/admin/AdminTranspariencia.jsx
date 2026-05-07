@@ -35,7 +35,7 @@ function Toast({ toasts, removeToast }) {
             className={`flex items-start gap-3 rounded-2xl border px-5 py-4 shadow-2xl backdrop-blur-md
               ${isSuccess ? "bg-emerald-50 border-emerald-200 text-emerald-800"
                 : isConfirm ? "bg-amber-50 border-amber-200 text-amber-800"
-                : "bg-red-50 border-red-200 text-red-800"}`}
+                  : "bg-red-50 border-red-200 text-red-800"}`}
             style={{ animation: "slideIn 0.3s ease" }}
           >
             <div className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-white text-sm font-bold
@@ -75,23 +75,23 @@ function Toast({ toasts, removeToast }) {
 
 /* ========================= COMPONENTE PRINCIPAL ========================= */
 function AdminTransparencia() {
-  const [cargando,  setCargando]  = useState(true);
-  const [error,     setError]     = useState(null);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState(null);
   const [guardando, setGuardando] = useState(false);
-  const [toasts,    setToasts]    = useState([]);
+  const [toasts, setToasts] = useState([]);
 
-  const [links,        setLinks]        = useState([]);
+  const [links, setLinks] = useState([]);
   const [linkEditando, setLinkEditando] = useState(null);
-  const [linkUrl,      setLinkUrl]      = useState("");
+  const [linkUrl, setLinkUrl] = useState("");
 
-  const [reuniones,       setReuniones]      = useState([]);
-  const [reunionForm,     setReunionForm]     = useState({ descripcion: "", fecha: "", tipo: "ordinaria" });
+  const [reuniones, setReuniones] = useState([]);
+  const [reunionForm, setReunionForm] = useState({ descripcion: "", fecha: "", tipo: "ordinaria" });
   const [editandoReunion, setEditandoReunion] = useState(null);
 
-  const certFileRef    = useRef(null);
+  const certFileRef = useRef(null);
   const reunionFormRef = useRef(null);
   const [certificados, setCertificados] = useState([]);
-  const [certForm,     setCertForm]     = useState({ titulo: "", file: null, preview: null });
+  const [certForm, setCertForm] = useState({ titulo: "", file: null, preview: null });
 
   // ── Toast helpers ──
   const removeToast = (id) => setToasts((prev) => prev.filter((t) => t.id !== id));
@@ -102,12 +102,12 @@ function AdminTransparencia() {
     return id;
   };
   const showSuccess = (msg) => addToast("success", msg);
-  const showError   = (msg) => addToast("error", msg);
+  const showError = (msg) => addToast("error", msg);
   const showConfirm = (msg) =>
     new Promise((resolve) => {
       const id = addToast("confirm", msg, {
         onConfirm: () => { removeToast(id); resolve(true); },
-        onCancel:  () => { removeToast(id); resolve(false); },
+        onCancel: () => { removeToast(id); resolve(false); },
       });
     });
 
@@ -240,10 +240,10 @@ function AdminTransparencia() {
   };
 
   if (cargando) return <div className="flex min-h-[60vh] items-center justify-center"><p className="text-slate-500 text-lg">Cargando transparencia...</p></div>;
-  if (error)    return <div className="flex min-h-[60vh] items-center justify-center"><p className="text-red-500 text-lg">{error}</p></div>;
+  if (error) return <div className="flex min-h-[60vh] items-center justify-center"><p className="text-red-500 text-lg">{error}</p></div>;
 
   return (
-    <div className="space-y-8 bg-slate-100 p-7">
+    <div className="space-y-8">
       <Toast toasts={toasts} removeToast={removeToast} />
 
       <div>
@@ -252,7 +252,7 @@ function AdminTransparencia() {
       </div>
 
       {/* LINKS */}
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <section className="rounded-2xl border border-slate-200 bg-white p-6">
         <div className="mb-6 flex items-center gap-3">
           <LinkIcon className="h-6 w-6 text-blue-600" />
           <h2 className="text-2xl font-bold text-slate-900">Enlaces institucionales</h2>
@@ -293,7 +293,7 @@ function AdminTransparencia() {
       </section>
 
       {/* REUNIONES */}
-      <section ref={reunionFormRef} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm scroll-mt-6">
+      <section ref={reunionFormRef} className="rounded-2xl border border-slate-200 bg-white p-6 scroll-mt-6">
         <div className="mb-6 flex items-center gap-3">
           <CalendarDays className="h-6 w-6 text-blue-600" />
           <h2 className="text-2xl font-bold text-slate-900">Fechas de Reuniones de Junta Directiva</h2>
@@ -309,14 +309,13 @@ function AdminTransparencia() {
         <form onSubmit={handleGuardarReunion} className="space-y-5">
           <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
             <div className="md:col-span-2">
-              <label className="mb-2 block text-sm font-semibold text-slate-900">Descripción *</label>
+              <label className="mb-2 block text-sm font-semibold text-slate-900">Descripción:</label>
               <input type="text" value={reunionForm.descripcion}
                 onChange={(e) => setReunionForm((prev) => ({ ...prev, descripcion: e.target.value }))}
-                className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-500 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                placeholder="Ej: Sesión ordinaria de Junta Directiva" />
+                className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-500 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200" />
             </div>
             <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-900">Tipo</label>
+              <label className="mb-2 block text-sm font-semibold text-slate-900">Tipo:</label>
               <select value={reunionForm.tipo} onChange={(e) => setReunionForm((prev) => ({ ...prev, tipo: e.target.value }))}
                 className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
                 <option value="ordinaria">Ordinaria</option>
@@ -325,7 +324,7 @@ function AdminTransparencia() {
             </div>
           </div>
           <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-900">Fecha *</label>
+            <label className="mb-2 block text-sm font-semibold text-slate-900">Fecha:</label>
             <input type="date" value={reunionForm.fecha}
               onChange={(e) => setReunionForm((prev) => ({ ...prev, fecha: e.target.value }))}
               className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200 md:w-64" />
@@ -377,21 +376,20 @@ function AdminTransparencia() {
       </section>
 
       {/* CERTIFICADOS */}
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <section className="rounded-2xl border border-slate-200 bg-white p-6">
         <div className="mb-6 flex items-center gap-3">
           <ImageIcon className="h-6 w-6 text-blue-600" />
           <h2 className="text-2xl font-bold text-slate-900">Certificados</h2>
         </div>
         <form onSubmit={handleGuardarCert} className="space-y-5">
           <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-900">Título del certificado *</label>
+            <label className="mb-2 block text-sm font-semibold text-slate-900">Título del certificado:</label>
             <input type="text" value={certForm.titulo}
               onChange={(e) => setCertForm((prev) => ({ ...prev, titulo: e.target.value }))}
-              className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-500 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-              placeholder="Ej: Certificado de calidad sanitaria 2024" />
+              className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-500 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200" />
           </div>
           <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-900">Imagen *</label>
+            <label className="mb-2 block text-sm font-semibold text-slate-900">Imagen:</label>
             <div onClick={() => certFileRef.current?.click()}
               className="cursor-pointer rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 p-6 text-center transition hover:border-blue-400 hover:bg-blue-50/40">
               <Upload className="mx-auto mb-3 h-10 w-10 text-slate-400" />

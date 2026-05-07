@@ -18,7 +18,7 @@ function Toast({ toasts, removeToast }) {
             className={`flex items-start gap-3 rounded-2xl border px-5 py-4 shadow-2xl backdrop-blur-md
               ${isSuccess ? "bg-emerald-50 border-emerald-200 text-emerald-800"
                 : isConfirm ? "bg-amber-50 border-amber-200 text-amber-800"
-                : "bg-red-50 border-red-200 text-red-800"}`}
+                  : "bg-red-50 border-red-200 text-red-800"}`}
             style={{ animation: "slideIn 0.3s ease" }}
           >
             <div className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-white text-sm font-bold
@@ -75,12 +75,12 @@ function AdminTramites() {
     return id;
   };
   const showSuccess = (msg) => addToast("success", msg);
-  const showError   = (msg) => addToast("error", msg);
+  const showError = (msg) => addToast("error", msg);
   const showConfirm = (msg) =>
     new Promise((resolve) => {
       const id = addToast("confirm", msg, {
         onConfirm: () => { removeToast(id); resolve(true); },
-        onCancel:  () => { removeToast(id); resolve(false); },
+        onCancel: () => { removeToast(id); resolve(false); },
       });
     });
 
@@ -193,14 +193,14 @@ function AdminTramites() {
 
   if (loading) {
     return (
-      <div className="bg-slate-100 p-7">
+      <div className="space-y-8">
         <div className="rounded-2xl border border-slate-200 bg-white p-8 text-slate-700 shadow-sm">Cargando trámites...</div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-8 bg-slate-100 p-7">
+    <div className="space-y-8">
       <Toast toasts={toasts} removeToast={removeToast} />
 
       <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
@@ -218,7 +218,7 @@ function AdminTramites() {
 
       {/* Formulario */}
       {mostrarFormulario && (
-        <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <section className="rounded-2xl border border-slate-200 bg-white p-6">
           <div className="mb-6 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <Plus className="h-6 w-6 text-blue-600" />
@@ -231,17 +231,17 @@ function AdminTramites() {
           </div>
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-800">Descripción</label>
+              <label className="mb-2 block text-sm font-semibold text-slate-800">Descripción:</label>
               <input type="text" name="titulo" value={form.titulo} onChange={handleChange}
                 className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-800">Requisitos (uno por línea)</label>
+              <label className="mb-2 block text-sm font-semibold text-slate-800">Requisitos (uno por línea):</label>
               <textarea name="requisitosTexto" rows="5" value={form.requisitosTexto} onChange={handleChange}
                 className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-800">Archivo</label>
+              <label className="mb-2 block text-sm font-semibold text-slate-800">Archivo:</label>
               <input id="archivo" type="file" name="archivo" onChange={handleChange}
                 className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-700 file:mr-4 file:rounded-lg file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:font-medium file:text-blue-700 hover:file:bg-blue-100" />
               <p className="mt-2 text-sm text-slate-500">
@@ -263,7 +263,7 @@ function AdminTramites() {
       )}
 
       {/* Lista */}
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <section className="rounded-2xl border border-slate-200 bg-white p-6">
         <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex items-center gap-3">
             <FileText className="h-6 w-6 text-blue-600" />

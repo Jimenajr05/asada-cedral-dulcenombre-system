@@ -18,7 +18,7 @@ function Toast({ toasts, removeToast }) {
             className={`flex items-start gap-3 rounded-2xl border px-5 py-4 shadow-2xl backdrop-blur-md
               ${isSuccess ? "bg-emerald-50 border-emerald-200 text-emerald-800"
                 : isConfirm ? "bg-amber-50 border-amber-200 text-amber-800"
-                : "bg-red-50 border-red-200 text-red-800"}`}
+                  : "bg-red-50 border-red-200 text-red-800"}`}
             style={{ animation: "slideIn 0.3s ease" }}>
             <div className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-white text-sm font-bold
               ${isSuccess ? "bg-emerald-500" : isConfirm ? "bg-amber-500" : "bg-red-500"}`}>
@@ -76,12 +76,12 @@ function AdminSobreNosotros() {
     return id;
   };
   const showSuccess = (msg) => addToast("success", msg);
-  const showError   = (msg) => addToast("error", msg);
+  const showError = (msg) => addToast("error", msg);
   const showConfirm = (msg) =>
     new Promise((resolve) => {
       const id = addToast("confirm", msg, {
         onConfirm: () => { removeToast(id); resolve(true); },
-        onCancel:  () => { removeToast(id); resolve(false); },
+        onCancel: () => { removeToast(id); resolve(false); },
       });
     });
 
@@ -223,7 +223,7 @@ function AdminSobreNosotros() {
 
   if (loading) {
     return (
-      <div className="bg-slate-100 p-7">
+      <div className="space-y-8">
         <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm text-slate-700">
           Cargando información...
         </div>
@@ -232,7 +232,7 @@ function AdminSobreNosotros() {
   }
 
   return (
-    <div className="space-y-8 bg-slate-100 p-7">
+    <div className="space-y-8">
       <Toast toasts={toasts} removeToast={removeToast} />
 
       <div>
@@ -241,7 +241,7 @@ function AdminSobreNosotros() {
       </div>
 
       {/* PERÍODO */}
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <section className="rounded-2xl border border-slate-200 bg-white p-6">
         <h2 className="mb-4 text-2xl font-bold text-slate-900">Período de Junta Directiva</h2>
         {editandoPeriodo ? (
           <div className="flex flex-col gap-4 md:flex-row">
@@ -273,7 +273,7 @@ function AdminSobreNosotros() {
       </section>
 
       {/* JUNTA DIRECTIVA */}
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <section className="rounded-2xl border border-slate-200 bg-white p-6">
         <div className="mb-6 flex items-center gap-3">
           <Users className="h-6 w-6 text-blue-600" />
           <h2 className="text-2xl font-bold text-slate-900">Junta Directiva</h2>
@@ -281,22 +281,20 @@ function AdminSobreNosotros() {
         <form onSubmit={handleGuardarMiembro} className="space-y-5">
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
             <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-900">Nombre</label>
+              <label className="mb-2 block text-sm font-semibold text-slate-900">Nombre:</label>
               <input type="text" value={miembroForm.nombre}
                 onChange={(e) => setMiembroForm((prev) => ({ ...prev, nombre: e.target.value }))}
-                className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-500 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                placeholder="Nombre completo" />
+                className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-500 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200" />
             </div>
             <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-900">Cargo</label>
+              <label className="mb-2 block text-sm font-semibold text-slate-900">Cargo:</label>
               <input type="text" value={miembroForm.cargo}
                 onChange={(e) => setMiembroForm((prev) => ({ ...prev, cargo: e.target.value }))}
-                className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-500 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                placeholder="Ejemplo: Presidente" />
+                className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-500 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200" />
             </div>
           </div>
           <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-900">Foto</label>
+            <label className="mb-2 block text-sm font-semibold text-slate-900">Foto:</label>
             <div onClick={() => fileInputRef.current?.click()}
               className="cursor-pointer rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 p-6 text-center transition hover:border-blue-400 hover:bg-blue-50/40">
               <Upload className="mx-auto mb-3 h-10 w-10 text-slate-400" />
@@ -323,37 +321,39 @@ function AdminSobreNosotros() {
           </div>
         </form>
 
-        <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {data.miembros.length > 0 ? data.miembros.map((miembro, index) => (
-            <div key={index} className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-              <div className="flex flex-col items-center text-center">
-                <div className="h-24 w-24 overflow-hidden rounded-full bg-slate-200">
-                  {miembro.foto
-                    ? <img src={construirUrlImagen(miembro.foto)} alt={miembro.nombre} className="h-full w-full object-cover" />
-                    : <div className="flex h-full w-full items-center justify-center text-sm text-slate-500">Sin foto</div>}
+        <div className="mt-8 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {data.miembros.length > 0 ? data.miembros.map((miembro, index) => (
+              <div key={index} className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                <div className="flex flex-col items-center text-center">
+                  <div className="h-24 w-24 overflow-hidden rounded-full bg-slate-200">
+                    {miembro.foto
+                      ? <img src={construirUrlImagen(miembro.foto)} alt={miembro.nombre} className="h-full w-full object-cover" />
+                      : <div className="flex h-full w-full items-center justify-center text-sm text-slate-500">Sin foto</div>}
+                  </div>
+                  <h3 className="mt-4 text-lg font-semibold text-slate-900">{miembro.nombre}</h3>
+                  <p className="text-sm text-slate-600">{miembro.cargo}</p>
                 </div>
-                <h3 className="mt-4 text-lg font-semibold text-slate-900">{miembro.nombre}</h3>
-                <p className="text-sm text-slate-600">{miembro.cargo}</p>
+                <div className="mt-5 flex gap-3">
+                  <button type="button" onClick={() => handleEditarMiembro(miembro, index)}
+                    className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-blue-50 px-4 py-3 text-blue-600 transition hover:bg-blue-100">
+                    <Pencil className="h-4 w-4" /> Editar
+                  </button>
+                  <button type="button" onClick={() => handleEliminarMiembro(index)}
+                    className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-red-50 px-4 py-3 text-red-600 transition hover:bg-red-100">
+                    <Trash2 className="h-4 w-4" /> Eliminar
+                  </button>
+                </div>
               </div>
-              <div className="mt-5 flex gap-3">
-                <button type="button" onClick={() => handleEditarMiembro(miembro, index)}
-                  className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-blue-50 px-4 py-3 text-blue-600 transition hover:bg-blue-100">
-                  <Pencil className="h-4 w-4" /> Editar
-                </button>
-                <button type="button" onClick={() => handleEliminarMiembro(index)}
-                  className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-red-50 px-4 py-3 text-red-600 transition hover:bg-red-100">
-                  <Trash2 className="h-4 w-4" /> Eliminar
-                </button>
-              </div>
-            </div>
-          )) : (
-            <div className="col-span-full text-center text-slate-500">No hay miembros registrados.</div>
-          )}
+            )) : (
+              <div className="col-span-full text-center text-slate-500">No hay miembros registrados.</div>
+            )}
+          </div>
         </div>
       </section>
 
       {/* COBERTURA */}
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <section className="rounded-2xl border border-slate-200 bg-white p-6">
         <div className="mb-6 flex items-center gap-3">
           <BarChart3 className="h-6 w-6 text-blue-600" />
           <h2 className="text-2xl font-bold text-slate-900">Cobertura y Alcance</h2>
@@ -361,18 +361,16 @@ function AdminSobreNosotros() {
         <form onSubmit={handleGuardarCobertura} className="space-y-5">
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
             <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-900">Valor</label>
+              <label className="mb-2 block text-sm font-semibold text-slate-900">Valor:</label>
               <input type="text" value={coberturaForm.valor}
                 onChange={(e) => setCoberturaForm((prev) => ({ ...prev, valor: e.target.value }))}
-                className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-500 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                placeholder="Ejemplo: 1 912" />
+                className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-500 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200" />
             </div>
             <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-900">Descripción</label>
+              <label className="mb-2 block text-sm font-semibold text-slate-900">Descripción:</label>
               <input type="text" value={coberturaForm.descripcion}
                 onChange={(e) => setCoberturaForm((prev) => ({ ...prev, descripcion: e.target.value }))}
-                className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-500 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                placeholder="Ejemplo: Abonados atendidos" />
+                className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-500 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200" />
             </div>
           </div>
           <div className="flex gap-3">
