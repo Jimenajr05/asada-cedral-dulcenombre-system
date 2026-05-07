@@ -159,13 +159,14 @@ export default function AdminPanel() {
   );
 
   return (
-    <div className="bg-slate-100 p-7 space-y-8">
+    <div className="space-y-8">
       <Toast toasts={toasts} removeToast={removeToast} />
 
       {/* Encabezado */}
       <div>
-        <h1 className="text-4xl font-bold text-slate-900 md:text-5xl">Dashboard</h1>
-        <p className="mt-2 text-lg text-slate-600">Resumen general del sistema ASADA</p>
+        <p className="text-xs font-bold uppercase tracking-widest text-sky-600">Sistema ASADA</p>
+        <h1 className="mt-1 text-3xl font-extrabold text-slate-900 sm:text-4xl" style={{ fontFamily: "var(--font-display)" }}>Dashboard</h1>
+        <p className="mt-1 text-sm text-slate-500">Resumen general del sistema ASADA Cedral y Dulce Nombre</p>
       </div>
 
       {/* Stats */}
@@ -173,15 +174,16 @@ export default function AdminPanel() {
         {stats.map((stat) => {
           const Icon = stat.icon;
           return (
-            <div key={stat.label} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-              <div className="flex items-start justify-between mb-5">
-                <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${stat.color}`}>
-                  <Icon className="h-6 w-6 text-white" strokeWidth={2.2} />
+            <div key={stat.label} className="relative overflow-hidden rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+              <div className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-sky-400 to-teal-400" />
+              <div className="flex items-start justify-between mb-4">
+                <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${stat.color}`}>
+                  <Icon className="h-5 w-5 text-white" strokeWidth={2.2} />
                 </div>
               </div>
-              <p className="text-slate-500 text-sm">{stat.label}</p>
-              <p className="text-5xl font-bold text-slate-900 mt-1 leading-none">{stat.value}</p>
-              <p className="text-xs text-slate-400 mt-3">{stat.sub}</p>
+              <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">{stat.label}</p>
+              <p className="mt-1 text-4xl font-extrabold text-slate-900 leading-none" style={{ fontFamily: "var(--font-display)" }}>{stat.value}</p>
+              <p className="mt-2 text-xs text-slate-400">{stat.sub}</p>
             </div>
           );
         })}
@@ -194,16 +196,16 @@ export default function AdminPanel() {
         <div className="space-y-6">
 
           {/* Accesos rápidos */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 className="mb-5 text-2xl font-bold text-slate-900">Accesos Rápidos</h2>
+          <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+            <h2 className="mb-5 text-xl font-bold text-slate-900" style={{ fontFamily: "var(--font-display)" }}>Accesos Rápidos</h2>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
               {accesosRapidos.map((a) => {
                 const Icon = a.icon;
                 return (
                   <Link key={a.label} to={a.path}
-                    className={`flex items-center gap-3 rounded-2xl px-4 py-4 font-medium transition ${a.color}`}>
-                    <Icon className="h-5 w-5 shrink-0" strokeWidth={2} />
-                    <span className="text-sm">{a.label}</span>
+                    className={`flex items-center gap-3 rounded-xl border border-slate-100 px-4 py-3.5 text-sm font-semibold transition hover:shadow-sm ${a.color}`}>
+                    <Icon className="h-4 w-4 shrink-0" strokeWidth={2} />
+                    <span>{a.label}</span>
                   </Link>
                 );
               })}
@@ -211,8 +213,8 @@ export default function AdminPanel() {
           </div>
 
           {/* Últimas novedades */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 className="mb-5 text-2xl font-bold text-slate-900">Últimas Novedades</h2>
+          <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+            <h2 className="mb-5 text-xl font-bold text-slate-900" style={{ fontFamily: "var(--font-display)" }}>Últimas Novedades</h2>
             <div className="space-y-4">
 
               {/* Último aviso */}
@@ -270,8 +272,8 @@ export default function AdminPanel() {
         </div>
 
         {/* Columna derecha — Tareas */}
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-5 text-2xl font-bold text-slate-900">Tareas Pendientes</h2>
+        <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+          <h2 className="mb-5 text-xl font-bold text-slate-900" style={{ fontFamily: "var(--font-display)" }}>Tareas Pendientes</h2>
 
           {/* Crear tarea */}
           <div className="mb-5 space-y-3">
@@ -280,17 +282,17 @@ export default function AdminPanel() {
               onChange={(e) => setNuevaTarea(e.target.value)}
               placeholder="Nueva tarea..."
               rows={2}
-              className="w-full resize-none rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              className="input-field resize-none"
             />
             <div className="flex gap-2">
               <select value={prioridadNueva} onChange={(e) => setPrioridadNueva(e.target.value)}
-                className="flex-1 rounded-2xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100">
+                className="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-700 outline-none focus:border-sky-400 focus:bg-white focus:ring-2 focus:ring-sky-100">
                 <option value="alta">🔴 Alta</option>
                 <option value="media">🟡 Media</option>
                 <option value="baja">🔵 Baja</option>
               </select>
               <button onClick={handleCrearTarea}
-                className="flex items-center gap-1.5 rounded-2xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 transition">
+                className="btn-glow flex items-center gap-1.5 rounded-xl bg-sky-500 px-4 py-2.5 text-sm font-semibold text-white">
                 <Plus className="h-4 w-4" /> Agregar
               </button>
             </div>

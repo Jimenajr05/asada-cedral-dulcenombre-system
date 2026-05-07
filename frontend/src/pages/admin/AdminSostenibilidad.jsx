@@ -19,7 +19,7 @@ function Toast({ toasts, removeToast }) {
             className={`flex items-start gap-3 rounded-2xl border px-5 py-4 shadow-2xl backdrop-blur-md
               ${isSuccess ? "bg-emerald-50 border-emerald-200 text-emerald-800"
                 : isConfirm ? "bg-amber-50 border-amber-200 text-amber-800"
-                : "bg-red-50 border-red-200 text-red-800"}`}
+                  : "bg-red-50 border-red-200 text-red-800"}`}
             style={{ animation: "slideIn 0.3s ease" }}
           >
             <div className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-white text-sm font-bold
@@ -78,12 +78,12 @@ function AdminSostenibilidad() {
     return id;
   };
   const showSuccess = (msg) => addToast("success", msg);
-  const showError   = (msg) => addToast("error", msg);
+  const showError = (msg) => addToast("error", msg);
   const showConfirm = (msg) =>
     new Promise((resolve) => {
       const id = addToast("confirm", msg, {
         onConfirm: () => { removeToast(id); resolve(true); },
-        onCancel:  () => { removeToast(id); resolve(false); },
+        onCancel: () => { removeToast(id); resolve(false); },
       });
     });
 
@@ -186,14 +186,14 @@ function AdminSostenibilidad() {
 
   if (loading) {
     return (
-      <div className="bg-slate-100 p-7">
+      <div className="space-y-8">
         <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm text-slate-700">Cargando información...</div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-8 bg-slate-100 p-7">
+    <div className="space-y-8">
       <Toast toasts={toasts} removeToast={removeToast} />
 
       <div>
@@ -201,7 +201,7 @@ function AdminSostenibilidad() {
         <p className="mt-2 text-lg text-slate-700">Administra las imágenes de las galerías de sostenibilidad.</p>
       </div>
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <section className="rounded-2xl border border-slate-200 bg-white p-6">
         <div className="mb-6 flex items-center gap-3">
           <ImagePlus className="h-6 w-6 text-blue-600" />
           <h2 className="text-2xl font-bold text-slate-900">Galerías de Sostenibilidad</h2>
@@ -211,8 +211,8 @@ function AdminSostenibilidad() {
         <div className="mb-6 flex flex-wrap gap-3">
           {[
             { key: "culturaHidrica", label: "Actividades Cultura Hídrica" },
-            { key: "mantenimiento",  label: "Mantenimiento de estructuras" },
-            { key: "hidrantes",      label: "Hidrantes" },
+            { key: "mantenimiento", label: "Mantenimiento de estructuras" },
+            { key: "hidrantes", label: "Hidrantes" },
           ].map(({ key, label }) => (
             <button key={key} type="button" onClick={() => cambiarGaleria(key)}
               className={`rounded-2xl px-4 py-3 font-semibold transition ${galeriaActiva === key ? "bg-blue-600 text-white" : "bg-slate-200 text-slate-700 hover:bg-slate-300"}`}>
@@ -241,11 +241,10 @@ function AdminSostenibilidad() {
         <form onSubmit={handleGuardarImagen} className="space-y-5">
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
             <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-900">Texto alternativo</label>
+              <label className="mb-2 block text-sm font-semibold text-slate-900">Texto alternativo:</label>
               <input type="text" value={imagenForm.alt}
                 onChange={(e) => setImagenForm((prev) => ({ ...prev, alt: e.target.value }))}
-                className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                placeholder="Ejemplo: Actividad comunitaria" />
+                className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200" />
             </div>
             <div>
               <label className="mb-2 block text-sm font-semibold text-slate-900">Imagen</label>
@@ -292,7 +291,7 @@ function AdminSostenibilidad() {
               <div className="max-h-[720px] overflow-y-auto pr-2">
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
                   {galeriaActual.images.map((image, index) => (
-                    <div key={index} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                    <div key={index} className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
                       <div className="h-40 w-full overflow-hidden bg-slate-100">
                         <img src={construirUrlImagen(image.src)} alt={image.alt} className="h-full w-full object-cover" />
                       </div>

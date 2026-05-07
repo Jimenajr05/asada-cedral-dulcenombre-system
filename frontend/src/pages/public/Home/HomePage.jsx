@@ -81,17 +81,17 @@ export default function HomePage() {
 
         const avisosFormateados = Array.isArray(data)
           ? data.map((aviso) => ({
-              ...aviso,
-              date: aviso.createdAt
-                ? new Date(aviso.createdAt).toLocaleDateString("es-CR", {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                  })
-                : "Sin fecha",
-              desc: aviso.descripcion,
-              tipo: aviso.tipo,
-            }))
+            ...aviso,
+            date: aviso.createdAt
+              ? new Date(aviso.createdAt).toLocaleDateString("es-CR", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })
+              : "Sin fecha",
+            desc: aviso.descripcion,
+            tipo: aviso.tipo,
+          }))
           : [];
 
         setNotices(avisosFormateados);
@@ -111,34 +111,46 @@ export default function HomePage() {
   }, [notices]);
 
   return (
-    <main className="overflow-x-hidden bg-white text-slate-900">
+    <main className="overflow-x-hidden bg-white text-slate-900" style={{ fontFamily: "var(--font-body)" }}>
       {/* HERO */}
       <section
-        className="relative min-h-[420px] bg-cover bg-center sm:min-h-[500px] lg:min-h-[620px]"
+        className="relative min-h-[520px] bg-cover bg-center lg:min-h-[680px] overflow-hidden"
         style={{
           backgroundImage:
             "url('https://images.unsplash.com/photo-1500375592092-40eb2168fd21?q=80&w=1600&auto=format&fit=crop')",
         }}
       >
-        <div className="absolute inset-0 bg-black/50" />
+        {/* Overlay con gradiente direccional */}
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-900/60 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent" />
 
-        <div className="relative mx-auto flex min-h-[420px] max-w-7xl items-center px-4 sm:min-h-[500px] sm:px-6 lg:min-h-[620px] lg:px-8">
-          <div className="max-w-3xl py-16 text-white sm:py-20 lg:py-24">
-            <h1 className="text-3xl font-bold leading-tight sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl">
-              Agua Potable para Nuestra Comunidad
+        <div className="relative mx-auto flex min-h-[520px] max-w-7xl items-center px-6 lg:min-h-[680px] lg:px-8">
+          <div className="max-w-2xl py-20 text-white animate-fade-up">
+            <span className="section-badge mb-6 bg-sky-500/20 border border-sky-400/30 text-sky-300">
+              ASADA Cedral y Dulce Nombre
+            </span>
+
+            <h1 className="mt-4 text-4xl font-extrabold leading-tight sm:text-5xl lg:text-6xl xl:text-7xl" style={{ fontFamily: "var(--font-display)" }}>
+              Agua Potable para{" "}
+              <span className="text-gradient-water">Nuestra Comunidad</span>
             </h1>
 
-            <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-100 sm:mt-6 sm:text-base sm:leading-7 md:text-lg lg:text-xl">
-              Gestión responsable y sostenible del recurso hídrico al servicio
-              de todos.
+            <p className="mt-6 max-w-xl text-base leading-7 text-slate-300 sm:text-lg">
+              Gestión responsable y sostenible del recurso hídrico al servicio de todos, con transparencia y compromiso comunitario.
             </p>
 
-            <div className="mt-6 sm:mt-8">
+            <div className="mt-10 flex flex-wrap gap-4">
               <button
                 onClick={() => navigate("/sobre-nosotros")}
-                className="btn btn-primary btn-sm px-6 sm:btn-md sm:px-8 lg:btn-lg"
+                className="btn-glow inline-flex items-center gap-2 rounded-xl bg-sky-500 px-8 py-3.5 text-sm font-semibold text-white shadow-lg"
               >
                 Conocer más
+              </button>
+              <button
+                onClick={() => navigate("/contacto")}
+                className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-8 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20"
+              >
+                Contacto
               </button>
             </div>
           </div>
@@ -146,29 +158,31 @@ export default function HomePage() {
       </section>
 
       {/* QUICK ACCESS */}
-      <section className="relative z-10 -mt-8 px-4 sm:-mt-10 sm:px-6 lg:-mt-14 lg:px-8 xl:-mt-16">
+      <section className="relative z-10 -mt-12 px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4 lg:gap-6">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {quickAccess.map((item) => (
               <div
                 key={item.title}
                 onClick={() => navigate(item.path)}
-                className="card cursor-pointer border border-slate-100 bg-white shadow-lg transition-transform duration-200 hover:-translate-y-1"
+                className="card-hover cursor-pointer rounded-2xl border border-white/60 bg-white/90 shadow-xl shadow-slate-200/60 backdrop-blur-sm group"
               >
-                <div className="card-body p-5 sm:p-6">
+                <div className="p-6">
                   <div
-                    className={`flex h-12 w-12 items-center justify-center rounded-xl text-lg text-white sm:h-14 sm:w-14 sm:text-xl ${item.bg}`}
+                    className={`flex h-13 w-13 items-center justify-center rounded-xl text-xl text-white shadow-sm transition-transform duration-300 group-hover:scale-110 group-hover:rotate-2 ${item.bg}`}
+                    style={{ height: 52, width: 52 }}
                   >
                     {getIcon(item.icon)}
                   </div>
 
-                  <h3 className="mt-3 text-lg font-semibold sm:mt-4 sm:text-xl">
+                  <h3 className="mt-4 text-lg font-bold text-slate-900" style={{ fontFamily: "var(--font-display)" }}>
                     {item.title}
                   </h3>
 
-                  <p className="text-sm text-slate-500 sm:text-base">
+                  <p className="mt-1 text-sm leading-relaxed text-slate-500">
                     {item.subtitle}
                   </p>
+
                 </div>
               </div>
             ))}
@@ -177,12 +191,15 @@ export default function HomePage() {
       </section>
 
       {/* AVISOS */}
-      <section className="px-4 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+      <section className="px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <div className="mb-8 flex flex-col gap-3 sm:mb-10 sm:flex-row sm:items-center sm:justify-between">
-            <h2 className="text-2xl font-bold sm:text-3xl lg:text-4xl">
-              Avisos Destacados
-            </h2>
+          <div className="mb-10 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <span className="section-badge bg-sky-50 text-sky-600">Noticias</span>
+              <h2 className="mt-3 text-3xl font-extrabold text-slate-900 sm:text-4xl" style={{ fontFamily: "var(--font-display)" }}>
+                Avisos Destacados
+              </h2>
+            </div>
 
             <button
               onClick={() => navigate("/avisos")}
@@ -205,35 +222,35 @@ export default function HomePage() {
           )}
 
           {!loadingNotices && !errorNotices && noticesPreview.length > 0 && (
-            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
               {noticesPreview.map((notice, index) => {
                 const badge = tipoConfig(notice.tipo);
 
                 return (
                   <div
                     key={notice._id || index}
-                    className="card border border-slate-200 bg-white shadow-md transition-shadow duration-200 hover:shadow-lg"
+                    className="card-hover rounded-2xl border border-slate-100 bg-white shadow-md group overflow-hidden"
                   >
-                    <div className="card-body p-5 sm:p-6">
-                      <div className="mb-5 flex flex-wrap items-center gap-3 text-sm">
+                    <div className="p-6">
+                      <div className="mb-5 flex flex-wrap items-center gap-3">
                         <div
-                          className={`inline-flex w-fit items-center gap-2 rounded-full px-4 py-2 font-medium ${badge.className}`}
+                          className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide ${badge.className}`}
                         >
                           {badge.icon}
                           <span>{badge.label}</span>
                         </div>
 
-                        <div className="inline-flex items-center gap-2 text-slate-500">
-                          <FiCalendar className="text-base" />
+                        <div className="inline-flex items-center gap-1.5 text-xs text-slate-400">
+                          <FiCalendar />
                           <span>{notice.date || "Sin fecha"}</span>
                         </div>
                       </div>
 
-                      <h3 className="text-xl font-semibold leading-snug sm:text-2xl">
+                      <h3 className="text-xl font-bold leading-snug text-slate-900 group-hover:text-sky-700 transition-colors" style={{ fontFamily: "var(--font-display)" }}>
                         {notice.titulo || "Sin título"}
                       </h3>
 
-                      <p className="mt-4 text-sm leading-6 text-slate-600 sm:text-base">
+                      <p className="mt-3 text-sm leading-7 text-slate-500 line-clamp-3">
                         {notice.desc || "Sin descripción"}
                       </p>
                     </div>
@@ -252,14 +269,15 @@ export default function HomePage() {
       </section>
 
       {/* MISIÓN */}
-      <section className="bg-slate-100 px-4 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
-        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-12 xl:gap-16">
-          <div className="flex flex-col justify-center">
-            <h2 className="text-2xl font-bold sm:text-3xl lg:text-4xl">
+      <section className="bg-slate-50 px-4 py-20 sm:px-6 lg:px-8">
+        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-14 lg:grid-cols-2 items-center">
+          <div>
+            <span className="section-badge bg-sky-50 text-sky-600">Identidad</span>
+            <h2 className="mt-4 text-3xl font-extrabold text-slate-900 sm:text-4xl lg:text-5xl" style={{ fontFamily: "var(--font-display)" }}>
               Nuestra Misión
             </h2>
 
-            <p className="mt-4 text-sm leading-7 text-slate-600 sm:mt-6 sm:text-base lg:text-lg">
+            <p className="mt-6 text-base leading-8 text-slate-600 max-w-lg">
               Brindar un servicio de agua potable seguro, continuo y de alta
               calidad a los abonados de Cedral y Dulce Nombre, mediante una
               gestión responsable, eficiente y orientada al bienestar de la
@@ -268,31 +286,29 @@ export default function HomePage() {
 
             <button
               onClick={() => navigate("/sobre-nosotros")}
-              className="mt-5 w-fit text-left text-sm font-semibold text-primary transition hover:opacity-80 sm:mt-6 sm:text-base"
+              className="mt-8 inline-flex items-center gap-2 text-sm font-bold text-sky-600 transition-all hover:gap-3"
             >
-              Conocer más sobre nosotros →
+              Conocer más sobre nosotros <span>→</span>
             </button>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             {missionCards.map((card) => (
               <div
                 key={card.title}
-                className="card bg-white shadow-md transition-transform duration-200 hover:-translate-y-1"
+                className="card-hover rounded-2xl border border-slate-100 bg-white p-6 shadow-sm"
               >
-                <div className="card-body p-5 sm:p-6">
-                  <div className="text-2xl text-primary sm:text-3xl">
-                    {getIcon(card.icon)}
-                  </div>
-
-                  <h3 className="card-title text-lg sm:text-xl">
-                    {card.title}
-                  </h3>
-
-                  <p className="text-sm text-slate-500 sm:text-base">
-                    {card.text}
-                  </p>
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-50 text-2xl text-sky-600">
+                  {getIcon(card.icon)}
                 </div>
+
+                <h3 className="mt-4 text-base font-bold text-slate-900" style={{ fontFamily: "var(--font-display)" }}>
+                  {card.title}
+                </h3>
+
+                <p className="mt-2 text-sm leading-relaxed text-slate-500">
+                  {card.text}
+                </p>
               </div>
             ))}
           </div>
@@ -300,32 +316,40 @@ export default function HomePage() {
       </section>
 
       {/* CTA */}
-      <section className="px-4 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
-        <div className="mx-auto max-w-7xl">
-          <div className="rounded-2xl bg-primary px-5 py-12 text-center text-white shadow-lg sm:rounded-3xl sm:px-8 sm:py-14 lg:px-10 lg:py-20">
-            <h2 className="text-2xl font-bold sm:text-3xl lg:text-4xl">
-              ¿Necesitas ayuda?
-            </h2>
+      <section className="px-4 py-20 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-5xl">
+          <div className="relative overflow-hidden rounded-3xl bg-slate-900 px-8 py-16 text-center text-white shadow-2xl lg:px-20">
+            {/* Glow blobs */}
+            <div className="pointer-events-none absolute -top-20 -left-20 h-64 w-64 rounded-full bg-sky-500/20 blur-[80px]" />
+            <div className="pointer-events-none absolute -bottom-20 -right-20 h-64 w-64 rounded-full bg-teal-500/20 blur-[80px]" />
+            {/* Dot pattern */}
+            <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 0)", backgroundSize: "28px 28px" }} />
 
-            <p className="mx-auto mt-4 max-w-2xl text-sm leading-6 text-blue-100 sm:text-base lg:text-lg">
-              Nuestro equipo está disponible para atenderte y orientarte con
-              cualquier consulta relacionada con nuestros servicios.
-            </p>
+            <div className="relative z-10">
+              <h2 className="text-3xl font-extrabold sm:text-4xl lg:text-5xl" style={{ fontFamily: "var(--font-display)" }}>
+                ¿Necesitas ayuda?
+              </h2>
 
-            <div className="mt-6 flex flex-col items-stretch justify-center gap-3 sm:mt-8 sm:flex-row sm:items-center sm:gap-4">
-              <button
-                onClick={() => navigate("/contacto")}
-                className="btn border-none bg-white text-primary hover:bg-slate-100"
-              >
-                Contactar
-              </button>
+              <p className="mx-auto mt-5 max-w-xl text-base leading-7 text-slate-300">
+                Nuestro equipo está disponible para atenderte y orientarte con
+                cualquier consulta relacionada con nuestros servicios.
+              </p>
 
-              <button
-                onClick={() => navigate("/tramites")}
-                className="btn btn-info border-none text-white"
-              >
-                Ver trámites
-              </button>
+              <div className="mt-10 flex flex-wrap justify-center gap-4">
+                <button
+                  onClick={() => navigate("/contacto")}
+                  className="btn-glow inline-flex items-center gap-2 rounded-xl bg-sky-500 px-8 py-3.5 text-sm font-bold text-white"
+                >
+                  Contactar ahora
+                </button>
+
+                <button
+                  onClick={() => navigate("/tramites")}
+                  className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-8 py-3.5 text-sm font-bold text-white backdrop-blur-sm transition hover:bg-white/20"
+                >
+                  Ver trámites
+                </button>
+              </div>
             </div>
           </div>
         </div>

@@ -1,14 +1,31 @@
 import { useEffect, useState } from "react";
+import { FiTrash2 } from "react-icons/fi";
 import {
-  obtenerGestionAgua, actualizarGestionAgua,
-  subirFotoAnalisis, eliminarFotoAnalisis, BASE_URL,
+  obtenerGestionAgua,
+  actualizarGestionAgua,
+  subirFotoAnalisis,
+  eliminarFotoAnalisis,
+  BASE_URL,
 } from "../../services/gestionAguaService";
 
 /* ========================= UTILIDADES ========================= */
-const crearParametroVacio = () => ({ nombre: "", valor: "", rango: "", porcentaje: "0%" });
+const crearParametroVacio = () => ({
+  nombre: "",
+  valor: "",
+  rango: "",
+  porcentaje: "0%",
+});
+
 const crearInfraestructuraVacia = () => ({ titulo: "", items: [""] });
 const crearAforoVacio = () => ({ lugar: "", produccion: "" });
-const formatearFechaActual = () => new Date().toLocaleDateString("es-CR", { day: "2-digit", month: "2-digit", year: "numeric" });
+
+const formatearFechaActual = () =>
+  new Date().toLocaleDateString("es-CR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+
 const normalizarPorcentaje = (valor) => {
   if (!valor) return "0%";
   const limpio = String(valor).replace("%", "").trim();
@@ -22,35 +39,58 @@ const normalizarPorcentaje = (valor) => {
 /* ========================= TOAST ========================= */
 function Toast({ toasts, removeToast }) {
   return (
-    <div className="fixed top-6 right-6 z-50 flex flex-col gap-3" style={{ minWidth: 300, maxWidth: 400 }}>
+    <div
+      className="fixed top-6 right-6 z-50 flex flex-col gap-3"
+      style={{ minWidth: 300, maxWidth: 400 }}
+    >
       {toasts.map((t) => {
         const isSuccess = t.type === "success";
         const isConfirm = t.type === "confirm";
+
         return (
-          <div key={t.id}
+          <div
+            key={t.id}
             className={`flex items-start gap-3 rounded-2xl border px-5 py-4 shadow-2xl backdrop-blur-md
-              ${isSuccess ? "bg-emerald-50 border-emerald-200 text-emerald-800"
-                : isConfirm ? "bg-amber-50 border-amber-200 text-amber-800"
-                : "bg-red-50 border-red-200 text-red-800"}`}
+              ${isSuccess
+                ? "bg-emerald-50 border-emerald-200 text-emerald-800"
+                : isConfirm
+                  ? "bg-amber-50 border-amber-200 text-amber-800"
+                  : "bg-red-50 border-red-200 text-red-800"
+              }`}
             style={{ animation: "slideIn 0.3s ease" }}
           >
-            <div className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-white text-sm font-bold
-              ${isSuccess ? "bg-emerald-500" : isConfirm ? "bg-amber-500" : "bg-red-500"}`}>
+            <div
+              className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-white text-sm font-bold
+              ${isSuccess
+                  ? "bg-emerald-500"
+                  : isConfirm
+                    ? "bg-amber-500"
+                    : "bg-red-500"
+                }`}
+            >
               {isSuccess ? "✓" : isConfirm ? "?" : "✕"}
             </div>
+
             <div className="flex-1">
               <p className="font-semibold text-sm leading-snug">
                 {isSuccess ? "¡Éxito!" : isConfirm ? "Confirmar" : "Error"}
               </p>
+
               <p className="text-sm mt-0.5 opacity-80">{t.message}</p>
+
               {isConfirm && (
                 <div className="flex gap-2 mt-3">
-                  <button onClick={() => t.onConfirm()}
-                    className="rounded-xl bg-red-600 px-4 py-1.5 text-xs font-bold text-white hover:bg-red-700 transition">
+                  <button
+                    onClick={() => t.onConfirm()}
+                    className="rounded-xl bg-red-600 px-4 py-1.5 text-xs font-bold text-white hover:bg-red-700 transition"
+                  >
                     Eliminar
                   </button>
-                  <button onClick={() => t.onCancel()}
-                    className="rounded-xl bg-slate-200 px-4 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-300 transition">
+
+                  <button
+                    onClick={() => t.onCancel()}
+                    className="rounded-xl bg-slate-200 px-4 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-300 transition"
+                  >
                     Cancelar
                   </button>
                 </div>
@@ -59,6 +99,7 @@ function Toast({ toasts, removeToast }) {
           </div>
         );
       })}
+
       <style>{`
         @keyframes slideIn {
           from { opacity: 0; transform: translateX(40px); }
@@ -72,62 +113,112 @@ function Toast({ toasts, removeToast }) {
 /* ========================= COMPONENTES UI ========================= */
 function SectionCard({ title, subtitle, children, actions }) {
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <section className="rounded-2xl border border-slate-200 bg-white">
       <div className="border-b border-slate-200 px-6 py-5">
         <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           <div>
             <h2 className="text-2xl font-bold text-slate-900">{title}</h2>
-            {subtitle ? <p className="mt-1 max-w-3xl text-sm text-slate-600">{subtitle}</p> : null}
+            {subtitle ? (
+              <p className="mt-1 max-w-3xl text-sm text-slate-600">
+                {subtitle}
+              </p>
+            ) : null}
           </div>
+
           {actions ? <div className="flex flex-wrap gap-2">{actions}</div> : null}
         </div>
       </div>
+
       <div className="p-6">{children}</div>
     </section>
   );
 }
 
-function ActionButton({ children, onClick, type = "button", variant = "primary", disabled = false, className = "" }) {
+function ActionButton({
+  children,
+  onClick,
+  type = "button",
+  variant = "primary",
+  disabled = false,
+  className = "",
+}) {
   const styles = {
-    primary:   "bg-blue-600 text-white hover:bg-blue-700",
+    primary: "bg-blue-600 text-white hover:bg-blue-700",
     secondary: "bg-slate-100 text-slate-800 hover:bg-slate-200",
-    success:   "bg-emerald-600 text-white hover:bg-emerald-700",
-    danger:    "bg-red-500 text-white hover:bg-red-600",
+    success: "bg-emerald-600 text-white hover:bg-emerald-700",
+    danger: "bg-red-500 text-white hover:bg-red-600",
   };
+
   return (
-    <button type={type} onClick={onClick} disabled={disabled}
-      className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition ${styles[variant]} disabled:cursor-not-allowed disabled:opacity-60 ${className}`}>
+    <button
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
+      className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition ${styles[variant]} disabled:cursor-not-allowed disabled:opacity-60 ${className}`}
+    >
       {children}
+    </button>
+  );
+}
+
+function DeleteIconButton({ onClick, title = "Eliminar" }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      title={title}
+      className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-red-50 text-red-600 transition hover:bg-red-100 hover:text-red-700 active:scale-95"
+    >
+      <FiTrash2 className="text-lg" />
     </button>
   );
 }
 
 function Input({ className = "", ...props }) {
   return (
-    <input {...props}
-      className={`w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 placeholder:text-slate-400 ${className}`} />
+    <input
+      {...props}
+      className={`w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 placeholder:text-slate-400 ${className}`}
+    />
   );
 }
 
 function Label({ children }) {
-  return <label className="mb-2 block text-sm font-semibold text-slate-700">{children}</label>;
+  return (
+    <label className="mb-2 block text-sm font-semibold text-slate-700">
+      {children}
+    </label>
+  );
 }
 
 function ParameterPreview({ parametro }) {
   const width = normalizarPorcentaje(parametro.porcentaje);
+
   return (
     <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
       <div className="mb-2 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm font-semibold text-slate-900">{parametro.nombre || "Nombre del parámetro"}</p>
+        <p className="text-sm font-semibold text-slate-900">
+          {parametro.nombre || "Nombre del parámetro"}
+        </p>
+
         <div className="text-sm text-slate-600">
-          <span className="font-semibold text-slate-900">{parametro.valor || "0"}</span>
+          <span className="font-semibold text-slate-900">
+            {parametro.valor || "0"}
+          </span>
           {parametro.rango ? <span className="ml-2">({parametro.rango})</span> : null}
         </div>
       </div>
+
       <div className="h-3 overflow-hidden rounded-full bg-slate-200">
-        <div className="h-full rounded-full bg-green-500 transition-all" style={{ width }} />
+        <div
+          className="h-full rounded-full bg-green-500 transition-all"
+          style={{ width }}
+        />
       </div>
-      <p className="mt-2 text-xs font-medium text-slate-500">Vista previa: {width}</p>
+
+      <p className="mt-2 text-xs font-medium text-slate-500">
+        Vista previa: {width}
+      </p>
     </div>
   );
 }
@@ -140,33 +231,50 @@ function AdminGestionAgua() {
 
   const [guardandoParametros, setGuardandoParametros] = useState(false);
   const [guardandoAforos, setGuardandoAforos] = useState(false);
-  const [guardandoInfraestructura, setGuardandoInfraestructura] = useState(false);
+  const [guardandoInfraestructura, setGuardandoInfraestructura] =
+    useState(false);
   const [subiendoFoto, setSubiendoFoto] = useState(false);
   const [nuevaImagen, setNuevaImagen] = useState(null);
 
-  // ── Toast helpers ──
-  const removeToast = (id) => setToasts((prev) => prev.filter((t) => t.id !== id));
+  const removeToast = (id) =>
+    setToasts((prev) => prev.filter((t) => t.id !== id));
+
   const addToast = (type, message, extra = {}) => {
     const id = Date.now();
     setToasts((prev) => [...prev, { id, type, message, ...extra }]);
-    if (type !== "confirm") setTimeout(() => removeToast(id), 3500);
+
+    if (type !== "confirm") {
+      setTimeout(() => removeToast(id), 3500);
+    }
+
     return id;
   };
+
   const showSuccess = (msg) => addToast("success", msg);
-  const showError   = (msg) => addToast("error", msg);
+  const showError = (msg) => addToast("error", msg);
+
   const showConfirm = (msg) =>
     new Promise((resolve) => {
       const id = addToast("confirm", msg, {
-        onConfirm: () => { removeToast(id); resolve(true); },
-        onCancel:  () => { removeToast(id); resolve(false); },
+        onConfirm: () => {
+          removeToast(id);
+          resolve(true);
+        },
+        onCancel: () => {
+          removeToast(id);
+          resolve(false);
+        },
       });
     });
 
-  useEffect(() => { cargarDatos(); }, []);
+  useEffect(() => {
+    cargarDatos();
+  }, []);
 
   const cargarDatos = async () => {
     try {
       const data = await obtenerGestionAgua();
+
       setForm({
         ...data,
         parametros: data.parametros || [],
@@ -177,7 +285,8 @@ function AdminGestionAgua() {
           registros: data.aforos?.registros || [],
         },
         analisisCalidadAgua: {
-          titulo: data.analisisCalidadAgua?.titulo || "Análisis de calidad del agua",
+          titulo:
+            data.analisisCalidadAgua?.titulo || "Análisis de calidad del agua",
           fotos: data.analisisCalidadAgua?.fotos || [],
         },
       });
@@ -188,13 +297,17 @@ function AdminGestionAgua() {
     }
   };
 
-  /* ── Guardados ── */
   const guardarParametros = async () => {
     try {
       setGuardandoParametros(true);
+
       await actualizarGestionAgua({
-        parametros: form.parametros.map((p) => ({ ...p, porcentaje: normalizarPorcentaje(p.porcentaje) })),
+        parametros: form.parametros.map((p) => ({
+          ...p,
+          porcentaje: normalizarPorcentaje(p.porcentaje),
+        })),
       });
+
       await cargarDatos();
       showSuccess("Parámetros guardados correctamente");
     } catch (error) {
@@ -207,7 +320,11 @@ function AdminGestionAgua() {
   const guardarAforos = async () => {
     try {
       setGuardandoAforos(true);
-      await actualizarGestionAgua({ aforos: form.aforos });
+
+      await actualizarGestionAgua({
+        aforos: form.aforos,
+      });
+
       await cargarDatos();
       showSuccess("Aforos guardados correctamente");
     } catch (error) {
@@ -220,7 +337,11 @@ function AdminGestionAgua() {
   const guardarInfraestructura = async () => {
     try {
       setGuardandoInfraestructura(true);
-      await actualizarGestionAgua({ infraestructura: form.infraestructura });
+
+      await actualizarGestionAgua({
+        infraestructura: form.infraestructura,
+      });
+
       await cargarDatos();
       showSuccess("Infraestructura guardada correctamente");
     } catch (error) {
@@ -230,31 +351,49 @@ function AdminGestionAgua() {
     }
   };
 
-  /* ── Parámetros ── */
   const handleParametroChange = (index, campo, valor) => {
     const nuevos = [...form.parametros];
     nuevos[index][campo] = valor;
     setForm((prev) => ({ ...prev, parametros: nuevos }));
   };
-  const agregarParametro = () => setForm((prev) => ({ ...prev, parametros: [...prev.parametros, crearParametroVacio()] }));
-  const eliminarParametro = (index) => {
+
+  const agregarParametro = () =>
+    setForm((prev) => ({
+      ...prev,
+      parametros: [...prev.parametros, crearParametroVacio()],
+    }));
+
+  const eliminarParametro = async (index) => {
+    const confirmed = await showConfirm(
+      "¿Deseas eliminar este parámetro? Deberás presionar 'Guardar parámetros' para aplicar el cambio."
+    );
+
+    if (!confirmed) return;
+
     const nuevos = [...form.parametros];
     nuevos.splice(index, 1);
     setForm((prev) => ({ ...prev, parametros: nuevos }));
   };
 
-  /* ── Fotos ── */
   const handleSubirImagen = async (e) => {
     e.preventDefault();
-    if (!nuevaImagen) { showError("Seleccione una imagen"); return; }
+
+    if (!nuevaImagen) {
+      showError("Seleccione una imagen");
+      return;
+    }
+
     try {
       setSubiendoFoto(true);
+
       const formData = new FormData();
       formData.append("fecha", formatearFechaActual());
       formData.append("imagen", nuevaImagen);
+
       await subirFotoAnalisis(formData);
       setNuevaImagen(null);
       await cargarDatos();
+
       showSuccess("Foto subida correctamente");
     } catch (error) {
       showError("Error al subir foto");
@@ -265,134 +404,347 @@ function AdminGestionAgua() {
 
   const handleEliminarFoto = async (fotoId) => {
     const confirmed = await showConfirm("¿Desea eliminar esta foto?");
+
     if (!confirmed) return;
+
     try {
       await eliminarFotoAnalisis(fotoId);
       await cargarDatos();
+
       showSuccess("Foto eliminada correctamente");
     } catch (error) {
       showError("Error al eliminar foto");
     }
   };
 
-  /* ── Aforos ── */
-  const handleAforoChange = (campo, valor) => setForm((prev) => ({ ...prev, aforos: { ...prev.aforos, [campo]: valor } }));
+  const handleAforoChange = (campo, valor) =>
+    setForm((prev) => ({
+      ...prev,
+      aforos: {
+        ...prev.aforos,
+        [campo]: valor,
+      },
+    }));
+
   const handleAforoRegistroChange = (index, campo, valor) => {
     const nuevos = [...form.aforos.registros];
     nuevos[index][campo] = valor;
-    setForm((prev) => ({ ...prev, aforos: { ...prev.aforos, registros: nuevos } }));
-  };
-  const agregarAforo = () => setForm((prev) => ({ ...prev, aforos: { ...prev.aforos, registros: [...prev.aforos.registros, crearAforoVacio()] } }));
-  const eliminarAforo = (index) => {
-    const nuevos = [...form.aforos.registros];
-    nuevos.splice(index, 1);
-    setForm((prev) => ({ ...prev, aforos: { ...prev.aforos, registros: nuevos } }));
+
+    setForm((prev) => ({
+      ...prev,
+      aforos: {
+        ...prev.aforos,
+        registros: nuevos,
+      },
+    }));
   };
 
-  /* ── Infraestructura ── */
+  const agregarAforo = () =>
+    setForm((prev) => ({
+      ...prev,
+      aforos: {
+        ...prev.aforos,
+        registros: [...prev.aforos.registros, crearAforoVacio()],
+      },
+    }));
+
+  const eliminarAforo = async (index) => {
+    const confirmed = await showConfirm(
+      "¿Deseas eliminar este registro de aforo? Recuerda que debes presionar 'Guardar aforos' arriba para aplicar los cambios."
+    );
+
+    if (!confirmed) return;
+
+    const nuevos = [...form.aforos.registros];
+    nuevos.splice(index, 1);
+
+    setForm((prev) => ({
+      ...prev,
+      aforos: {
+        ...prev.aforos,
+        registros: nuevos,
+      },
+    }));
+  };
+
   const handleInfraTituloChange = (index, valor) => {
     const nuevas = [...form.infraestructura];
     nuevas[index].titulo = valor;
-    setForm((prev) => ({ ...prev, infraestructura: nuevas }));
+
+    setForm((prev) => ({
+      ...prev,
+      infraestructura: nuevas,
+    }));
   };
+
   const handleInfraItemChange = (infraIndex, itemIndex, valor) => {
     const nuevas = [...form.infraestructura];
     nuevas[infraIndex].items[itemIndex] = valor;
-    setForm((prev) => ({ ...prev, infraestructura: nuevas }));
+
+    setForm((prev) => ({
+      ...prev,
+      infraestructura: nuevas,
+    }));
   };
-  const agregarBloqueInfraestructura = () => setForm((prev) => ({ ...prev, infraestructura: [...prev.infraestructura, crearInfraestructuraVacia()] }));
-  const eliminarBloqueInfraestructura = (index) => {
+
+  const agregarBloqueInfraestructura = () =>
+    setForm((prev) => ({
+      ...prev,
+      infraestructura: [...prev.infraestructura, crearInfraestructuraVacia()],
+    }));
+
+  const eliminarBloqueInfraestructura = async (index) => {
+    const confirmed = await showConfirm(
+      "¿Deseas eliminar este bloque de infraestructura? Recuerda presionar 'Guardar infraestructura' arriba para aplicar los cambios."
+    );
+
+    if (!confirmed) return;
+
     const nuevas = [...form.infraestructura];
     nuevas.splice(index, 1);
-    setForm((prev) => ({ ...prev, infraestructura: nuevas }));
+
+    setForm((prev) => ({
+      ...prev,
+      infraestructura: nuevas,
+    }));
   };
+
   const agregarItemInfraestructura = (index) => {
     const nuevas = [...form.infraestructura];
     nuevas[index].items.push("");
-    setForm((prev) => ({ ...prev, infraestructura: nuevas }));
+
+    setForm((prev) => ({
+      ...prev,
+      infraestructura: nuevas,
+    }));
   };
-  const eliminarItemInfraestructura = (infraIndex, itemIndex) => {
+
+  const eliminarItemInfraestructura = async (infraIndex, itemIndex) => {
+    const confirmed = await showConfirm(
+      "¿Deseas eliminar este detalle? Recuerda guardar los cambios arriba para aplicar el cambio."
+    );
+
+    if (!confirmed) return;
+
     const nuevas = [...form.infraestructura];
     nuevas[infraIndex].items.splice(itemIndex, 1);
-    setForm((prev) => ({ ...prev, infraestructura: nuevas }));
+
+    setForm((prev) => ({
+      ...prev,
+      infraestructura: nuevas,
+    }));
   };
 
   if (loading) return <p className="p-6 text-slate-800">Cargando...</p>;
-  if (!form) return <p className="p-6 text-red-600">No se pudo cargar la información.</p>;
+
+  if (!form) {
+    return (
+      <p className="p-6 text-red-600">
+        No se pudo cargar la información.
+      </p>
+    );
+  }
 
   return (
-    <div className="bg-slate-100 p-7">
+    <div className="space-y-8">
       <Toast toasts={toasts} removeToast={removeToast} />
 
       <div className="mb-6 flex items-start justify-between">
         <div>
-          <h1 className="text-4xl font-bold text-slate-900 md:text-5xl">Gestión del Agua</h1>
-          <p className="mt-2 text-lg text-slate-700">Administra los parámetros, aforos, infraestructura y análisis del sistema.</p>
+          <h1 className="text-4xl font-bold text-slate-900 md:text-5xl">
+            Gestión del Agua
+          </h1>
+
+          <p className="mt-2 text-lg text-slate-700">
+            Administra los parámetros, aforos, infraestructura y análisis del
+            sistema.
+          </p>
         </div>
       </div>
 
-      <div className="mx-auto max-w-7xl space-y-8">
+      <div className="space-y-8">
         {/* 1. Parámetros */}
-        <SectionCard title="1. Parámetros de Calidad"
-          subtitle="Aquí puede editar cada parámetro mostrado en la página pública. Cuando termine, presione el botón Guardar de esta sección."
+        <SectionCard
+          title="1. Parámetros de Calidad"
+          subtitle="Edite los parámetros de calidad del agua. Recuerde presionar 'Guardar parámetros' al terminar o al realizar eliminaciones para aplicar los cambios de forma permanente."
           actions={
-            <ActionButton variant="success" onClick={guardarParametros} disabled={guardandoParametros}>
+            <ActionButton
+              variant="success"
+              onClick={guardarParametros}
+              disabled={guardandoParametros}
+            >
               {guardandoParametros ? "Guardando..." : "Guardar parámetros"}
             </ActionButton>
-          }>
+          }
+        >
           <div className="mb-5 flex justify-start">
-            <ActionButton variant="primary" onClick={agregarParametro}>+ Agregar parámetro</ActionButton>
+            <ActionButton variant="primary" onClick={agregarParametro}>
+              + Agregar parámetro
+            </ActionButton>
           </div>
-          <div className="grid gap-5 xl:grid-cols-2">
-            {form.parametros.map((parametro, index) => (
-              <div key={index} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                <div className="mb-4 flex items-center justify-between gap-3">
-                  <h3 className="font-bold text-slate-900">Parámetro {index + 1}</h3>
-                  <ActionButton variant="danger" onClick={() => eliminarParametro(index)}>Eliminar</ActionButton>
+
+          <div className="max-h-[750px] overflow-y-auto pr-2 custom-scrollbar">
+            <div className="grid gap-5 xl:grid-cols-2">
+              {form.parametros.map((parametro, index) => (
+                <div
+                  key={index}
+                  className="rounded-2xl border border-slate-200 bg-slate-50 p-4"
+                >
+                  <div className="mb-4 flex items-center justify-between gap-3">
+                    <h3 className="font-bold text-slate-900">
+                      Parámetro {index + 1}
+                    </h3>
+
+                    <ActionButton
+                      variant="danger"
+                      onClick={() => eliminarParametro(index)}
+                    >
+                      Eliminar
+                    </ActionButton>
+                  </div>
+
+                  <div className="grid gap-3 md:grid-cols-2">
+                    <div>
+                      <Label>Nombre:</Label>
+                      <Input
+                        type="text"
+                        value={parametro.nombre}
+                        onChange={(e) =>
+                          handleParametroChange(index, "nombre", e.target.value)
+                        }
+                        placeholder="Nombre"
+                      />
+                    </div>
+
+                    <div>
+                      <Label>Valor:</Label>
+                      <Input
+                        type="text"
+                        value={parametro.valor}
+                        onChange={(e) =>
+                          handleParametroChange(index, "valor", e.target.value)
+                        }
+                        placeholder="Valor"
+                      />
+                    </div>
+
+                    <div>
+                      <Label>Rango:</Label>
+                      <Input
+                        type="text"
+                        value={parametro.rango}
+                        onChange={(e) =>
+                          handleParametroChange(index, "rango", e.target.value)
+                        }
+                        placeholder="Rango"
+                      />
+                    </div>
+
+                    <div>
+                      <Label>Porcentaje:</Label>
+                      <Input
+                        type="text"
+                        value={parametro.porcentaje}
+                        onChange={(e) =>
+                          handleParametroChange(
+                            index,
+                            "porcentaje",
+                            e.target.value
+                          )
+                        }
+                        placeholder="Ejemplo: 70%"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="mt-4">
+                    <ParameterPreview parametro={parametro} />
+                  </div>
                 </div>
-                <div className="grid gap-3 md:grid-cols-2">
-                  <div><Label>Nombre</Label><Input type="text" value={parametro.nombre} onChange={(e) => handleParametroChange(index, "nombre", e.target.value)} placeholder="Nombre" /></div>
-                  <div><Label>Valor</Label><Input type="text" value={parametro.valor} onChange={(e) => handleParametroChange(index, "valor", e.target.value)} placeholder="Valor" /></div>
-                  <div><Label>Rango</Label><Input type="text" value={parametro.rango} onChange={(e) => handleParametroChange(index, "rango", e.target.value)} placeholder="Rango" /></div>
-                  <div><Label>Porcentaje</Label><Input type="text" value={parametro.porcentaje} onChange={(e) => handleParametroChange(index, "porcentaje", e.target.value)} placeholder="Ejemplo: 70%" /></div>
-                </div>
-                <div className="mt-4"><ParameterPreview parametro={parametro} /></div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </SectionCard>
 
         {/* 2. Fotos */}
-        <SectionCard title="2. Fotos de análisis"
-          subtitle="Primero seleccione una imagen y luego presione Agregar foto. Las imágenes guardadas aparecerán debajo.">
+        <SectionCard
+          title="2. Fotos de análisis"
+          subtitle="Primero seleccione una imagen y luego presione Agregar foto. Las imágenes guardadas aparecerán debajo."
+        >
           <div className="grid gap-6 xl:grid-cols-[420px_1fr]">
-            <form onSubmit={handleSubirImagen} className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-5">
-              <h3 className="mb-4 text-lg font-bold text-slate-900">Subir nueva foto</h3>
-              <div><Label>Seleccionar imagen</Label><Input type="file" accept="image/*" onChange={(e) => setNuevaImagen(e.target.files[0])} /></div>
-              <p className="mt-3 text-sm text-slate-500">Fecha automática: {formatearFechaActual()}</p>
+            <form
+              onSubmit={handleSubirImagen}
+              className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-5"
+            >
+              <h3 className="mb-4 text-lg font-bold text-slate-900">
+                Subir nueva foto
+              </h3>
+
+              <div>
+                <Label>Seleccionar imagen</Label>
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setNuevaImagen(e.target.files[0])}
+                />
+              </div>
+
+              <p className="mt-3 text-sm text-slate-500">
+                Fecha automática: {formatearFechaActual()}
+              </p>
+
               <div className="mt-5">
-                <ActionButton type="submit" variant="primary" disabled={subiendoFoto} className="w-full">
+                <ActionButton
+                  type="submit"
+                  variant="primary"
+                  disabled={subiendoFoto}
+                  className="w-full"
+                >
                   {subiendoFoto ? "Subiendo..." : "Agregar foto"}
                 </ActionButton>
               </div>
             </form>
+
             <div>
-              <h3 className="mb-4 text-lg font-bold text-slate-900">Fotos guardadas</h3>
+              <h3 className="mb-4 text-lg font-bold text-slate-900">
+                Fotos guardadas
+              </h3>
+
               {form.analisisCalidadAgua?.fotos?.length === 0 ? (
-                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 text-sm text-slate-500">Aún no hay fotos registradas.</div>
+                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 text-sm text-slate-500">
+                  Aún no hay fotos registradas.
+                </div>
               ) : (
-                <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-2">
-                  {form.analisisCalidadAgua?.fotos?.map((foto) => (
-                    <div key={foto._id} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-                      <div className="relative h-56 bg-slate-100">
-                        <img src={`${BASE_URL}${foto.imagen}`} alt={foto.fecha} className="h-full w-full object-cover" />
-                        <div className="absolute right-3 top-3 rounded-full bg-white/95 px-3 py-1 text-xs font-bold text-slate-900 shadow">{foto.fecha}</div>
+                <div className="max-h-[650px] overflow-y-auto pr-2 custom-scrollbar">
+                  <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-2">
+                    {form.analisisCalidadAgua?.fotos?.map((foto) => (
+                      <div
+                        key={foto._id}
+                        className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:shadow-md"
+                      >
+                        <div className="relative h-56 bg-slate-100">
+                          <img
+                            src={`${BASE_URL}${foto.imagen}`}
+                            alt={foto.fecha}
+                            className="h-full w-full object-cover"
+                          />
+
+                          <div className="absolute right-3 top-3 rounded-full bg-white/95 px-3 py-1 text-xs font-bold text-slate-900 shadow-sm">
+                            {foto.fecha}
+                          </div>
+                        </div>
+
+                        <div className="p-4">
+                          <ActionButton
+                            variant="danger"
+                            onClick={() => handleEliminarFoto(foto._id)}
+                          >
+                            Eliminar foto
+                          </ActionButton>
+                        </div>
                       </div>
-                      <div className="p-4">
-                        <ActionButton variant="danger" onClick={() => handleEliminarFoto(foto._id)}>Eliminar foto</ActionButton>
-                      </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
@@ -400,74 +752,206 @@ function AdminGestionAgua() {
         </SectionCard>
 
         {/* 3. Aforos */}
-        <SectionCard title="3. Tabla de Aforos"
-          subtitle="Edite la fecha general, el total y cada registro de la tabla. Luego presione Guardar aforos."
+        <SectionCard
+          title="3. Tabla de Aforos"
+          subtitle="Administre la fecha general y los registros de la tabla. Recuerde presionar 'Guardar aforos' para aplicar cualquier cambio o eliminación realizada."
           actions={
-            <ActionButton variant="success" onClick={guardarAforos} disabled={guardandoAforos}>
+            <ActionButton
+              variant="success"
+              onClick={guardarAforos}
+              disabled={guardandoAforos}
+            >
               {guardandoAforos ? "Guardando..." : "Guardar aforos"}
             </ActionButton>
-          }>
+          }
+        >
           <div className="mb-5 flex justify-start">
-            <ActionButton variant="primary" onClick={agregarAforo}>+ Agregar registro</ActionButton>
+            <ActionButton variant="primary" onClick={agregarAforo}>
+              + Agregar registro
+            </ActionButton>
           </div>
+
           <div className="mb-5 grid gap-4 md:grid-cols-2">
-            <div><Label>Fecha general</Label><Input type="text" value={form.aforos.fecha} onChange={(e) => handleAforoChange("fecha", e.target.value)} placeholder="Ejemplo: Abril 2026" /></div>
-            <div><Label>Total</Label><Input type="text" value={form.aforos.total} onChange={(e) => handleAforoChange("total", e.target.value)} placeholder="Total de l/s" /></div>
-          </div>
-          <div className="overflow-hidden rounded-2xl border border-slate-200">
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[700px] border-collapse">
-                <thead className="bg-slate-100">
-                  <tr>
-                    <th className="border border-slate-200 px-4 py-3 text-left text-sm font-bold text-slate-900">Lugar</th>
-                    <th className="border border-slate-200 px-4 py-3 text-left text-sm font-bold text-slate-900">Producción</th>
-                    <th className="border border-slate-200 px-4 py-3 text-center text-sm font-bold text-slate-900">Acción</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {form.aforos.registros.map((registro, index) => (
-                    <tr key={index} className="bg-white">
-                      <td className="border border-slate-200 p-3"><Input type="text" value={registro.lugar} onChange={(e) => handleAforoRegistroChange(index, "lugar", e.target.value)} placeholder="Lugar" /></td>
-                      <td className="border border-slate-200 p-3"><Input type="text" value={registro.produccion} onChange={(e) => handleAforoRegistroChange(index, "produccion", e.target.value)} placeholder="Producción" /></td>
-                      <td className="border border-slate-200 p-3 text-center"><ActionButton variant="danger" onClick={() => eliminarAforo(index)}>Eliminar</ActionButton></td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div>
+              <Label>Fecha general:</Label>
+              <Input
+                type="text"
+                value={form.aforos.fecha}
+                onChange={(e) => handleAforoChange("fecha", e.target.value)}
+                placeholder="Ejemplo: Abril 2026"
+              />
             </div>
+
+            <div>
+              <Label>Total:</Label>
+              <Input
+                type="text"
+                value={form.aforos.total}
+                onChange={(e) => handleAforoChange("total", e.target.value)}
+                placeholder="Total de l/s"
+              />
+            </div>
+          </div>
+
+          <div className="max-h-[550px] overflow-auto rounded-2xl border border-slate-200 custom-scrollbar">
+            <table className="w-full min-w-[700px] border-collapse">
+              <thead className="bg-slate-100">
+                <tr>
+                  <th className="border border-slate-200 px-4 py-3 text-left text-sm font-bold text-slate-900">
+                    Lugar
+                  </th>
+                  <th className="border border-slate-200 px-4 py-3 text-left text-sm font-bold text-slate-900">
+                    Producción
+                  </th>
+                  <th className="border border-slate-200 px-4 py-3 text-center text-sm font-bold text-slate-900">
+                    Acción
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {form.aforos.registros.map((registro, index) => (
+                  <tr key={index} className="bg-white">
+                    <td className="border border-slate-200 p-3">
+                      <Input
+                        type="text"
+                        value={registro.lugar}
+                        onChange={(e) =>
+                          handleAforoRegistroChange(
+                            index,
+                            "lugar",
+                            e.target.value
+                          )
+                        }
+                        placeholder="Lugar"
+                      />
+                    </td>
+
+                    <td className="border border-slate-200 p-3">
+                      <Input
+                        type="text"
+                        value={registro.produccion}
+                        onChange={(e) =>
+                          handleAforoRegistroChange(
+                            index,
+                            "produccion",
+                            e.target.value
+                          )
+                        }
+                        placeholder="Producción"
+                      />
+                    </td>
+
+                    <td className="border border-slate-200 p-3">
+                      <div className="flex justify-center">
+                        <DeleteIconButton
+                          onClick={() => eliminarAforo(index)}
+                          title="Eliminar registro"
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </SectionCard>
 
         {/* 4. Infraestructura */}
-        <SectionCard title="4. Infraestructura del Sistema"
-          subtitle="Aquí puede crear bloques como Nacientes, Tanques o Red de distribución, y agregar los detalles dentro de cada uno."
+        <SectionCard
+          title="4. Infraestructura del Sistema"
+          subtitle="Gestione los bloques de infraestructura y sus detalles. Recuerde presionar 'Guardar infraestructura' para aplicar todos los cambios y eliminaciones de esta sección."
           actions={
-            <ActionButton variant="success" onClick={guardarInfraestructura} disabled={guardandoInfraestructura}>
-              {guardandoInfraestructura ? "Guardando..." : "Guardar infraestructura"}
+            <ActionButton
+              variant="success"
+              onClick={guardarInfraestructura}
+              disabled={guardandoInfraestructura}
+            >
+              {guardandoInfraestructura
+                ? "Guardando..."
+                : "Guardar infraestructura"}
             </ActionButton>
-          }>
+          }
+        >
           <div className="mb-5 flex justify-start">
-            <ActionButton variant="primary" onClick={agregarBloqueInfraestructura}>+ Agregar bloque</ActionButton>
+            <ActionButton variant="primary" onClick={agregarBloqueInfraestructura}>
+              + Agregar bloque
+            </ActionButton>
           </div>
-          <div className="space-y-5">
-            {form.infraestructura.map((bloque, infraIndex) => (
-              <div key={infraIndex} className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-                <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-                  <h3 className="text-lg font-bold text-slate-900">Bloque {infraIndex + 1}</h3>
-                  <ActionButton variant="danger" onClick={() => eliminarBloqueInfraestructura(infraIndex)}>Eliminar bloque</ActionButton>
+
+          <div className="max-h-[800px] overflow-y-auto pr-2 custom-scrollbar">
+            <div className="space-y-5">
+              {form.infraestructura.map((bloque, infraIndex) => (
+                <div
+                  key={infraIndex}
+                  className="rounded-2xl border border-slate-200 bg-slate-50 p-5"
+                >
+                  <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                    <h3 className="text-lg font-bold text-slate-900">
+                      Bloque {infraIndex + 1}
+                    </h3>
+
+                    <ActionButton
+                      variant="danger"
+                      onClick={() => eliminarBloqueInfraestructura(infraIndex)}
+                    >
+                      Eliminar bloque
+                    </ActionButton>
+                  </div>
+
+                  <div className="mb-8">
+                    <Label>Título del bloque:</Label>
+                    <Input
+                      type="text"
+                      value={bloque.titulo}
+                      onChange={(e) =>
+                        handleInfraTituloChange(infraIndex, e.target.value)
+                      }
+                      placeholder="Ejemplo: Nacientes"
+                    />
+                  </div>
+
+                  <div className="mb-3">
+                    <Label>Puntos de información (detalles):</Label>
+                  </div>
+
+                  <div className="space-y-3">
+                    {bloque.items.map((item, itemIndex) => (
+                      <div key={itemIndex} className="flex gap-3">
+                        <Input
+                          type="text"
+                          value={item}
+                          onChange={(e) =>
+                            handleInfraItemChange(
+                              infraIndex,
+                              itemIndex,
+                              e.target.value
+                            )
+                          }
+                          placeholder="Detalle"
+                        />
+
+                        <DeleteIconButton
+                          onClick={() =>
+                            eliminarItemInfraestructura(infraIndex, itemIndex)
+                          }
+                          title="Eliminar detalle"
+                        />
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="mt-4">
+                    <ActionButton
+                      variant="secondary"
+                      onClick={() => agregarItemInfraestructura(infraIndex)}
+                    >
+                      + Agregar ítem
+                    </ActionButton>
+                  </div>
                 </div>
-                <div className="mb-4"><Label>Título del bloque</Label><Input type="text" value={bloque.titulo} onChange={(e) => handleInfraTituloChange(infraIndex, e.target.value)} placeholder="Ejemplo: Nacientes" /></div>
-                <div className="space-y-3">
-                  {bloque.items.map((item, itemIndex) => (
-                    <div key={itemIndex} className="flex gap-3">
-                      <Input type="text" value={item} onChange={(e) => handleInfraItemChange(infraIndex, itemIndex, e.target.value)} placeholder="Detalle" />
-                      <ActionButton variant="danger" onClick={() => eliminarItemInfraestructura(infraIndex, itemIndex)}>Eliminar</ActionButton>
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-4"><ActionButton variant="secondary" onClick={() => agregarItemInfraestructura(infraIndex)}>+ Agregar ítem</ActionButton></div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </SectionCard>
       </div>
