@@ -250,41 +250,27 @@ export default function SustainabilityPage() {
 
   return (
     <div className="bg-slate-50">
-      <section className="relative h-[420px] overflow-hidden">
-        <img
-          src="https://images.unsplash.com/photo-1492496913980-501348b61469?auto=format&fit=crop&w=1600&q=80"
-          alt="Sostenibilidad"
-          className="absolute inset-0 h-full w-full object-cover"
-        />
-        <div className="absolute inset-0 bg-slate-900/55" />
+      <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-sky-950 to-slate-900">
         <FloatingBg />
+        <div className="pointer-events-none absolute -top-32 left-1/4 h-96 w-96 rounded-full bg-sky-500/15 blur-[100px]" />
+        <div className="pointer-events-none absolute bottom-0 right-1/4 h-64 w-64 rounded-full bg-teal-500/10 blur-[80px]" />
 
-        <div
-          className="absolute bottom-0 left-0 right-0 leading-none"
-          aria-hidden="true"
-        >
-          <svg
-            viewBox="0 0 1440 80"
-            xmlns="http://www.w3.org/2000/svg"
-            preserveAspectRatio="none"
-            className="block w-full h-20"
-          >
-            <path
-              d="M0,32L48,37.3C96,43,192,53,288,58.7C384,64,480,64,576,58.7C672,53,768,43,864,42.7C960,43,1056,53,1152,58.7C1248,64,1344,64,1392,64L1440,64L1440,80L1392,80C1344,80,1248,80,1152,80C1056,80,960,80,864,80C768,80,672,80,576,80C480,80,384,80,288,80C192,80,96,80,48,80L0,80Z"
-              fill="#f8fafc"
-            />
+        <div className="absolute bottom-0 left-0 right-0 leading-none" aria-hidden="true">
+          <svg viewBox="0 0 1440 80" preserveAspectRatio="none" className="block w-full h-20">
+            <path d="M0,32L48,37.3C96,43,192,53,288,58.7C384,64,480,64,576,58.7C672,53,768,43,864,42.7C960,43,1056,53,1152,58.7C1248,64,1344,64,1392,64L1440,64L1440,80L0,80Z" fill="#f8fafc" />
           </svg>
         </div>
 
-        <div className="relative z-10 flex h-full items-center justify-center px-4 text-center">
-          <div className="max-w-3xl">
-            <h1 className="text-4xl sm:text-5xl font-extrabold text-white mb-5">
-              {hero.title}
-            </h1>
-            <p className="text-lg sm:text-xl text-white/90 leading-relaxed">
-              {hero.subtitle}
-            </p>
-          </div>
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-28 text-center">
+          <span className="section-badge bg-sky-500/20 border border-sky-400/30 text-sky-300 mb-5">
+            Medio ambiente
+          </span>
+          <h1 className="mt-4 text-4xl sm:text-5xl font-extrabold text-white mb-5" style={{ fontFamily: "var(--font-display)" }}>
+            {hero.title}
+          </h1>
+          <p className="text-lg sm:text-xl text-blue-100 leading-relaxed max-w-2xl mx-auto">
+            {hero.subtitle}
+          </p>
         </div>
       </section>
 

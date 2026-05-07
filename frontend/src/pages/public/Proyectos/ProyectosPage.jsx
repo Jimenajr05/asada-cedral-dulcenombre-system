@@ -42,18 +42,24 @@ export default function ProyectosPage() {
   return (
     <main className="bg-slate-50 text-slate-900">
       {/* HERO */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-blue-900 via-blue-800 to-blue-700">
+      <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-sky-950 to-slate-900">
         <WaterDropBg />
+        <div className="pointer-events-none absolute -top-32 left-1/4 h-96 w-96 rounded-full bg-sky-500/15 blur-[100px]" />
+        <div className="pointer-events-none absolute bottom-0 right-1/4 h-64 w-64 rounded-full bg-teal-500/10 blur-[80px]" />
+
         <div className="absolute bottom-0 left-0 right-0 leading-none">
-          <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" className="block w-full h-20">
-            <path d="M0,32L48,37.3C96,43,192,53,288,58.7C384,64,480,64,576,58.7C672,53,768,43,864,42.7C960,43,1056,53,1152,58.7C1248,64,1344,64,1392,64L1440,64L1440,80L1392,80C1344,80,1248,80,1152,80C1056,80,960,80,864,80C768,80,672,80,576,80C480,80,384,80,288,80C192,80,96,80,48,80L0,80Z" fill="#f8fafc" />
+          <svg viewBox="0 0 1440 80" preserveAspectRatio="none" className="block w-full h-20">
+            <path d="M0,32L48,37.3C96,43,192,53,288,58.7C384,64,480,64,576,58.7C672,53,768,43,864,42.7C960,43,1056,53,1152,58.7C1248,64,1344,64,1392,64L1440,64L1440,80L0,80Z" fill="#f8fafc" />
           </svg>
         </div>
-        <div className="relative mx-auto max-w-4xl px-4 pb-24 pt-16 text-center sm:px-6 lg:px-8">
-          <div className="mb-6 flex justify-center gap-2 text-xs text-blue-300">
-            <span>Inicio</span><span>›</span><span className="font-medium text-white">Proyectos</span>
-          </div>
-          <h1 className="mb-5 text-4xl font-extrabold text-white sm:text-5xl">Proyectos</h1>
+
+        <div className="relative mx-auto max-w-4xl px-4 pb-28 pt-16 text-center sm:px-6 lg:px-8">
+          <span className="section-badge bg-sky-500/20 border border-sky-400/30 text-sky-300 mb-5">
+            Desarrollo comunitario
+          </span>
+          <h1 className="mt-4 mb-5 text-4xl font-extrabold text-white sm:text-5xl" style={{ fontFamily: "var(--font-display)" }}>
+            Proyectos
+          </h1>
           <p className="mx-auto max-w-2xl text-lg leading-relaxed text-blue-100">
             Conocé los proyectos que la ASADA Cedral y Dulce Nombre está desarrollando para mejorar el servicio de agua potable en la comunidad.
           </p>

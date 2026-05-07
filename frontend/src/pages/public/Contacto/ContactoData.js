@@ -1,6 +1,6 @@
 export const hero = {
   title: "Contacto",
-  subtitle: "Estamos aquí para ayudarte",
+  subtitle: "Estamos aquí para ayudarte.",
 };
 
 export const contactInfo = {
