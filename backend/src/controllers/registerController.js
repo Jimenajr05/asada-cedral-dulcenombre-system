@@ -11,9 +11,11 @@ const registerController = async (req, res) => {
         });
         }
 
-        if (password.length < 6) {
+        // Validación de contraseña fuerte
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+        if (!passwordRegex.test(password)) {
             return res.status(400).json({
-            message: "La contraseña debe tener al menos 6 caracteres",
+            message: "La contraseña debe tener mínimo 8 caracteres, incluir mayúscula, minúscula, número y carácter especial",
         });
         }
 
@@ -31,7 +33,7 @@ const registerController = async (req, res) => {
         });
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await bcrypt.hash(password, 12);
 
         const newUser = new User({
         nombre,

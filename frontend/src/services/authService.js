@@ -6,6 +6,7 @@ export const registerAdmin = async (formData) => {
     headers: {
       "Content-Type": "application/json",
     },
+    credentials: "include",
     body: JSON.stringify(formData),
   });
 
@@ -24,6 +25,7 @@ export const loginAdmin = async (formData) => {
     headers: {
       "Content-Type": "application/json",
     },
+    credentials: "include",
     body: JSON.stringify(formData),
   });
 
@@ -31,6 +33,35 @@ export const loginAdmin = async (formData) => {
 
   if (!response.ok) {
     throw new Error(data.message || "Error al iniciar sesión");
+  }
+
+  return data;
+};
+
+export const logoutAdmin = async () => {
+  const response = await fetch(`${API_URL}/logout`, {
+    method: "POST",
+    credentials: "include",
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Error al cerrar sesión");
+  }
+
+  return data;
+};
+
+export const getProfile = async () => {
+  const response = await fetch(`${API_URL}/profile`, {
+    credentials: "include",
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Error al verificar sesión");
   }
 
   return data;

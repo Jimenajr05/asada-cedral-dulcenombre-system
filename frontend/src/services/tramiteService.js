@@ -2,8 +2,6 @@ const API_URL = `${
   import.meta.env.VITE_API_URL || "http://localhost:4000"
 }/api/tramites`;
 
-const getToken = () => localStorage.getItem("token");
-
 const parseResponse = async (response) => {
   const text = await response.text();
 
@@ -27,9 +25,7 @@ export const getTramites = async () => {
 
 export const getTramitesAdmin = async () => {
   const response = await fetch(`${API_URL}/admin`, {
-    headers: {
-      Authorization: `Bearer ${getToken()}`,
-    },
+    credentials: "include",
   });
 
   const data = await parseResponse(response);
@@ -44,9 +40,7 @@ export const getTramitesAdmin = async () => {
 export const createTramite = async (formData) => {
   const response = await fetch(API_URL, {
     method: "POST",
-    headers: {
-      Authorization: `Bearer ${getToken()}`,
-    },
+    credentials: "include",
     body: formData,
   });
 
@@ -62,9 +56,7 @@ export const createTramite = async (formData) => {
 export const updateTramite = async (id, formData) => {
   const response = await fetch(`${API_URL}/${id}`, {
     method: "PUT",
-    headers: {
-      Authorization: `Bearer ${getToken()}`,
-    },
+    credentials: "include",
     body: formData,
   });
 
@@ -80,9 +72,7 @@ export const updateTramite = async (id, formData) => {
 export const deleteTramite = async (id) => {
   const response = await fetch(`${API_URL}/${id}`, {
     method: "DELETE",
-    headers: {
-      Authorization: `Bearer ${getToken()}`,
-    },
+    credentials: "include",
   });
 
   const data = await parseResponse(response);

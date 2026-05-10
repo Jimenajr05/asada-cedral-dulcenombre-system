@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { registerAdmin } from "../../services/authService";
 
@@ -24,12 +24,77 @@ function Toast({ toast }) {
   );
 }
 
+/* ── Indicador de fuerza ─────────────────────── */
+function PasswordStrength({ password }) {
+  const checks = useMemo(() => [
+    { label: "Mínimo 8 caracteres", ok: password.length >= 8 },
+    { label: "Una mayúscula", ok: /[A-Z]/.test(password) },
+    { label: "Una minúscula", ok: /[a-z]/.test(password) },
+    { label: "Un número", ok: /\d/.test(password) },
+    { label: "Un carácter especial", ok: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password) },
+  ], [password]);
+
+  const passed = checks.filter((c) => c.ok).length;
+  const total = checks.length;
+  const pct = (passed / total) * 100;
+
+  const color =
+    pct <= 20 ? "bg-red-500" :
+    pct <= 40 ? "bg-orange-500" :
+    pct <= 60 ? "bg-amber-500" :
+    pct <= 80 ? "bg-lime-500" :
+    "bg-emerald-500";
+
+  const label =
+    pct <= 20 ? "Muy débil" :
+    pct <= 40 ? "Débil" :
+    pct <= 60 ? "Regular" :
+    pct <= 80 ? "Fuerte" :
+    "Muy fuerte";
+
+  if (!password) return null;
+
+  return (
+    <div className="mt-3 space-y-2">
+      {/* Barra de progreso */}
+      <div className="flex items-center gap-3">
+        <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
+          <div
+            className={`h-full rounded-full transition-all duration-500 ${color}`}
+            style={{ width: `${pct}%` }}
+          />
+        </div>
+        <span className={`text-xs font-semibold min-w-[70px] text-right ${
+          pct <= 40 ? "text-red-600" : pct <= 60 ? "text-amber-600" : "text-emerald-600"
+        }`}>
+          {label}
+        </span>
+      </div>
+
+      {/* Checklist */}
+      <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+        {checks.map((c) => (
+          <div key={c.label} className="flex items-center gap-1.5">
+            <span className={`text-xs ${c.ok ? "text-emerald-500" : "text-slate-300"}`}>
+              {c.ok ? "✓" : "○"}
+            </span>
+            <span className={`text-xs ${c.ok ? "text-slate-600" : "text-slate-400"}`}>
+              {c.label}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /* ── Componente principal ────────────────────── */
 function AdminRegister() {
   const navigate = useNavigate();
   const [form, setForm] = useState({ nombre: "", email: "", password: "", registerKey: "" });
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const showToast = (type, message) => {
     setToast({ type, message });
@@ -38,8 +103,19 @@ function AdminRegister() {
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
+  const isPasswordValid = useMemo(() => {
+    const p = form.password;
+    return p.length >= 8 && /[A-Z]/.test(p) && /[a-z]/.test(p) && /\d/.test(p) && /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(p);
+  }, [form.password]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!isPasswordValid) {
+      showToast("error", "La contraseña no cumple con los requisitos de seguridad");
+      return;
+    }
+
     try {
       setLoading(true);
       await registerAdmin(form);
@@ -78,11 +154,11 @@ function AdminRegister() {
 
           <div className="relative z-10 space-y-3">
             {[
-              { title: "Acceso institucional", desc: "Protegido con clave de autorización." },
-              { title: "Seguridad garantizada", desc: "Solo personal autorizado puede registrarse." },
+              { icon: "🔐", title: "Acceso institucional", desc: "Protegido con clave de autorización." },
+              { icon: "🛡️", title: "Contraseña segura", desc: "Requiere mayúscula, número y carácter especial." },
             ].map((item) => (
               <div key={item.title} className="rounded-2xl bg-white/10 border border-white/10 p-4 backdrop-blur-sm">
-                <h3 className="font-semibold text-sm">{item.title}</h3>
+                <h3 className="font-semibold text-sm">{item.icon} {item.title}</h3>
                 <p className="text-xs text-teal-200 mt-0.5">{item.desc}</p>
               </div>
             ))}
@@ -102,25 +178,69 @@ function AdminRegister() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-5">
-              {[
-                { name: "nombre", label: "Nombre completo", type: "text", placeholder: "Nombre completo" },
-                { name: "email", label: "Correo electrónico", type: "email", placeholder: "correo@asada.com" },
-                { name: "password", label: "Contraseña", type: "password", placeholder: "Mínimo 6 caracteres" },
-                { name: "registerKey", label: "Clave de registro", type: "text", placeholder: "Clave de autorización" },
-              ].map(({ name, label, type, placeholder }) => (
-                <div key={name}>
-                  <label className="block mb-2 text-sm font-semibold text-slate-700">{label}</label>
+              <div>
+                <label className="block mb-2 text-sm font-semibold text-slate-700">Nombre completo</label>
+                <input
+                  type="text" name="nombre" value={form.nombre} onChange={handleChange}
+                  placeholder="Nombre completo" required
+                  className="input-field"
+                />
+              </div>
+
+              <div>
+                <label className="block mb-2 text-sm font-semibold text-slate-700">Correo electrónico</label>
+                <input
+                  type="email" name="email" value={form.email} onChange={handleChange}
+                  placeholder="correo@asada.com" required
+                  className="input-field"
+                />
+              </div>
+
+              <div>
+                <label className="block mb-2 text-sm font-semibold text-slate-700">Contraseña</label>
+                <div className="relative">
                   <input
-                    type={type} name={name} value={form[name]} onChange={handleChange}
-                    placeholder={placeholder} required
-                    className="input-field"
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    value={form.password}
+                    onChange={handleChange}
+                    placeholder="Mínimo 8 caracteres"
+                    required
+                    className="input-field pr-12"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors p-1"
+                    tabIndex={-1}
+                  >
+                    {showPassword ? (
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L6.11 6.11m3.768 3.768L6.11 6.11m0 0L3 3m3.11 3.11l4.242 4.243m0 0l4.243 4.243m0 0L21 21m-3.11-3.11a9.953 9.953 0 01-5.89 1.11c-4.478 0-8.268-2.943-9.542-7a10.025 10.025 0 014.132-5.411" />
+                      </svg>
+                    ) : (
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                    )}
+                  </button>
                 </div>
-              ))}
+                <PasswordStrength password={form.password} />
+              </div>
+
+              <div>
+                <label className="block mb-2 text-sm font-semibold text-slate-700">Clave de registro</label>
+                <input
+                  type="password" name="registerKey" value={form.registerKey} onChange={handleChange}
+                  placeholder="Clave de autorización" required
+                  className="input-field"
+                />
+              </div>
 
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || !isPasswordValid}
                 className="btn-glow mt-2 w-full rounded-2xl bg-gradient-to-r from-teal-500 to-sky-600 py-4 text-sm font-bold text-white shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? "Registrando..." : "Crear cuenta"}

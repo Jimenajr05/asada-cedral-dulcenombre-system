@@ -1,11 +1,16 @@
 import AdminNavbar from "./AdminNavbar";
 import AdminSidebar from "./AdminSidebar";
+import { logoutAdmin } from "../../services/authService";
 
 function AdminLayout({ children }) {
   const user = JSON.parse(localStorage.getItem("user"));
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
+  const handleLogout = async () => {
+    try {
+      await logoutAdmin();
+    } catch {
+      // Continuar con el logout local incluso si falla el backend
+    }
     localStorage.removeItem("user");
     window.location.href = "/admin/login";
   };

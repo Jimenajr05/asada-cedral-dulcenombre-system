@@ -1,6 +1,8 @@
-const express = require("express");
-const cors    = require("cors");
-const path    = require("path");
+const express      = require("express");
+const cors         = require("cors");
+const path         = require("path");
+const helmet       = require("helmet");
+const cookieParser = require("cookie-parser");
 
 // Importación de rutas
 const authRoutes           = require("./routes/authRoutes");
@@ -16,8 +18,13 @@ const tareaRoutes = require("./routes/tareaRoutes");
 
 const app = express();
 
-// Middlewares globales
-app.use(cors());
+// Middlewares de seguridad
+app.use(helmet());
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true,
+}));
+app.use(cookieParser());
 app.use(express.json());
 
 // Servir archivos estáticos
