@@ -21,11 +21,18 @@ const createLink = async (req, res) => {
 
 const updateLink = async (req, res) => {
   try {
+    const { url } = req.body;
+    if (!url || !url.trim()) {
+      return res.status(400).json({ message: "La URL es obligatoria" });
+    }
     const actualizado = await Link.findByIdAndUpdate(
       req.params.id,
-      req.body,
-      { returnDocument: 'after' }
+      { url: url.trim() },
+      { returnDocument: "after" }
     );
+    if (!actualizado) {
+      return res.status(404).json({ message: "Link no encontrado" });
+    }
     res.json(actualizado);
   } catch (error) {
     res.status(500).json({ message: error.message });

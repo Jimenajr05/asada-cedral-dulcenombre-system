@@ -1,5 +1,7 @@
 const API_URL = `${import.meta.env.VITE_API_URL || "http://localhost:4000"}/api/transparencia`;
 
+const getToken = () => localStorage.getItem("token");
+
 const parseResponse = async (response) => {
   const text = await response.text();
   try {
@@ -23,6 +25,7 @@ export const createReunion = async (payload) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      "Authorization": `Bearer ${getToken()}`,
     },
     credentials: "include",
     body: JSON.stringify(payload),
@@ -37,6 +40,7 @@ export const updateReunion = async (id, payload) => {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
+      "Authorization": `Bearer ${getToken()}`,
     },
     credentials: "include",
     body: JSON.stringify(payload),
@@ -49,6 +53,9 @@ export const updateReunion = async (id, payload) => {
 export const deleteReunion = async (id) => {
   const response = await fetch(`${API_URL}/reuniones/${id}`, {
     method: "DELETE",
+    headers: {
+      "Authorization": `Bearer ${getToken()}`,
+    },
     credentials: "include",
   });
   const data = await parseResponse(response);
@@ -60,8 +67,12 @@ export const deleteReunion = async (id) => {
 export const createCertificado = async (formData) => {
   const response = await fetch(`${API_URL}/certificados`, {
     method: "POST",
+    headers: {
+      "Authorization": `Bearer ${getToken()}`,
+      // NO poner Content-Type aquí — el browser lo pone automáticamente con el boundary de FormData
+    },
     credentials: "include",
-    body: formData, // FormData — no poner Content-Type manual
+    body: formData,
   });
   const data = await parseResponse(response);
   if (!response.ok) throw new Error(data.message || "Error al agregar certificado");
@@ -71,6 +82,9 @@ export const createCertificado = async (formData) => {
 export const deleteCertificado = async (id) => {
   const response = await fetch(`${API_URL}/certificados/${id}`, {
     method: "DELETE",
+    headers: {
+      "Authorization": `Bearer ${getToken()}`,
+    },
     credentials: "include",
   });
   const data = await parseResponse(response);

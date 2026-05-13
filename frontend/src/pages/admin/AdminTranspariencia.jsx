@@ -9,14 +9,20 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 const getToken = () => localStorage.getItem("token");
 
 const fetchLinks = async () => {
-  const res = await fetch(`${API_BASE_URL}/api/links`, { headers: { Authorization: `Bearer ${getToken()}` } });
+  const res = await fetch(`${API_BASE_URL}/api/links`, {
+    credentials: "include",
+  });
   if (!res.ok) throw new Error("Error al obtener links");
   return res.json();
 };
 const saveLink = async (id, url) => {
+  const token = getToken();
+  const headers = { "Content-Type": "application/json" };
+  if (token) headers["Authorization"] = `Bearer ${token}`;
   const res = await fetch(`${API_BASE_URL}/api/links/${id}`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json", Authorization: `Bearer ${getToken()}` },
+    headers,
+    credentials: "include",
     body: JSON.stringify({ url }),
   });
   if (!res.ok) throw new Error("Error al guardar link");

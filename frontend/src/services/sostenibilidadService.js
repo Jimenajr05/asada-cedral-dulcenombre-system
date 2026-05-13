@@ -2,6 +2,8 @@ const API_URL = `${
   import.meta.env.VITE_API_URL || "http://localhost:4000"
 }/api/sostenibilidad`;
 
+const getToken = () => localStorage.getItem("token");
+
 const parseResponse = async (response) => {
   const text = await response.text();
 
@@ -25,6 +27,7 @@ export const getSostenibilidad = async () => {
 
 export const getSostenibilidadAdmin = async () => {
   const response = await fetch(`${API_URL}/admin`, {
+    headers: { "Authorization": `Bearer ${getToken()}` },
     credentials: "include",
   });
 
@@ -42,6 +45,7 @@ export const updateTotalHidrantes = async (payload) => {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
+      "Authorization": `Bearer ${getToken()}`,
     },
     credentials: "include",
     body: JSON.stringify(payload),
@@ -59,6 +63,7 @@ export const updateTotalHidrantes = async (payload) => {
 export const addImagenGaleria = async (galeria, formData) => {
   const response = await fetch(`${API_URL}/galerias/${galeria}/imagenes`, {
     method: "POST",
+    headers: { "Authorization": `Bearer ${getToken()}` },
     credentials: "include",
     body: formData,
   });
@@ -75,6 +80,7 @@ export const addImagenGaleria = async (galeria, formData) => {
 export const updateImagenGaleria = async (galeria, index, formData) => {
   const response = await fetch(`${API_URL}/galerias/${galeria}/imagenes/${index}`, {
     method: "PUT",
+    headers: { "Authorization": `Bearer ${getToken()}` },
     credentials: "include",
     body: formData,
   });
@@ -91,6 +97,7 @@ export const updateImagenGaleria = async (galeria, index, formData) => {
 export const deleteImagenGaleria = async (galeria, index) => {
   const response = await fetch(`${API_URL}/galerias/${galeria}/imagenes/${index}`, {
     method: "DELETE",
+    headers: { "Authorization": `Bearer ${getToken()}` },
     credentials: "include",
   });
 

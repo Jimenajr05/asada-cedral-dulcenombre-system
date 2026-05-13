@@ -2,6 +2,9 @@ const API_URL = `${
   import.meta.env.VITE_API_URL || "http://localhost:4000"
 }/api/sobre-nosotros`;
 
+const getToken = () => localStorage.getItem("token");
+
+
 const parseResponse = async (response) => {
   const text = await response.text();
 
@@ -27,6 +30,7 @@ export const updateSobreNosotros = async (payload) => {
   const response = await fetch(API_URL, {
     method: "PUT",
     headers: {
+      "Authorization": `Bearer ${getToken()}`,
       "Content-Type": "application/json",
     },
     credentials: "include",
@@ -45,6 +49,7 @@ export const updateSobreNosotros = async (payload) => {
 export const addMiembro = async (formData) => {
   const response = await fetch(`${API_URL}/miembros`, {
     method: "POST",
+    headers: { "Authorization": `Bearer ${getToken()}` },
     credentials: "include",
     body: formData,
   });
@@ -61,6 +66,7 @@ export const addMiembro = async (formData) => {
 export const updateMiembro = async (index, formData) => {
   const response = await fetch(`${API_URL}/miembros/${index}`, {
     method: "PUT",
+    headers: { "Authorization": `Bearer ${getToken()}` },
     credentials: "include",
     body: formData,
   });
@@ -77,6 +83,7 @@ export const updateMiembro = async (index, formData) => {
 export const deleteMiembro = async (index) => {
   const response = await fetch(`${API_URL}/miembros/${index}`, {
     method: "DELETE",
+    headers: { "Authorization": `Bearer ${getToken()}` },
     credentials: "include",
   });
 
@@ -93,6 +100,7 @@ export const addCobertura = async (payload) => {
   const response = await fetch(`${API_URL}/cobertura`, {
     method: "POST",
     headers: {
+      "Authorization": `Bearer ${getToken()}`,
       "Content-Type": "application/json",
     },
     credentials: "include",
@@ -112,6 +120,7 @@ export const updateCobertura = async (index, payload) => {
   const response = await fetch(`${API_URL}/cobertura/${index}`, {
     method: "PUT",
     headers: {
+      "Authorization": `Bearer ${getToken()}`,
       "Content-Type": "application/json",
     },
     credentials: "include",
@@ -130,6 +139,7 @@ export const updateCobertura = async (index, payload) => {
 export const deleteCobertura = async (index) => {
   const response = await fetch(`${API_URL}/cobertura/${index}`, {
     method: "DELETE",
+    headers: { "Authorization": `Bearer ${getToken()}` },
     credentials: "include",
   });
 

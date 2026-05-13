@@ -1,7 +1,11 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
+const getToken = () => localStorage.getItem("token");
+
+
 export const getTareas = async () => {
   const res = await fetch(`${API_BASE_URL}/api/tareas`, {
+    headers: { "Authorization": `Bearer ${getToken()}` },
     credentials: "include",
   });
   if (!res.ok) throw new Error("Error al obtener tareas");
@@ -11,7 +15,8 @@ export const getTareas = async () => {
 export const crearTarea = async (data) => {
   const res = await fetch(`${API_BASE_URL}/api/tareas`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Authorization": `Bearer ${getToken()}`, "Content-Type": "application/json" },
     credentials: "include",
     body: JSON.stringify(data),
   });
@@ -22,6 +27,7 @@ export const crearTarea = async (data) => {
 export const toggleTarea = async (id) => {
   const res = await fetch(`${API_BASE_URL}/api/tareas/${id}/toggle`, {
     method: "PATCH",
+    headers: { "Authorization": `Bearer ${getToken()}` },
     credentials: "include",
   });
   if (!res.ok) throw new Error("Error al actualizar tarea");
@@ -31,6 +37,7 @@ export const toggleTarea = async (id) => {
 export const eliminarTarea = async (id) => {
   const res = await fetch(`${API_BASE_URL}/api/tareas/${id}`, {
     method: "DELETE",
+    headers: { "Authorization": `Bearer ${getToken()}` },
     credentials: "include",
   });
   if (!res.ok) throw new Error("Error al eliminar tarea");

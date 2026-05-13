@@ -1,5 +1,8 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
+const getToken = () => localStorage.getItem("token");
+
+
 // ── Proyectos ──────────────────────────────────────────────────
 export const getProyectosPublico = async () => {
   const res = await fetch(`${API_BASE_URL}/api/proyectos`);
@@ -9,6 +12,7 @@ export const getProyectosPublico = async () => {
 
 export const getProyectosAdmin = async () => {
   const res = await fetch(`${API_BASE_URL}/api/proyectos/admin`, {
+    headers: { "Authorization": `Bearer ${getToken()}` },
     credentials: "include",
   });
   if (!res.ok) throw new Error("Error al obtener proyectos");
@@ -18,6 +22,7 @@ export const getProyectosAdmin = async () => {
 export const createProyecto = async (formData) => {
   const res = await fetch(`${API_BASE_URL}/api/proyectos`, {
     method: "POST",
+    headers: { "Authorization": `Bearer ${getToken()}` },
     credentials: "include",
     body: formData,
   });
@@ -28,6 +33,7 @@ export const createProyecto = async (formData) => {
 export const updateProyecto = async (id, formData) => {
   const res = await fetch(`${API_BASE_URL}/api/proyectos/${id}`, {
     method: "PUT",
+    headers: { "Authorization": `Bearer ${getToken()}` },
     credentials: "include",
     body: formData,
   });
@@ -38,6 +44,7 @@ export const updateProyecto = async (id, formData) => {
 export const deleteProyecto = async (id) => {
   const res = await fetch(`${API_BASE_URL}/api/proyectos/${id}`, {
     method: "DELETE",
+    headers: { "Authorization": `Bearer ${getToken()}` },
     credentials: "include",
   });
   if (!res.ok) throw new Error("Error al eliminar proyecto");
@@ -48,6 +55,7 @@ export const deleteProyecto = async (id) => {
 export const addFotoProyecto = async (id, formData) => {
   const res = await fetch(`${API_BASE_URL}/api/proyectos/${id}/fotos`, {
     method: "POST",
+    headers: { "Authorization": `Bearer ${getToken()}` },
     credentials: "include",
     body: formData,
   });
@@ -58,6 +66,7 @@ export const addFotoProyecto = async (id, formData) => {
 export const deleteFotoProyecto = async (id, fotoId) => {
   const res = await fetch(`${API_BASE_URL}/api/proyectos/${id}/fotos/${fotoId}`, {
     method: "DELETE",
+    headers: { "Authorization": `Bearer ${getToken()}` },
     credentials: "include",
   });
   if (!res.ok) throw new Error("Error al eliminar foto");
@@ -68,6 +77,7 @@ export const deleteFotoProyecto = async (id, fotoId) => {
 export const addDocumentoProyecto = async (id, formData) => {
   const res = await fetch(`${API_BASE_URL}/api/proyectos/${id}/documentos`, {
     method: "POST",
+    headers: { "Authorization": `Bearer ${getToken()}` },
     credentials: "include",
     body: formData,
   });
@@ -78,6 +88,7 @@ export const addDocumentoProyecto = async (id, formData) => {
 export const deleteDocumentoProyecto = async (id, docId) => {
   const res = await fetch(`${API_BASE_URL}/api/proyectos/${id}/documentos/${docId}`, {
     method: "DELETE",
+    headers: { "Authorization": `Bearer ${getToken()}` },
     credentials: "include",
   });
   if (!res.ok) throw new Error("Error al eliminar documento");
@@ -88,7 +99,8 @@ export const deleteDocumentoProyecto = async (id, docId) => {
 export const addActualizacion = async (id, data) => {
   const res = await fetch(`${API_BASE_URL}/api/proyectos/${id}/actualizaciones`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Authorization": `Bearer ${getToken()}`, "Content-Type": "application/json" },
     credentials: "include",
     body: JSON.stringify(data),
   });
@@ -99,7 +111,8 @@ export const addActualizacion = async (id, data) => {
 export const updateActualizacion = async (id, actId, data) => {
   const res = await fetch(`${API_BASE_URL}/api/proyectos/${id}/actualizaciones/${actId}`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Authorization": `Bearer ${getToken()}`, "Content-Type": "application/json" },
     credentials: "include",
     body: JSON.stringify(data),
   });
@@ -110,6 +123,7 @@ export const updateActualizacion = async (id, actId, data) => {
 export const deleteActualizacion = async (id, actId) => {
   const res = await fetch(`${API_BASE_URL}/api/proyectos/${id}/actualizaciones/${actId}`, {
     method: "DELETE",
+    headers: { "Authorization": `Bearer ${getToken()}` },
     credentials: "include",
   });
   if (!res.ok) throw new Error("Error al eliminar actualización");

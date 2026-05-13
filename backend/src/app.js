@@ -19,7 +19,9 @@ const tareaRoutes = require("./routes/tareaRoutes");
 const app = express();
 
 // Middlewares de seguridad
-app.use(helmet());
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" }, // permite cargar imágenes desde el frontend
+}));
 app.use(cors({
   origin: "http://localhost:5173",
   credentials: true,

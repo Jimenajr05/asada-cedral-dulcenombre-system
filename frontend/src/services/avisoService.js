@@ -1,4 +1,7 @@
-const API_URL = "http://localhost:4000/api/avisos";
+const API_URL = `${import.meta.env.VITE_API_URL || "http://localhost:4000"}/api/avisos`;
+
+const getToken = () => localStorage.getItem("token");
+
 
 const parseResponse = async (response) => {
   const text = await response.text();
@@ -25,6 +28,7 @@ export const createAviso = async (aviso) => {
   const response = await fetch(API_URL, {
     method: "POST",
     headers: {
+      "Authorization": `Bearer ${getToken()}`,
       "Content-Type": "application/json",
     },
     credentials: "include",
@@ -44,6 +48,7 @@ export const updateAviso = async (id, aviso) => {
   const response = await fetch(`${API_URL}/${id}`, {
     method: "PUT",
     headers: {
+      "Authorization": `Bearer ${getToken()}`,
       "Content-Type": "application/json",
     },
     credentials: "include",
@@ -62,6 +67,7 @@ export const updateAviso = async (id, aviso) => {
 export const deleteAviso = async (id) => {
   const response = await fetch(`${API_URL}/${id}`, {
     method: "DELETE",
+    headers: { "Authorization": `Bearer ${getToken()}` },
     credentials: "include",
   });
 
