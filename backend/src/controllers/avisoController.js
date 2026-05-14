@@ -3,7 +3,7 @@ const Aviso = require("../models/aviso");
 // Crear aviso
 const crearAviso = async (req, res) => {
   try {
-    const { titulo, descripcion, tipo, estado, fijado } = req.body;
+    const { titulo, descripcion, tipo, estado, fijado, imagen } = req.body;
 
     if (!req.user || !req.user._id) {
       return res.status(401).json({
@@ -24,6 +24,7 @@ const crearAviso = async (req, res) => {
       estado: estado || "borrador",
       fijado: fijado ?? false,
       creadoPor: req.user._id,
+      imagen: imagen || null,
     });
 
     await nuevoAviso.save();
@@ -80,7 +81,7 @@ const obtenerAvisoPorId = async (req, res) => {
 // Editar aviso
 const actualizarAviso = async (req, res) => {
   try {
-    const { titulo, descripcion, tipo, estado, fijado } = req.body;
+    const { titulo, descripcion, tipo, estado, fijado, imagen } = req.body;
 
     const aviso = await Aviso.findById(req.params.id);
 
@@ -95,6 +96,9 @@ const actualizarAviso = async (req, res) => {
     aviso.tipo = tipo ?? aviso.tipo;
     aviso.estado = estado ?? aviso.estado;
     aviso.fijado = fijado ?? aviso.fijado;
+    if (imagen !== undefined) {
+      aviso.imagen = imagen;
+    }
 
     await aviso.save();
 
