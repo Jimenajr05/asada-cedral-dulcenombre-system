@@ -5,6 +5,8 @@ import {
   FiAlertCircle,
   FiInfo,
   FiCheckCircle,
+  FiZoomIn,
+  FiX,
 } from "react-icons/fi";
 
 const WaterDropBg = () => (
@@ -66,10 +68,10 @@ function FiltroButton({ filtro, activo, onClick }) {
       type="button"
       onClick={onClick}
       className={`rounded-xl px-5 py-3 text-base font-semibold transition ${activo
-          ? filtro.key === "todos"
-            ? "bg-blue-600 text-white hover:bg-blue-700"
-            : config.activeButton
-          : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+        ? filtro.key === "todos"
+          ? "bg-blue-600 text-white hover:bg-blue-700"
+          : config.activeButton
+        : "bg-slate-100 text-slate-700 hover:bg-slate-200"
         }`}
     >
       {filtro.label}
@@ -79,41 +81,103 @@ function FiltroButton({ filtro, activo, onClick }) {
 
 function AvisoCard({ aviso, destacado = false }) {
   const config = tipoConfig(aviso?.tipo);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
-    <article
-      className={`rounded-2xl bg-white p-6 shadow-md ${destacado ? "border-2 border-blue-500" : "border border-slate-200"
-        }`}
-    >
-      {destacado && (
-        <div className="mb-4 flex items-center gap-2 text-sm font-medium text-blue-600">
-          <FiBell className="text-base" />
-          <span>Aviso Destacado</span>
+    <>
+      <article
+        className={`rounded-3xl bg-white shadow-sm border transition-shadow hover:shadow-md overflow-hidden ${destacado ? "border-blue-400 ring-4 ring-blue-50" : "border-slate-200"
+          }`}
+      >
+        <div className="flex flex-col md:flex-row h-full">
+
+          {/* Imagen (Lado Izquierdo, pegada al borde) */}
+          {aviso?.imagen && (
+            <div className="w-full md:w-1/3 lg:w-[28%] xl:w-1/4 shrink-0">
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(true)}
+                className="w-full h-full relative group focus:outline-none transition-all block"
+                aria-label="Ampliar imagen"
+              >
+                <img
+                  src={aviso.imagen}
+                  alt="Adjunto del aviso"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 min-h-[250px] md:min-h-full absolute inset-0"
+                  style={{ position: 'relative' }}
+                />
+                <div className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/10 transition-colors duration-300 flex items-center justify-center">
+                  <div className="bg-white/90 text-slate-900 p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-md transform scale-90 group-hover:scale-100">
+                    <FiZoomIn className="text-2xl" />
+                  </div>
+                </div>
+              </button>
+            </div>
+          )}
+
+          {/* Texto y Etiquetas (Lado Derecho, con padding) */}
+          <div className="flex-1 flex flex-col justify-center p-6 sm:p-8 lg:p-10">
+            <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
+              {destacado && (
+                <div className="flex items-center gap-2 text-sm font-bold tracking-wide text-blue-600 uppercase">
+                  <FiBell className="text-base" />
+                  <span>Aviso Destacado</span>
+                </div>
+              )}
+
+              <div className={`flex flex-wrap items-center gap-3 text-sm ${!destacado ? 'w-full justify-between' : ''}`}>
+                <span
+                  className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-semibold shadow-sm ${config.pill}`}
+                >
+                  {config.icon}
+                  {config.label}
+                </span>
+
+                <span className="inline-flex items-center gap-1.5 font-medium text-slate-500 bg-slate-50 border border-slate-100 px-3 py-1 rounded-full">
+                  <FiCalendar className="text-base" />
+                  {aviso?.fechaFormateada || "Sin fecha"}
+                </span>
+              </div>
+            </div>
+
+            <h3 className="mb-4 text-2xl font-bold leading-tight text-slate-900 md:text-3xl break-all">
+              {aviso?.titulo || "Sin título"}
+            </h3>
+
+            <div className="max-h-25 overflow-y-auto pr-2 custom-scrollbar">
+              <p className="text-lg leading-relaxed text-slate-700 whitespace-pre-line break-all">
+                {aviso?.descripcion || "Sin descripción"}
+              </p>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      {/* Modal de Imagen */}
+      {isModalOpen && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/80 p-4 backdrop-blur-sm transition-opacity"
+          onClick={() => setIsModalOpen(false)}
+        >
+          <div className="relative max-h-[90vh] max-w-5xl w-full flex flex-col items-center">
+            <button
+              type="button"
+              className="absolute -top-12 right-0 text-white hover:text-blue-300 p-2 flex items-center gap-2 transition-colors focus:outline-none"
+              onClick={() => setIsModalOpen(false)}
+            >
+              <span className="font-semibold tracking-wide text-sm">CERRAR</span>
+              <FiX className="text-2xl" />
+            </button>
+            <img
+              src={aviso.imagen}
+              alt="Vista ampliada"
+              className="max-h-[85vh] w-auto max-w-full object-contain rounded-xl shadow-2xl ring-1 ring-white/20"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
         </div>
       )}
-
-      <div className="mb-5 flex flex-wrap items-center gap-3 text-sm">
-        <span
-          className={`inline-flex items-center gap-2 rounded-full px-4 py-1.5 font-medium ${config.pill}`}
-        >
-          {config.icon}
-          {config.label}
-        </span>
-
-        <span className="inline-flex items-center gap-2 text-slate-500">
-          <FiCalendar className="text-base" />
-          {aviso?.fechaFormateada || "Sin fecha"}
-        </span>
-      </div>
-
-      <h3 className="mb-4 text-2xl font-bold leading-snug text-slate-900">
-        {aviso?.titulo || "Sin título"}
-      </h3>
-
-      <p className="text-lg leading-8 text-slate-700">
-        {aviso?.descripcion || "Sin descripción"}
-      </p>
-    </article>
+    </>
   );
 }
 

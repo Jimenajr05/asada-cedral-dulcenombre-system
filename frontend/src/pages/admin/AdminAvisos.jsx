@@ -66,10 +66,16 @@ function AdminAvisos() {
   const [modoEdicion, setModoEdicion] = useState(false);
   const [avisoEditandoId, setAvisoEditandoId] = useState(null);
   const [toasts, setToasts] = useState([]);
+  const [imagenModal, setImagenModal] = useState(null);
 
   const [form, setForm] = useState({
-    titulo: "", descripcion: "", tipo: "info",
-    estado: "publicado", fijado: false, fecha: new Date(),
+    titulo: "",
+    descripcion: "",
+    tipo: "info",
+    estado: "publicado",
+    fijado: false,
+    fecha: new Date(),
+    imagen: null, // base64 image data (optional)
   });
 
   const addToast = (type, message, extra = {}) => {
@@ -110,17 +116,35 @@ function AdminAvisos() {
   };
 
   const abrirNuevoFormulario = () => { resetForm(); setShowForm(true); };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) {
+      setForm((prev) => ({ ...prev, imagen: null }));
+      return;
+    }
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setForm((prev) => ({ ...prev, imagen: reader.result }));
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const payload = {
-        titulo: form.titulo, descripcion: form.descripcion,
-        tipo: form.tipo, estado: form.estado, fijado: form.fijado,
+        titulo: form.titulo,
+        descripcion: form.descripcion,
+        tipo: form.tipo,
+        estado: form.estado,
+        fijado: form.fijado,
+        imagen: form.imagen, // optional base64 image
       };
       if (modoEdicion && avisoEditandoId) {
         await updateAviso(avisoEditandoId, payload);
@@ -250,6 +274,11 @@ function AdminAvisos() {
                 rows="5" required
                 className="w-full resize-none rounded-2xl border border-slate-300 bg-white px-4 py-3 text-base text-black placeholder:text-slate-400 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200" />
             </div>
+            <div className="mt-5">
+              <label className="mb-2 block text-sm font-semibold text-black">Imagen (opcional):</label>
+              <input type="file" accept="image/*" onChange={handleImageChange}
+                className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-base text-black file:mr-4 file:rounded-xl file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-blue-700 hover:file:bg-blue-100 transition outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200" />
+            </div>
             <div className="mt-5 grid grid-cols-1 gap-5 xl:grid-cols-[1.1fr_1fr_1fr]">
               <div>
                 <label className="mb-2 block text-sm font-semibold text-black">Fecha:</label>
@@ -317,7 +346,20 @@ function AdminAvisos() {
               className="flex flex-col gap-3 border-b border-slate-200 px-6 py-5 md:grid md:grid-cols-[1fr_auto_auto_auto_auto] md:items-center md:gap-4">
               <div className="flex items-start gap-3 min-w-0">
                 <Pin className={`mt-1 h-4 w-4 shrink-0 ${aviso.fijado ? "text-blue-600" : "text-slate-300"}`} />
-                <div className="min-w-0">
+                {aviso.imagen && (
+                  <button 
+                    type="button"
+                    onClick={() => setImagenModal(aviso.imagen)}
+                    className="h-16 w-24 shrink-0 overflow-hidden rounded-lg border border-slate-200 shadow-sm relative group focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+                    title="Ver imagen completa"
+                  >
+                    <img src={aviso.imagen} alt="Miniatura" className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110" />
+                    <div className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/20 transition-colors flex items-center justify-center">
+                      <Eye className="h-5 w-5 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-md" />
+                    </div>
+                  </button>
+                )}
+                <div className="min-w-0 flex-1">
                   <h3 className="text-base font-semibold leading-tight text-slate-900 truncate">{aviso.titulo}</h3>
                   <p className="mt-0.5 text-sm text-slate-500 line-clamp-2">{aviso.descripcion}</p>
                 </div>
@@ -357,6 +399,31 @@ function AdminAvisos() {
           ))
         )}
       </div>
+
+      {/* MODAL DE IMAGEN */}
+      {imagenModal && (
+        <div 
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/80 p-4 backdrop-blur-sm transition-opacity"
+          onClick={() => setImagenModal(null)}
+        >
+          <div className="relative max-h-[90vh] max-w-5xl w-full flex flex-col items-center">
+            <button 
+              type="button"
+              className="absolute -top-12 right-0 text-white hover:text-blue-300 p-2 flex items-center gap-2 transition-colors focus:outline-none"
+              onClick={() => setImagenModal(null)}
+            >
+              <span className="font-semibold tracking-wide text-sm">CERRAR</span>
+              <X className="h-6 w-6" />
+            </button>
+            <img
+              src={imagenModal}
+              alt="Vista ampliada"
+              className="max-h-[85vh] w-auto max-w-full object-contain rounded-xl shadow-2xl ring-1 ring-white/20"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
