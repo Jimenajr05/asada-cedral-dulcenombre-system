@@ -31,6 +31,10 @@ const avisoSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    imagen: {
+      type: String,
+      required: false,
+    },
   },
   {
     timestamps: true,
