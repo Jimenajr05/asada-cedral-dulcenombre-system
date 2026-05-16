@@ -1,5 +1,5 @@
 import { LogOut } from "lucide-react";
-import logo from "../../assets/logo.jpeg";
+import logo from "../../assets/logo.png";
 
 function AdminNavbar({ user, onLogout }) {
   return (
@@ -8,7 +8,7 @@ function AdminNavbar({ user, onLogout }) {
         <img
           src={logo}
           alt="ASADA"
-          className="h-11 w-24 object-cover object-center"
+          className="h-10 w-auto object-contain"
         />
 
         <div className="hidden sm:block">
