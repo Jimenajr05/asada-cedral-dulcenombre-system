@@ -7,6 +7,7 @@ import {
   FiCheckCircle,
   FiZoomIn,
   FiX,
+  FiSearch,
 } from "react-icons/fi";
 
 const WaterDropBg = () => (
@@ -67,7 +68,7 @@ function FiltroButton({ filtro, activo, onClick }) {
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-xl px-5 py-3 text-base font-semibold transition ${activo
+      className={`rounded-xl px-3.5 py-2 sm:px-5 sm:py-3 text-sm sm:text-base font-semibold transition ${activo
         ? filtro.key === "todos"
           ? "bg-blue-600 text-white hover:bg-blue-700"
           : config.activeButton
@@ -140,12 +141,12 @@ function AvisoCard({ aviso, destacado = false }) {
               </div>
             </div>
 
-            <h3 className="mb-4 text-2xl font-bold leading-tight text-slate-900 md:text-3xl break-all">
+            <h3 className="mb-4 text-2xl font-bold leading-tight text-slate-900 md:text-3xl break-words">
               {aviso?.titulo || "Sin título"}
             </h3>
 
             <div className="max-h-25 overflow-y-auto pr-2 custom-scrollbar">
-              <p className="text-lg leading-relaxed text-slate-700 whitespace-pre-line break-all">
+              <p className="text-base sm:text-lg leading-relaxed text-slate-700 whitespace-pre-line break-words">
                 {aviso?.descripcion || "Sin descripción"}
               </p>
             </div>
@@ -186,6 +187,8 @@ export default function AvisosPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [filtroActivo, setFiltroActivo] = useState("todos");
+  const [paginaActual, setPaginaActual] = useState(1);
+  const avisosPorPagina = 5;
 
   useEffect(() => {
     const obtenerAvisos = async () => {
@@ -227,20 +230,39 @@ export default function AvisosPage() {
     obtenerAvisos();
   }, []);
 
-  const avisosFiltrados = useMemo(() => {
-    if (filtroActivo === "todos") {
-      return avisosData;
-    }
+  const [avisoSearch, setAvisoSearch] = useState("");
 
-    return avisosData.filter((aviso) => aviso?.tipo === filtroActivo);
-  }, [avisosData, filtroActivo]);
+  useEffect(() => {
+    setPaginaActual(1);
+  }, [filtroActivo, avisoSearch]);
+
+  const avisosFiltrados = useMemo(() => {
+    const base = filtroActivo === "todos"
+      ? avisosData
+      : avisosData.filter((aviso) => aviso?.tipo === filtroActivo);
+
+    const term = avisoSearch.toLowerCase().trim();
+    if (!term) return base;
+
+    return base.filter((aviso) =>
+      (aviso?.titulo || "").toLowerCase().includes(term) ||
+      (aviso?.descripcion || "").toLowerCase().includes(term)
+    );
+  }, [avisosData, filtroActivo, avisoSearch]);
 
   const avisoDestacado = avisosFiltrados.find((aviso) => aviso?.fijado);
 
-  const avisosNormales = useMemo(() => {
+  const avisosSinDestacado = useMemo(() => {
     if (!avisoDestacado) return avisosFiltrados;
     return avisosFiltrados.filter((aviso) => aviso?._id !== avisoDestacado._id);
   }, [avisosFiltrados, avisoDestacado]);
+
+  const indexInicio = (paginaActual - 1) * avisosPorPagina;
+  const indexFin = indexInicio + avisosPorPagina;
+
+  const avisosPaginados = avisosSinDestacado.slice(indexInicio, indexFin);
+
+  const totalPaginas = Math.ceil(avisosSinDestacado.length / avisosPorPagina);
 
   return (
     <main className="bg-slate-50 text-slate-900">
@@ -259,10 +281,10 @@ export default function AvisosPage() {
           <span className="section-badge bg-sky-500/20 border border-sky-400/30 text-sky-300 mb-5">
             Comunicados oficiales
           </span>
-          <h1 className="mt-4 mb-5 text-4xl font-extrabold text-white sm:text-5xl" style={{ fontFamily: "var(--font-display)" }}>
+          <h1 className="mt-4 mb-5 text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white" style={{ fontFamily: "var(--font-display)" }}>
             Avisos Importantes
           </h1>
-          <p className="mx-auto max-w-2xl text-lg leading-relaxed text-blue-100">
+          <p className="mx-auto max-w-2xl text-base sm:text-lg leading-relaxed text-blue-100">
             Mantente informado sobre nuestros servicios y actividades.
           </p>
         </div>
@@ -302,16 +324,85 @@ export default function AvisosPage() {
       {!loading && !error && (
         <section className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8 lg:py-14">
           <div className="space-y-8">
+            {/* BUSCADOR DE AVISOS */}
+            <div className="flex flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm md:flex-row md:items-center md:justify-between">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">Resultados</p>
+                <p className="mt-0.5 text-xl font-bold text-slate-900">
+                  {avisosSinDestacado.length + (avisoDestacado ? 1 : 0)} {avisosSinDestacado.length + (avisoDestacado ? 1 : 0) === 1 ? "aviso" : "avisos"}
+                </p>
+              </div>
+
+              <div className="relative w-full md:max-w-md">
+                <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+                  <FiSearch className="text-base" />
+                </span>
+                <input
+                  type="text"
+                  value={avisoSearch}
+                  onChange={(e) => setAvisoSearch(e.target.value)}
+                  placeholder="Buscar comunicado..."
+                  className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3.5 pl-14 pr-4 text-slate-900 text-sm outline-none transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-100"
+                />
+              </div>
+            </div>
+
             {avisoDestacado && <AvisoCard aviso={avisoDestacado} destacado />}
 
-            {avisosNormales.map((aviso) => (
+            {avisosPaginados.map((aviso) => (
               <AvisoCard key={aviso._id} aviso={aviso} />
             ))}
 
-            {!avisoDestacado && avisosNormales.length === 0 && (
-              <div className="rounded-2xl border border-slate-200 bg-white p-10 text-center shadow-sm">
+            {totalPaginas > 1 && (
+              <div className="flex justify-center items-center mt-10">
+                <div className="flex items-center gap-1 rounded-2xl bg-white/80 backdrop-blur px-2 py-2 shadow-sm border border-slate-200">
+
+                  {/* anterior */}
+                  <button
+                    onClick={() => setPaginaActual((p) => Math.max(p - 1, 1))}
+                    disabled={paginaActual === 1}
+                    className="px-3 py-2 rounded-xl text-sm font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 disabled:opacity-40"
+                  >
+                    ←
+                  </button>
+
+                  {/* páginas */}
+                  {[...Array(totalPaginas)].map((_, i) => {
+                    const page = i + 1;
+                    const active = paginaActual === page;
+
+                    return (
+                      <button
+                        key={page}
+                        onClick={() => setPaginaActual(page)}
+                        className={`min-w-[36px] h-9 rounded-xl text-sm font-semibold transition
+              ${active
+                            ? "bg-blue-600 text-white shadow-md scale-105"
+                            : "bg-transparent text-slate-600 hover:bg-slate-100"
+                          }`}
+                      >
+                        {page}
+                      </button>
+                    );
+                  })}
+
+                  {/* siguiente */}
+                  <button
+                    onClick={() => setPaginaActual((p) => Math.min(p + 1, totalPaginas))}
+                    disabled={paginaActual === totalPaginas}
+                    className="px-3 py-2 rounded-xl text-sm font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 disabled:opacity-40"
+                  >
+                    →
+                  </button>
+
+                </div>
+              </div>
+            )}
+
+            {!avisoDestacado && avisosSinDestacado.length === 0 && (
+              <div className="rounded-3xl border border-slate-200 bg-white p-10 text-center shadow-sm">
                 <p className="text-lg text-slate-600">
-                  No hay avisos disponibles para esta categoría.
+                  {avisoSearch.trim() ? "No se encontraron avisos que coincidan con la búsqueda." : "No hay avisos disponibles para esta categoría."}
                 </p>
               </div>
             )}

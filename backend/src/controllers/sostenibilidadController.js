@@ -69,7 +69,7 @@ exports.addImagenGaleria = async (req, res) => {
 
     doc.galerias[galeria].images.push({
       src: `/uploads/sostenibilidad/${req.file.filename}`,
-      alt: alt || "Imagen de galería",
+      alt: alt || "",
     });
 
     await doc.save();

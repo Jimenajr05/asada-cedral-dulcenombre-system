@@ -120,11 +120,34 @@ const deleteCertificado = async (req, res) => {
   }
 };
 
+// PUT /api/transparencia/certificados/:id
+const updateCertificado = async (req, res) => {
+  try {
+    const { titulo } = req.body;
+    const doc = await getDocumento();
+    const cert = doc.certificados.id(req.params.id);
+
+    if (!cert) return res.status(404).json({ message: "Certificado no encontrado" });
+
+    cert.titulo = titulo ?? cert.titulo;
+
+    if (req.file) {
+      cert.imagenUrl = `/uploads/certificados/${req.file.filename}`;
+    }
+
+    await doc.save();
+    return res.status(200).json({ message: "Certificado actualizado correctamente", transparencia: doc });
+  } catch (error) {
+    return res.status(500).json({ message: "Error al actualizar certificado", error: error.message });
+  }
+};
+
 module.exports = {
   getTransparencia,
   addReunion,
   updateReunion,
   deleteReunion,
   addCertificado,
+  updateCertificado,
   deleteCertificado,
 };

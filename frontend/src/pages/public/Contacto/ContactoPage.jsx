@@ -20,20 +20,43 @@ const WaterDropBg = () => (
 
 function ContactItem({ icon, title, items }) {
   return (
-    <div className="flex items-start gap-4">
-      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-blue-600">
+    <div className="group flex items-start gap-4 rounded-xl p-3 transition-all duration-300 hover:bg-white hover:shadow-md hover:scale-[1.01]">
+
+      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-sky-50 via-white to-indigo-50 text-sky-600 shadow-sm ring-1 ring-sky-100 group-hover:scale-110 transition-transform duration-300">
         {icon}
       </div>
 
-      <div>
-        <h3 className="mb-2 text-xl font-semibold text-slate-900">
+      <div className="min-w-0 flex-1">
+        <h3 className="text-sm font-semibold tracking-wide text-slate-900 uppercase">
           {title}
         </h3>
 
-        <div className="space-y-1 text-[17px] leading-8 text-slate-700">
-          {items.map((item) => (
-            <p key={item}>{item}</p>
-          ))}
+        <div className="mt-1 space-y-0.5 text-sm leading-6 text-slate-600">
+          {items.map((item) => {
+            const isEmail = item.includes("@");
+
+            if (isEmail) {
+              const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${item}`;
+
+              return (
+                <a
+                  key={item}
+                  href={gmailUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="block break-all sm:break-normal text-slate-600 hover:underline transition"
+                >
+                  {item}
+                </a>
+              );
+            }
+
+            return (
+              <p key={item} className="break-words text-slate-600 whitespace-normal">
+                {item}
+              </p>
+            );
+          })}
         </div>
       </div>
     </div>
@@ -116,106 +139,120 @@ export default function ContactoPage() {
           </svg>
         </div>
 
-        <div className="relative mx-auto max-w-4xl px-4 pb-28 pt-16 text-center sm:px-6 lg:px-8">
+        <div className="relative mx-auto max-w-4xl px-4 pb-20 pt-12 sm:pb-28 sm:pt-16 text-center sm:px-6 lg:px-8">
           <span className="section-badge mb-5 border border-sky-400/30 bg-sky-500/20 text-sky-300">
             Atención al abonado
           </span>
 
           <h1
-            className="mb-5 mt-4 text-4xl font-extrabold text-white sm:text-5xl"
+            className="mb-5 mt-4 text-3xl font-extrabold text-white sm:text-4xl md:text-5xl"
             style={{ fontFamily: "var(--font-display)" }}
           >
             {hero.title}
           </h1>
 
-          <p className="mx-auto max-w-2xl text-lg leading-relaxed text-blue-100">
+          <p className="mx-auto max-w-2xl text-base sm:text-lg leading-relaxed text-blue-100">
             {hero.subtitle}
           </p>
         </div>
       </section>
 
       {/* CONTENIDO */}
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="grid gap-8 lg:grid-cols-[380px_minmax(0,1fr)] lg:items-start">
+      <section className="mx-auto max-w-7xl px-4 py-10 sm:py-16 sm:px-6 lg:px-8">
+        <div className="grid gap-8 lg:grid-cols-[405px_minmax(0,1fr)] lg:items-start">
+
           {/* IZQUIERDA */}
           <div className="space-y-6">
-            <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-              <h2 className="mb-8 text-3xl font-bold text-slate-900">
-                Información de Contacto
-              </h2>
 
-              <div className="space-y-8">
-                <ContactItem
-                  icon={<FiMapPin className="text-[22px]" />}
-                  title="Dirección"
-                  items={contactInfo.direccion}
-                />
+            {/* CONTACTO */}
+            <div className="relative flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 shadow-sm">
 
-                <ContactItem
-                  icon={<FiPhone className="text-[22px]" />}
-                  title="Teléfonos"
-                  items={contactInfo.telefonos}
-                />
+              {/* decorativo MUY suave */}
+              <div className="pointer-events-none absolute -top-10 -right-10 h-32 w-32 rounded-full bg-slate-100 blur-2xl" />
+              <div className="pointer-events-none absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-slate-100 blur-2xl" />
 
-                <ContactItem
-                  icon={<FiMail className="text-[22px]" />}
-                  title="Correos"
-                  items={contactInfo.correos}
-                />
+              <div className="relative">
 
-                <ContactItem
-                  icon={<FiClock className="text-[22px]" />}
-                  title="Horario"
-                  items={contactInfo.horario}
-                />
+                {/* TÍTULO */}
+                <div className="ml-2 sm:ml-4">
+                  <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">
+                    Información de Contacto
+                  </h2>
+
+                  <p className="mt-2 text-sm text-slate-500">
+                    Canales oficiales de atención al usuario.
+                  </p>
+                </div>
+
+                {/* divider */}
+                <div className="my-5 h-px w-full bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
+
+                {/* ITEMS */}
+                <div className="mt-4 space-y-3 flex-1">
+
+                  <ContactItem
+                    icon={<FiMapPin className="text-[18px]" />}
+                    title="Ubicación"
+                    items={contactInfo.direccion}
+                  />
+
+                  <ContactItem
+                    icon={<FiPhone className="text-[18px]" />}
+                    title="Teléfonos"
+                    items={contactInfo.telefonos}
+                  />
+
+                  <ContactItem
+                    icon={<FiMail className="text-[18px]" />}
+                    title="Correos oficiales"
+                    items={contactInfo.correos}
+                  />
+
+                  <ContactItem
+                    icon={<FiClock className="text-[18px]" />}
+                    title="Horario de atención"
+                    items={contactInfo.horario}
+                  />
+
+                </div>
               </div>
             </div>
 
-            <div className="rounded-2xl border border-blue-200 bg-blue-50 p-6 shadow-sm">
-              <h3 className="mb-4 text-2xl font-bold text-slate-900">
+            {/* EMERGENCIA (DENTRO DE IZQUIERDA) */}
+            <div className="rounded-2xl border border-blue-200 bg-blue-50 p-4 sm:p-6 shadow-sm">
+              <h3 className="mb-3 text-2xl font-bold text-slate-900">
                 {contactInfo.emergencia.titulo}
               </h3>
 
-              <p className="mb-6 text-[17px] leading-8 text-slate-700">
+              <p className="mb-5 text-[17px] leading-8 text-slate-700">
                 {contactInfo.emergencia.descripcion}
               </p>
 
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                 <a
                   href={`tel:${contactInfo.emergencia.telefono}`}
-                  className="group inline-flex items-center gap-3 rounded-xl bg-gradient-to-br from-red-500 to-red-700 px-6 py-3.5 text-lg font-bold text-white shadow-lg shadow-red-200 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-red-300 active:scale-95"
+                  className="flex-1 group inline-flex items-center justify-center gap-3 rounded-xl bg-gradient-to-br from-red-500 to-red-700 px-6 py-3.5 text-lg font-bold text-white shadow-lg shadow-red-200 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-red-300 active:scale-95"
                 >
                   <FiPhone className="text-xl transition-transform group-hover:rotate-12" />
-                  {contactInfo.emergencia.telefono}
+                  Llamar
                 </a>
 
                 <a
-                  href={`https://wa.me/506${contactInfo.emergencia.telefono.replace(
-                    /-/g,
-                    ""
-                  )}`}
+                  href={`https://wa.me/506${contactInfo.emergencia.telefono.replace(/-/g, "")}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="group inline-flex items-center gap-3 rounded-xl bg-gradient-to-br from-emerald-500 to-green-600 px-6 py-3.5 text-lg font-bold text-white shadow-lg shadow-green-200 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-green-300 active:scale-95"
+                  className="flex-1 group inline-flex items-center justify-center gap-3 rounded-xl bg-gradient-to-br from-emerald-500 to-green-600 px-6 py-3.5 text-lg font-bold text-white shadow-lg shadow-green-200 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-green-300 active:scale-95"
                 >
-                  <svg
-                    viewBox="0 0 24 24"
-                    className="h-5 w-5 fill-current"
-                    aria-hidden="true"
-                  >
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
-                    <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.117 1.528 5.847L.057 23.428a.75.75 0 0 0 .916.916l5.606-1.47A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75a9.714 9.714 0 0 1-4.953-1.355l-.355-.212-3.68.965.982-3.589-.232-.371A9.714 9.714 0 0 1 2.25 12C2.25 6.615 6.615 2.25 12 2.25S21.75 6.615 21.75 12 17.385 21.75 12 21.75z" />
-                  </svg>
-
                   WhatsApp
                 </a>
               </div>
             </div>
+
           </div>
 
           {/* DERECHA */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 className="mb-2 text-3xl font-bold text-slate-900">
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 shadow-sm">
+            <h2 className="mb-2 text-2xl sm:text-3xl font-bold text-slate-900">
               Envíanos un mensaje
             </h2>
 
@@ -318,6 +355,7 @@ export default function ContactoPage() {
               </button>
             </form>
           </div>
+
         </div>
       </section>
 
@@ -329,7 +367,7 @@ export default function ContactoPage() {
               title="Ubicación ASADA Cedral y Dulce Nombre"
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3928.5!2d-84.4362427!3d10.3735681!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8fa065002f2cf143%3A0x3e834fd6aad3eb40!2sASADA+CEDRAL+Y+DULCE+NOMBRE!5e1!3m2!1ses!2scr!4v1700000000000!5m2!1ses!2scr"
               width="100%"
-              height="520"
+              className="h-[300px] sm:h-[400px] md:h-[520px] w-full"
               style={{ border: 0, display: "block" }}
               allowFullScreen
               loading="lazy"

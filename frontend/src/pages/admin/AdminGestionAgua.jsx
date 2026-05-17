@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { FiTrash2 } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
+import { FiTrash2, FiAlertTriangle } from "react-icons/fi";
 import {
   obtenerGestionAgua,
   actualizarGestionAgua,
@@ -40,8 +41,7 @@ const normalizarPorcentaje = (valor) => {
 function Toast({ toasts, removeToast }) {
   return (
     <div
-      className="fixed top-6 right-6 z-50 flex flex-col gap-3"
-      style={{ minWidth: 300, maxWidth: 400 }}
+      className="fixed top-4 right-4 left-4 sm:top-6 sm:right-6 sm:left-auto z-50 flex flex-col gap-3 sm:w-[380px]"
     >
       {toasts.map((t) => {
         const isSuccess = t.type === "success";
@@ -50,7 +50,7 @@ function Toast({ toasts, removeToast }) {
         return (
           <div
             key={t.id}
-            className={`flex items-start gap-3 rounded-2xl border px-5 py-4 shadow-2xl backdrop-blur-md
+            className={`flex items-start gap-3 rounded-2xl border px-4 py-3 sm:px-5 sm:py-4 shadow-2xl backdrop-blur-md
               ${isSuccess
                 ? "bg-emerald-50 border-emerald-200 text-emerald-800"
                 : isConfirm
@@ -102,8 +102,14 @@ function Toast({ toasts, removeToast }) {
 
       <style>{`
         @keyframes slideIn {
-          from { opacity: 0; transform: translateX(40px); }
-          to   { opacity: 1; transform: translateX(0); }
+          from { opacity: 0; transform: translateY(-20px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @media (min-width: 640px) {
+          @keyframes slideIn {
+            from { opacity: 0; transform: translateX(40px); }
+            to   { opacity: 1; transform: translateX(0); }
+          }
         }
       `}</style>
     </div>
@@ -113,23 +119,27 @@ function Toast({ toasts, removeToast }) {
 /* ========================= COMPONENTES UI ========================= */
 function SectionCard({ title, subtitle, children, actions }) {
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white">
-      <div className="border-b border-slate-200 px-6 py-5">
-        <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-          <div>
-            <h2 className="text-2xl font-bold text-slate-900">{title}</h2>
+    <section className="rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div className="border-b border-slate-200 px-4 py-4 sm:px-6 sm:py-5">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="space-y-1">
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 leading-tight">{title}</h2>
             {subtitle ? (
-              <p className="mt-1 max-w-3xl text-sm text-slate-600">
+              <p className="max-w-3xl text-xs sm:text-sm text-slate-500 leading-relaxed">
                 {subtitle}
               </p>
             ) : null}
           </div>
 
-          {actions ? <div className="flex flex-wrap gap-2">{actions}</div> : null}
+          {actions ? (
+            <div className="flex w-full sm:w-auto shrink-0 flex-wrap gap-2">
+              {actions}
+            </div>
+          ) : null}
         </div>
       </div>
 
-      <div className="p-6">{children}</div>
+      <div className="p-4 sm:p-6">{children}</div>
     </section>
   );
 }
@@ -174,11 +184,17 @@ function DeleteIconButton({ onClick, title = "Eliminar" }) {
   );
 }
 
-function Input({ className = "", ...props }) {
+function Input({ className = "", type, ...props }) {
+  const isFile = type === "file";
   return (
     <input
+      type={type}
       {...props}
-      className={`w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 placeholder:text-slate-400 ${className}`}
+      className={`w-full rounded-xl border border-slate-300 bg-white text-sm text-slate-900 outline-none transition placeholder:text-slate-400
+        ${isFile
+          ? "px-2 py-1.5 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 file:cursor-pointer"
+          : "px-4 py-2.5 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+        } ${className}`}
     />
   );
 }
@@ -225,7 +241,9 @@ function ParameterPreview({ parametro }) {
 
 /* ========================= COMPONENTE PRINCIPAL ========================= */
 function AdminGestionAgua() {
+  const navigate = useNavigate();
   const [form, setForm] = useState(null);
+  const [confirmacionNavegacion, setConfirmacionNavegacion] = useState(null);
   const [loading, setLoading] = useState(true);
   const [toasts, setToasts] = useState([]);
 
@@ -235,6 +253,10 @@ function AdminGestionAgua() {
     useState(false);
   const [subiendoFoto, setSubiendoFoto] = useState(false);
   const [nuevaImagen, setNuevaImagen] = useState(null);
+
+  const [hasUnsavedParametros, setHasUnsavedParametros] = useState(false);
+  const [hasUnsavedAforos, setHasUnsavedAforos] = useState(false);
+  const [hasUnsavedInfraestructura, setHasUnsavedInfraestructura] = useState(false);
 
   const removeToast = (id) =>
     setToasts((prev) => prev.filter((t) => t.id !== id));
@@ -271,6 +293,78 @@ function AdminGestionAgua() {
     cargarDatos();
   }, []);
 
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (hasUnsavedParametros || hasUnsavedAforos || hasUnsavedInfraestructura) {
+        e.preventDefault();
+        e.returnValue = "Tienes cambios sin guardar. ¿Seguro que deseas salir?";
+        return e.returnValue;
+      }
+    };
+
+    const handleGlobalClick = (e) => {
+      const isDirty = hasUnsavedParametros || hasUnsavedAforos || hasUnsavedInfraestructura;
+      if (!isDirty) return;
+
+      let target = e.target;
+      while (target && target !== document.body) {
+        const isLink = target.tagName === "A";
+        const isButtonInHeaderOrSidebar = target.tagName === "BUTTON" && (target.closest("header") || target.closest("aside"));
+
+        if (isLink || isButtonInHeaderOrSidebar) {
+          let href = "";
+          let isLogout = false;
+
+          if (isLink) {
+            href = target.getAttribute("href") || target.getAttribute("to");
+            if (href && (href.startsWith("#") || href === window.location.pathname)) {
+              break;
+            }
+          } else {
+            isLogout = true;
+          }
+
+          e.preventDefault();
+          e.stopPropagation();
+
+          setConfirmacionNavegacion({
+            onConfirm: () => {
+              setConfirmacionNavegacion(null);
+              setHasUnsavedParametros(false);
+              setHasUnsavedAforos(false);
+              setHasUnsavedInfraestructura(false);
+
+              if (isLogout) {
+                if (target.click) {
+                  setTimeout(() => {
+                    target.click();
+                  }, 50);
+                } else {
+                  window.location.href = "/admin/login";
+                }
+              } else if (href) {
+                navigate(href);
+              }
+            },
+            onCancel: () => {
+              setConfirmacionNavegacion(null);
+            }
+          });
+          break;
+        }
+        target = target.parentElement;
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    document.addEventListener("click", handleGlobalClick, true);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      document.removeEventListener("click", handleGlobalClick, true);
+    };
+  }, [hasUnsavedParametros, hasUnsavedAforos, hasUnsavedInfraestructura]);
+
   const cargarDatos = async () => {
     try {
       const data = await obtenerGestionAgua();
@@ -290,6 +384,9 @@ function AdminGestionAgua() {
           fotos: data.analisisCalidadAgua?.fotos || [],
         },
       });
+      setHasUnsavedParametros(false);
+      setHasUnsavedAforos(false);
+      setHasUnsavedInfraestructura(false);
     } catch (error) {
       showError("Error al cargar gestión del agua");
     } finally {
@@ -309,6 +406,7 @@ function AdminGestionAgua() {
       });
 
       await cargarDatos();
+      setHasUnsavedParametros(false);
       showSuccess("Parámetros guardados correctamente");
     } catch (error) {
       showError("Error al guardar parámetros");
@@ -326,6 +424,7 @@ function AdminGestionAgua() {
       });
 
       await cargarDatos();
+      setHasUnsavedAforos(false);
       showSuccess("Aforos guardados correctamente");
     } catch (error) {
       showError("Error al guardar aforos");
@@ -343,6 +442,7 @@ function AdminGestionAgua() {
       });
 
       await cargarDatos();
+      setHasUnsavedInfraestructura(false);
       showSuccess("Infraestructura guardada correctamente");
     } catch (error) {
       showError("Error al guardar infraestructura");
@@ -355,13 +455,16 @@ function AdminGestionAgua() {
     const nuevos = [...form.parametros];
     nuevos[index][campo] = valor;
     setForm((prev) => ({ ...prev, parametros: nuevos }));
+    setHasUnsavedParametros(true);
   };
 
-  const agregarParametro = () =>
+  const agregarParametro = () => {
     setForm((prev) => ({
       ...prev,
       parametros: [...prev.parametros, crearParametroVacio()],
     }));
+    setHasUnsavedParametros(true);
+  };
 
   const eliminarParametro = async (index) => {
     const confirmed = await showConfirm(
@@ -373,6 +476,7 @@ function AdminGestionAgua() {
     const nuevos = [...form.parametros];
     nuevos.splice(index, 1);
     setForm((prev) => ({ ...prev, parametros: nuevos }));
+    setHasUnsavedParametros(true);
   };
 
   const handleSubirImagen = async (e) => {
@@ -417,7 +521,7 @@ function AdminGestionAgua() {
     }
   };
 
-  const handleAforoChange = (campo, valor) =>
+  const handleAforoChange = (campo, valor) => {
     setForm((prev) => ({
       ...prev,
       aforos: {
@@ -425,6 +529,8 @@ function AdminGestionAgua() {
         [campo]: valor,
       },
     }));
+    setHasUnsavedAforos(true);
+  };
 
   const handleAforoRegistroChange = (index, campo, valor) => {
     const nuevos = [...form.aforos.registros];
@@ -437,9 +543,10 @@ function AdminGestionAgua() {
         registros: nuevos,
       },
     }));
+    setHasUnsavedAforos(true);
   };
 
-  const agregarAforo = () =>
+  const agregarAforo = () => {
     setForm((prev) => ({
       ...prev,
       aforos: {
@@ -447,6 +554,8 @@ function AdminGestionAgua() {
         registros: [...prev.aforos.registros, crearAforoVacio()],
       },
     }));
+    setHasUnsavedAforos(true);
+  };
 
   const eliminarAforo = async (index) => {
     const confirmed = await showConfirm(
@@ -465,6 +574,7 @@ function AdminGestionAgua() {
         registros: nuevos,
       },
     }));
+    setHasUnsavedAforos(true);
   };
 
   const handleInfraTituloChange = (index, valor) => {
@@ -475,6 +585,7 @@ function AdminGestionAgua() {
       ...prev,
       infraestructura: nuevas,
     }));
+    setHasUnsavedInfraestructura(true);
   };
 
   const handleInfraItemChange = (infraIndex, itemIndex, valor) => {
@@ -485,13 +596,16 @@ function AdminGestionAgua() {
       ...prev,
       infraestructura: nuevas,
     }));
+    setHasUnsavedInfraestructura(true);
   };
 
-  const agregarBloqueInfraestructura = () =>
+  const agregarBloqueInfraestructura = () => {
     setForm((prev) => ({
       ...prev,
       infraestructura: [...prev.infraestructura, crearInfraestructuraVacia()],
     }));
+    setHasUnsavedInfraestructura(true);
+  };
 
   const eliminarBloqueInfraestructura = async (index) => {
     const confirmed = await showConfirm(
@@ -507,6 +621,7 @@ function AdminGestionAgua() {
       ...prev,
       infraestructura: nuevas,
     }));
+    setHasUnsavedInfraestructura(true);
   };
 
   const agregarItemInfraestructura = (index) => {
@@ -517,6 +632,7 @@ function AdminGestionAgua() {
       ...prev,
       infraestructura: nuevas,
     }));
+    setHasUnsavedInfraestructura(true);
   };
 
   const eliminarItemInfraestructura = async (infraIndex, itemIndex) => {
@@ -533,6 +649,7 @@ function AdminGestionAgua() {
       ...prev,
       infraestructura: nuevas,
     }));
+    setHasUnsavedInfraestructura(true);
   };
 
   if (loading) return <p className="p-6 text-slate-800">Cargando...</p>;
@@ -546,23 +663,21 @@ function AdminGestionAgua() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       <Toast toasts={toasts} removeToast={removeToast} />
 
-      <div className="mb-6 flex items-start justify-between">
-        <div>
-          <h1 className="text-4xl font-bold text-slate-900 md:text-5xl">
-            Gestión del Agua
-          </h1>
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-slate-900 sm:text-4xl md:text-5xl leading-tight">
+          Gestión del Agua
+        </h1>
 
-          <p className="mt-2 text-lg text-slate-700">
-            Administra los parámetros, aforos, infraestructura y análisis del
-            sistema.
-          </p>
-        </div>
+        <p className="mt-2 text-sm sm:text-base md:text-lg text-slate-600">
+          Administra los parámetros, aforos, infraestructura y análisis del
+          sistema.
+        </p>
       </div>
 
-      <div className="space-y-8">
+      <div className="space-y-6 sm:space-y-8">
         {/* 1. Parámetros */}
         <SectionCard
           title="1. Parámetros de Calidad"
@@ -572,19 +687,31 @@ function AdminGestionAgua() {
               variant="success"
               onClick={guardarParametros}
               disabled={guardandoParametros}
+              className="w-full sm:w-auto text-center"
             >
               {guardandoParametros ? "Guardando..." : "Guardar parámetros"}
             </ActionButton>
           }
         >
+          {hasUnsavedParametros && (
+            <div className="mb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl bg-amber-50 border border-amber-200 p-4 text-xs sm:text-sm text-amber-800 animate-fade-in">
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-2.5 w-2.5 shrink-0">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
+                </span>
+                <span>Tienes <strong>cambios sin guardar</strong> en los parámetros. Presiona el botón verde de arriba para guardarlos de forma permanente.</span>
+              </div>
+            </div>
+          )}
           <div className="mb-5 flex justify-start">
-            <ActionButton variant="primary" onClick={agregarParametro}>
+            <ActionButton variant="primary" onClick={agregarParametro} className="w-full sm:w-auto text-center">
               + Agregar parámetro
             </ActionButton>
           </div>
 
           <div className="max-h-[750px] overflow-y-auto pr-2 custom-scrollbar">
-            <div className="grid gap-5 xl:grid-cols-2">
+            <div className="grid gap-5 lg:grid-cols-2">
               {form.parametros.map((parametro, index) => (
                 <div
                   key={index}
@@ -598,12 +725,13 @@ function AdminGestionAgua() {
                     <ActionButton
                       variant="danger"
                       onClick={() => eliminarParametro(index)}
+                      className="text-xs py-1.5 px-3 rounded-lg"
                     >
                       Eliminar
                     </ActionButton>
                   </div>
 
-                  <div className="grid gap-3 md:grid-cols-2">
+                  <div className="grid gap-3 sm:grid-cols-2">
                     <div>
                       <Label>Nombre:</Label>
                       <Input
@@ -671,10 +799,10 @@ function AdminGestionAgua() {
           title="2. Fotos de análisis"
           subtitle="Primero seleccione una imagen y luego presione Agregar foto. Las imágenes guardadas aparecerán debajo."
         >
-          <div className="grid gap-6 xl:grid-cols-[420px_1fr]">
+          <div className="grid gap-6 lg:grid-cols-[360px_1fr] xl:grid-cols-[420px_1fr]">
             <form
               onSubmit={handleSubirImagen}
-              className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-5"
+              className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-5 self-start"
             >
               <h3 className="mb-4 text-lg font-bold text-slate-900">
                 Subir nueva foto
@@ -689,7 +817,7 @@ function AdminGestionAgua() {
                 />
               </div>
 
-              <p className="mt-3 text-sm text-slate-500">
+              <p className="mt-3 text-xs text-slate-500">
                 Fecha automática: {formatearFechaActual()}
               </p>
 
@@ -698,7 +826,7 @@ function AdminGestionAgua() {
                   type="submit"
                   variant="primary"
                   disabled={subiendoFoto}
-                  className="w-full"
+                  className="w-full text-center"
                 >
                   {subiendoFoto ? "Subiendo..." : "Agregar foto"}
                 </ActionButton>
@@ -716,13 +844,13 @@ function AdminGestionAgua() {
                 </div>
               ) : (
                 <div className="max-h-[650px] overflow-y-auto pr-2 custom-scrollbar">
-                  <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-2">
+                  <div className="grid gap-4 sm:grid-cols-2">
                     {form.analisisCalidadAgua?.fotos?.map((foto) => (
                       <div
                         key={foto._id}
                         className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:shadow-md"
                       >
-                        <div className="relative h-56 bg-slate-100">
+                        <div className="relative h-48 sm:h-56 bg-slate-100">
                           <img
                             src={`${BASE_URL}${foto.imagen}`}
                             alt={foto.fecha}
@@ -738,6 +866,7 @@ function AdminGestionAgua() {
                           <ActionButton
                             variant="danger"
                             onClick={() => handleEliminarFoto(foto._id)}
+                            className="w-full text-xs py-2 text-center"
                           >
                             Eliminar foto
                           </ActionButton>
@@ -760,18 +889,30 @@ function AdminGestionAgua() {
               variant="success"
               onClick={guardarAforos}
               disabled={guardandoAforos}
+              className="w-full sm:w-auto text-center"
             >
               {guardandoAforos ? "Guardando..." : "Guardar aforos"}
             </ActionButton>
           }
         >
+          {hasUnsavedAforos && (
+            <div className="mb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl bg-amber-50 border border-amber-200 p-4 text-xs sm:text-sm text-amber-800 animate-fade-in">
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-2.5 w-2.5 shrink-0">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
+                </span>
+                <span>Tienes <strong>cambios sin guardar</strong> en la tabla de aforos. Presiona el botón verde de arriba para guardarlos de forma permanente.</span>
+              </div>
+            </div>
+          )}
           <div className="mb-5 flex justify-start">
-            <ActionButton variant="primary" onClick={agregarAforo}>
+            <ActionButton variant="primary" onClick={agregarAforo} className="w-full sm:w-auto text-center">
               + Agregar registro
             </ActionButton>
           </div>
 
-          <div className="mb-5 grid gap-4 md:grid-cols-2">
+          <div className="mb-5 grid gap-4 sm:grid-cols-2">
             <div>
               <Label>Fecha general:</Label>
               <Input
@@ -793,7 +934,71 @@ function AdminGestionAgua() {
             </div>
           </div>
 
-          <div className="max-h-[550px] overflow-auto rounded-2xl border border-slate-200 custom-scrollbar">
+          {/* Vista Móvil: Tarjetas (visible solo en pantallas pequeñas) */}
+          <div className="block md:hidden space-y-4 max-h-[550px] overflow-y-auto pr-1 custom-scrollbar">
+            {form.aforos.registros.length === 0 ? (
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 text-sm text-slate-500 text-center">
+                Aún no hay registros de aforo.
+              </div>
+            ) : (
+              form.aforos.registros.map((registro, index) => (
+                <div
+                  key={index}
+                  className="rounded-2xl border border-slate-200 bg-slate-50 p-4 space-y-3 relative animate-fade-in"
+                >
+                  <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+                    <span className="text-sm font-bold text-slate-900">
+                      Registro {index + 1}
+                    </span>
+                    <ActionButton
+                      variant="danger"
+                      onClick={() => eliminarAforo(index)}
+                      className="text-xs py-1.5 px-3 rounded-lg"
+                    >
+                      Eliminar
+                    </ActionButton>
+                  </div>
+
+                  <div className="space-y-3">
+                    <div>
+                      <Label>Lugar:</Label>
+                      <Input
+                        type="text"
+                        value={registro.lugar}
+                        onChange={(e) =>
+                          handleAforoRegistroChange(
+                            index,
+                            "lugar",
+                            e.target.value
+                          )
+                        }
+                        placeholder="Lugar"
+                      />
+                    </div>
+
+                    <div>
+                      <Label>Producción:</Label>
+                      <Input
+                        type="text"
+                        value={registro.produccion}
+                        onChange={(e) =>
+                          handleAforoRegistroChange(
+                            index,
+                            "produccion",
+                            e.target.value
+                          )
+                        }
+                        placeholder="Producción"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* Vista Escritorio: Tabla (oculta en pantallas móviles) */}
+          <div className="hidden md:block max-h-[550px] overflow-auto rounded-2xl border border-slate-200 custom-scrollbar">
             <table className="w-full min-w-[700px] border-collapse">
               <thead className="bg-slate-100">
                 <tr>
@@ -811,7 +1016,7 @@ function AdminGestionAgua() {
 
               <tbody>
                 {form.aforos.registros.map((registro, index) => (
-                  <tr key={index} className="bg-white">
+                  <tr key={index} className="bg-white animate-fade-in">
                     <td className="border border-slate-200 p-3">
                       <Input
                         type="text"
@@ -866,6 +1071,7 @@ function AdminGestionAgua() {
               variant="success"
               onClick={guardarInfraestructura}
               disabled={guardandoInfraestructura}
+              className="w-full sm:w-auto text-center"
             >
               {guardandoInfraestructura
                 ? "Guardando..."
@@ -873,8 +1079,19 @@ function AdminGestionAgua() {
             </ActionButton>
           }
         >
+          {hasUnsavedInfraestructura && (
+            <div className="mb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl bg-amber-50 border border-amber-200 p-4 text-xs sm:text-sm text-amber-800 animate-fade-in">
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-2.5 w-2.5 shrink-0">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
+                </span>
+                <span>Tienes <strong>cambios sin guardar</strong> en la infraestructura. Presiona el botón verde de arriba para guardarlos de forma permanente.</span>
+              </div>
+            </div>
+          )}
           <div className="mb-5 flex justify-start">
-            <ActionButton variant="primary" onClick={agregarBloqueInfraestructura}>
+            <ActionButton variant="primary" onClick={agregarBloqueInfraestructura} className="w-full sm:w-auto text-center">
               + Agregar bloque
             </ActionButton>
           </div>
@@ -884,9 +1101,9 @@ function AdminGestionAgua() {
               {form.infraestructura.map((bloque, infraIndex) => (
                 <div
                   key={infraIndex}
-                  className="rounded-2xl border border-slate-200 bg-slate-50 p-5"
+                  className="rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:p-5 animate-fade-in"
                 >
-                  <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                  <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <h3 className="text-lg font-bold text-slate-900">
                       Bloque {infraIndex + 1}
                     </h3>
@@ -894,12 +1111,13 @@ function AdminGestionAgua() {
                     <ActionButton
                       variant="danger"
                       onClick={() => eliminarBloqueInfraestructura(infraIndex)}
+                      className="w-full sm:w-auto text-xs py-2 px-3 text-center"
                     >
                       Eliminar bloque
                     </ActionButton>
                   </div>
 
-                  <div className="mb-8">
+                  <div className="mb-6">
                     <Label>Título del bloque:</Label>
                     <Input
                       type="text"
@@ -917,7 +1135,7 @@ function AdminGestionAgua() {
 
                   <div className="space-y-3">
                     {bloque.items.map((item, itemIndex) => (
-                      <div key={itemIndex} className="flex gap-3">
+                      <div key={itemIndex} className="flex gap-2 sm:gap-3">
                         <Input
                           type="text"
                           value={item}
@@ -941,10 +1159,11 @@ function AdminGestionAgua() {
                     ))}
                   </div>
 
-                  <div className="mt-4">
+                  <div className="mt-4 flex justify-start">
                     <ActionButton
                       variant="secondary"
                       onClick={() => agregarItemInfraestructura(infraIndex)}
+                      className="w-full sm:w-auto text-xs py-2 px-3 text-center"
                     >
                       + Agregar ítem
                     </ActionButton>
@@ -955,6 +1174,38 @@ function AdminGestionAgua() {
           </div>
         </SectionCard>
       </div>
+
+      {confirmacionNavegacion && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm animate-fade-in">
+          <div className="w-full max-w-md scale-95 overflow-hidden rounded-3xl border border-slate-100 bg-white p-6 shadow-2xl transition-all animate-scale-up">
+            <div className="flex flex-col items-center text-center">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-100 text-amber-600 mb-4">
+                <FiAlertTriangle className="h-7 w-7" />
+              </div>
+              <h3 className="text-xl font-bold text-slate-900">¿Salir sin guardar los cambios?</h3>
+              <p className="mt-2 text-sm text-slate-500">
+                Tienes modificaciones pendientes en esta sección. Si sales ahora, perderás todos tus cambios en la gestión del agua de forma permanente.
+              </p>
+            </div>
+            <div className="mt-6 flex flex-col gap-2 sm:flex-row">
+              <button
+                type="button"
+                onClick={confirmacionNavegacion.onCancel}
+                className="flex-1 rounded-2xl bg-slate-100 py-3.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-200 active:scale-[0.98] cursor-pointer"
+              >
+                Permanecer aquí
+              </button>
+              <button
+                type="button"
+                onClick={confirmacionNavegacion.onConfirm}
+                className="flex-1 rounded-2xl bg-amber-600 py-3.5 text-sm font-semibold text-white transition hover:bg-amber-700 active:scale-[0.98] shadow-lg shadow-amber-100 cursor-pointer"
+              >
+                Salir sin guardar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

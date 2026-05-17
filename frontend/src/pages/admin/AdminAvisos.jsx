@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { useNavigate } from "react-router-dom";
 
 import {
   Plus, Pin, Eye, EyeOff, Pencil, Trash2,
-  CalendarDays, AlertCircle, Info, CheckCircle2, Check, X,
+  CalendarDays, AlertCircle, Info, CheckCircle2, Check, X, Search, AlertTriangle
 } from "lucide-react";
 import {
   getAvisos, createAviso, updateAviso, deleteAviso,
@@ -60,6 +61,8 @@ function Toast({ toasts }) {
 }
 
 function AdminAvisos() {
+  const navigate = useNavigate();
+  const [confirmacionNavegacion, setConfirmacionNavegacion] = useState(null);
   const [avisos, setAvisos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -67,6 +70,30 @@ function AdminAvisos() {
   const [avisoEditandoId, setAvisoEditandoId] = useState(null);
   const [toasts, setToasts] = useState([]);
   const [imagenModal, setImagenModal] = useState(null);
+  const [paginaActual, setPaginaActual] = useState(1);
+  const avisosPorPagina = 10;
+  const [avisoSearch, setAvisoSearch] = useState("");
+
+  const avisosFiltrados = avisos.filter((a) => {
+    const term = avisoSearch.toLowerCase().trim();
+    if (!term) return true;
+    return (
+      (a.titulo || "").toLowerCase().includes(term) ||
+      (a.descripcion || "").toLowerCase().includes(term) ||
+      (a.tipo || "").toLowerCase().includes(term)
+    );
+  });
+
+  const indexInicio = (paginaActual - 1) * avisosPorPagina;
+  const indexFin = indexInicio + avisosPorPagina;
+  const totalPaginas = Math.ceil(avisosFiltrados.length / avisosPorPagina);
+  const avisosPaginados = avisosFiltrados.slice(indexInicio, indexFin);
+
+  useEffect(() => {
+    if (totalPaginas > 0 && paginaActual > totalPaginas) {
+      setPaginaActual(totalPaginas);
+    }
+  }, [totalPaginas, paginaActual]);
 
   const [form, setForm] = useState({
     titulo: "",
@@ -109,6 +136,83 @@ function AdminAvisos() {
 
   useEffect(() => { cargarAvisos(); }, []);
 
+  useEffect(() => {
+    const isDirty = showForm && (
+      modoEdicion ||
+      form.titulo.trim() !== "" ||
+      form.descripcion.trim() !== "" ||
+      form.imagen !== null
+    );
+
+    const handleBeforeUnload = (e) => {
+      if (isDirty) {
+        e.preventDefault();
+        e.returnValue = "Tienes cambios sin guardar. ¿Seguro que deseas salir?";
+        return e.returnValue;
+      }
+    };
+
+    const handleGlobalClick = (e) => {
+      if (!isDirty) return;
+
+      let target = e.target;
+      while (target && target !== document.body) {
+        const isLink = target.tagName === "A";
+        const isButtonInHeaderOrSidebar = target.tagName === "BUTTON" && (target.closest("header") || target.closest("aside"));
+
+        if (isLink || isButtonInHeaderOrSidebar) {
+          let href = "";
+          let isLogout = false;
+
+          if (isLink) {
+            href = target.getAttribute("href") || target.getAttribute("to");
+            if (href && (href.startsWith("#") || href === window.location.pathname)) {
+              break;
+            }
+          } else {
+            isLogout = true;
+          }
+
+          e.preventDefault();
+          e.stopPropagation();
+
+          setConfirmacionNavegacion({
+            onConfirm: () => {
+              setConfirmacionNavegacion(null);
+              resetForm();
+              setShowForm(false);
+
+              if (isLogout) {
+                if (target.click) {
+                  setTimeout(() => {
+                    target.click();
+                  }, 50);
+                } else {
+                  window.location.href = "/admin/login";
+                }
+              } else if (href) {
+                navigate(href);
+              }
+            },
+            onCancel: () => {
+              setConfirmacionNavegacion(null);
+            }
+          });
+          break;
+        }
+        target = target.parentElement;
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    document.addEventListener("click", handleGlobalClick, true);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      document.removeEventListener("click", handleGlobalClick, true);
+    };
+  }, [showForm, modoEdicion, form]);
+
   const resetForm = () => {
     setForm({ titulo: "", descripcion: "", tipo: "info", estado: "publicado", fijado: false, fecha: new Date() });
     setModoEdicion(false);
@@ -143,8 +247,9 @@ function AdminAvisos() {
         descripcion: form.descripcion,
         tipo: form.tipo,
         estado: form.estado,
-        fijado: form.fijado,
+        fijado: modoEdicion ? form.fijado : false,
         imagen: form.imagen, // optional base64 image
+        fecha: form.fecha,
       };
       if (modoEdicion && avisoEditandoId) {
         await updateAviso(avisoEditandoId, payload);
@@ -235,13 +340,13 @@ function AdminAvisos() {
       <Toast toasts={toasts} />
 
       {/* ENCABEZADO */}
-      <div className="mb-6 flex items-start justify-between">
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-4xl font-bold text-slate-900 md:text-5xl">Gestión de Avisos</h1>
-          <p className="mt-2 text-lg text-slate-700">Crear, editar y administrar avisos públicos.</p>
+          <h1 className="text-3xl font-bold text-slate-900 sm:text-4xl md:text-5xl">Gestión de Avisos</h1>
+          <p className="mt-2 text-sm text-slate-700 sm:text-base md:text-lg">Crear, editar y administrar avisos públicos.</p>
         </div>
         <button type="button" onClick={abrirNuevoFormulario}
-          className="inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-6 py-4 font-semibold text-white shadow-sm transition hover:bg-blue-700">
+          className="inline-flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-6 py-4 font-semibold text-white shadow-sm transition hover:bg-blue-700 w-full sm:w-auto">
           <Plus className="h-5 w-5" /> Nuevo Aviso
         </button>
       </div>
@@ -286,6 +391,7 @@ function AdminAvisos() {
                   <DatePicker selected={form.fecha}
                     onChange={(date) => setForm((prev) => ({ ...prev, fecha: date }))}
                     dateFormat="MM/dd/yyyy"
+                    minDate={new Date()}
                     className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 pr-12 text-base text-black outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200" />
                   <CalendarDays className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black" />
                 </div>
@@ -301,17 +407,19 @@ function AdminAvisos() {
                   Publicado
                 </label>
               </div>
-              <div className="flex items-end">
-                <label className="flex cursor-pointer items-center gap-3 px-2 py-3 text-base text-black">
-                  <span className="relative flex h-5 w-5 items-center justify-center">
-                    <input type="checkbox" checked={form.fijado}
-                      onChange={(e) => setForm((prev) => ({ ...prev, fijado: e.target.checked }))}
-                      className="peer absolute h-5 w-5 cursor-pointer appearance-none rounded-[4px] border border-slate-500 bg-white" />
-                    <Check className="pointer-events-none z-10 hidden h-3.5 w-3.5 text-black peer-checked:block" />
-                  </span>
-                  Destacado
-                </label>
-              </div>
+              {modoEdicion && (
+                <div className="flex items-end">
+                  <label className="flex cursor-pointer items-center gap-3 px-2 py-3 text-base text-black">
+                    <span className="relative flex h-5 w-5 items-center justify-center">
+                      <input type="checkbox" checked={form.fijado}
+                        onChange={(e) => setForm((prev) => ({ ...prev, fijado: e.target.checked }))}
+                        className="peer absolute h-5 w-5 cursor-pointer appearance-none rounded-[4px] border border-slate-500 bg-white" />
+                      <Check className="pointer-events-none z-10 hidden h-3.5 w-3.5 text-black peer-checked:block" />
+                    </span>
+                    Destacado
+                  </label>
+                </div>
+              )}
             </div>
             <div className="mt-8 flex items-center gap-3">
               <button type="submit"
@@ -327,6 +435,34 @@ function AdminAvisos() {
         </div>
       )}
 
+      {/* BUSCADOR DE AVISOS */}
+      {!showForm && (
+        <div className="mb-6 flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm md:flex-row md:items-center md:justify-between">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">Resultados</p>
+            <p className="mt-0.5 text-xl font-bold text-slate-900">
+              {avisosFiltrados.length} {avisosFiltrados.length === 1 ? "aviso" : "avisos"}
+            </p>
+          </div>
+
+          <div className="relative w-full md:max-w-md">
+            <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+              <Search className="h-4 w-4" />
+            </span>
+            <input
+              type="text"
+              value={avisoSearch}
+              onChange={(e) => {
+                setAvisoSearch(e.target.value);
+                setPaginaActual(1);
+              }}
+              placeholder="Buscar aviso por título o descripción..."
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 py-3 pl-14 pr-4 text-slate-900 text-sm outline-none transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-100"
+            />
+          </div>
+        </div>
+      )}
+
       {/* TABLA */}
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
         <div className="hidden md:grid md:grid-cols-[1fr_auto_auto_auto_auto] border-b border-slate-200 px-6 py-4 text-xs font-semibold uppercase tracking-wide text-slate-500 gap-4">
@@ -338,10 +474,12 @@ function AdminAvisos() {
         </div>
         {loading ? (
           <div className="p-6 text-slate-500">Cargando avisos...</div>
-        ) : avisos.length === 0 ? (
-          <div className="p-6 text-slate-500">No hay avisos registrados.</div>
+        ) : avisosFiltrados.length === 0 ? (
+          <div className="p-6 text-slate-500">
+            {avisos.length === 0 ? "No hay avisos registrados." : "No se encontraron avisos que coincidan con la búsqueda."}
+          </div>
         ) : (
-          avisos.map((aviso) => (
+          avisosPaginados.map((aviso) => (
             <div key={aviso._id}
               className="flex flex-col gap-3 border-b border-slate-200 px-6 py-5 md:grid md:grid-cols-[1fr_auto_auto_auto_auto] md:items-center md:gap-4">
               <div className="flex items-start gap-3 min-w-0">
@@ -360,8 +498,8 @@ function AdminAvisos() {
                   </button>
                 )}
                 <div className="min-w-0 flex-1">
-                  <h3 className="text-base font-semibold leading-tight text-slate-900 truncate">{aviso.titulo}</h3>
-                  <p className="mt-0.5 text-sm text-slate-500 line-clamp-2">{aviso.descripcion}</p>
+                  <h3 className="text-base font-semibold leading-tight text-slate-900 break-words">{aviso.titulo}</h3>
+                  <p className="mt-0.5 text-sm text-slate-500 line-clamp-2 break-words">{aviso.descripcion}</p>
                 </div>
               </div>
               <div className="w-28 shrink-0">{getTipoBadge(aviso.tipo)}</div>
@@ -400,6 +538,52 @@ function AdminAvisos() {
         )}
       </div>
 
+      {totalPaginas > 1 && (
+        <div className="flex justify-center items-center mt-10">
+          <div className="flex items-center gap-1 rounded-2xl bg-white/80 backdrop-blur px-2 py-2 shadow-sm border border-slate-200">
+
+            {/* Botón anterior */}
+            <button
+              onClick={() => setPaginaActual((p) => Math.max(p - 1, 1))}
+              disabled={paginaActual === 1}
+              className="px-3 py-2 rounded-xl text-sm font-medium transition bg-slate-100 text-slate-600 hover:bg-slate-200 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              ←
+            </button>
+
+            {/* Números de página */}
+            {[...Array(totalPaginas)].map((_, i) => {
+              const page = i + 1;
+              const active = paginaActual === page;
+
+              return (
+                <button
+                  key={page}
+                  onClick={() => setPaginaActual(page)}
+                  className={`min-w-[36px] h-9 rounded-xl text-sm font-semibold transition-all duration-200
+                    ${active
+                      ? "bg-blue-600 text-white shadow-md scale-105"
+                      : "bg-transparent text-slate-600 hover:bg-slate-100"
+                    }`}
+                >
+                  {page}
+                </button>
+              );
+            })}
+
+            {/* Botón siguiente */}
+            <button
+              onClick={() => setPaginaActual((p) => Math.min(p + 1, totalPaginas))}
+              disabled={paginaActual === totalPaginas}
+              className="px-3 py-2 rounded-xl text-sm font-medium transition bg-slate-100 text-slate-600 hover:bg-slate-200 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              →
+            </button>
+
+          </div>
+        </div>
+      )}
+
       {/* MODAL DE IMAGEN */}
       {imagenModal && (
         <div 
@@ -421,6 +605,38 @@ function AdminAvisos() {
               className="max-h-[85vh] w-auto max-w-full object-contain rounded-xl shadow-2xl ring-1 ring-white/20"
               onClick={(e) => e.stopPropagation()}
             />
+          </div>
+        </div>
+      )}
+
+      {confirmacionNavegacion && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm animate-fade-in">
+          <div className="w-full max-w-md scale-95 overflow-hidden rounded-3xl border border-slate-100 bg-white p-6 shadow-2xl transition-all animate-scale-up">
+            <div className="flex flex-col items-center text-center">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-100 text-amber-600 mb-4">
+                <AlertTriangle className="h-7 w-7" />
+              </div>
+              <h3 className="text-xl font-bold text-slate-900">¿Salir sin guardar los cambios?</h3>
+              <p className="mt-2 text-sm text-slate-500">
+                Tienes modificaciones pendientes en esta sección. Si sales ahora, perderás todos tus cambios en la gestión de avisos de forma permanente.
+              </p>
+            </div>
+            <div className="mt-6 flex flex-col gap-2 sm:flex-row">
+              <button
+                type="button"
+                onClick={confirmacionNavegacion.onCancel}
+                className="flex-1 rounded-2xl bg-slate-100 py-3.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-200 active:scale-[0.98] cursor-pointer"
+              >
+                Permanecer aquí
+              </button>
+              <button
+                type="button"
+                onClick={confirmacionNavegacion.onConfirm}
+                className="flex-1 rounded-2xl bg-amber-600 py-3.5 text-sm font-semibold text-white transition hover:bg-amber-700 active:scale-[0.98] shadow-lg shadow-amber-100 cursor-pointer"
+              >
+                Salir sin guardar
+              </button>
+            </div>
           </div>
         </div>
       )}

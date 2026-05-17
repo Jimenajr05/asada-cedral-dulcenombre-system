@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { FileText, Pencil, Trash2, Plus, Upload, X, Search } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { FileText, Pencil, Trash2, Plus, Upload, X, Search, AlertTriangle } from "lucide-react";
 import {
   getTramitesAdmin, createTramite, updateTramite, deleteTramite,
 } from "../../services/tramiteService";
@@ -58,6 +59,8 @@ function Toast({ toasts, removeToast }) {
 
 /* ========================= COMPONENTE PRINCIPAL ========================= */
 function AdminTramites() {
+  const navigate = useNavigate();
+  const [confirmacionNavegacion, setConfirmacionNavegacion] = useState(null);
   const [loading, setLoading] = useState(true);
   const [tramites, setTramites] = useState([]);
   const [editandoId, setEditandoId] = useState(null);
@@ -103,6 +106,82 @@ function AdminTramites() {
   };
 
   useEffect(() => { cargarTramites(); }, []);
+
+  useEffect(() => {
+    const isDirty = mostrarFormulario && (
+      editandoId !== null ||
+      form.titulo.trim() !== "" ||
+      form.requisitosTexto.trim() !== "" ||
+      form.archivo !== null
+    );
+
+    const handleBeforeUnload = (e) => {
+      if (isDirty) {
+        e.preventDefault();
+        e.returnValue = "Tienes cambios sin guardar. ¿Seguro que deseas salir?";
+        return e.returnValue;
+      }
+    };
+
+    const handleGlobalClick = (e) => {
+      if (!isDirty) return;
+
+      let target = e.target;
+      while (target && target !== document.body) {
+        const isLink = target.tagName === "A";
+        const isButtonInHeaderOrSidebar = target.tagName === "BUTTON" && (target.closest("header") || target.closest("aside"));
+
+        if (isLink || isButtonInHeaderOrSidebar) {
+          let href = "";
+          let isLogout = false;
+
+          if (isLink) {
+            href = target.getAttribute("href") || target.getAttribute("to");
+            if (href && (href.startsWith("#") || href === window.location.pathname)) {
+              break;
+            }
+          } else {
+            isLogout = true;
+          }
+
+          e.preventDefault();
+          e.stopPropagation();
+
+          setConfirmacionNavegacion({
+            onConfirm: () => {
+              setConfirmacionNavegacion(null);
+              limpiarFormulario();
+
+              if (isLogout) {
+                if (target.click) {
+                  setTimeout(() => {
+                    target.click();
+                  }, 50);
+                } else {
+                  window.location.href = "/admin/login";
+                }
+              } else if (href) {
+                navigate(href);
+              }
+            },
+            onCancel: () => {
+              setConfirmacionNavegacion(null);
+            }
+          });
+          break;
+        }
+        target = target.parentElement;
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    document.addEventListener("click", handleGlobalClick, true);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      document.removeEventListener("click", handleGlobalClick, true);
+    };
+  }, [mostrarFormulario, editandoId, form]);
 
   const tramitesFiltrados = useMemo(() => {
     const texto = busqueda.trim().toLowerCase();
@@ -205,12 +284,12 @@ function AdminTramites() {
 
       <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
         <div>
-          <h1 className="text-4xl font-bold text-slate-900">Gestión de Trámites</h1>
-          <p className="mt-2 text-lg text-slate-700">Administra los trámites y archivos descargables del sitio.</p>
+          <h1 className="text-3xl font-bold text-slate-900 sm:text-4xl">Gestión de Trámites</h1>
+          <p className="mt-2 text-sm text-slate-700 sm:text-base md:text-lg">Administra los trámites y archivos descargables del sitio.</p>
         </div>
         {!mostrarFormulario && (
           <button type="button" onClick={abrirFormularioNuevo}
-            className="inline-flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700">
+            className="inline-flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700 w-full sm:w-auto">
             <Plus className="h-5 w-5" /> Agregar trámite
           </button>
         )}
@@ -297,15 +376,17 @@ function AdminTramites() {
                   <tbody className="bg-white">
                     {tramitesFiltrados.map((tramite) => (
                       <tr key={tramite._id} className="border-b border-slate-200 align-top hover:bg-slate-50">
-                        <td className="px-4 py-4">
-                          <p className="font-semibold text-slate-900">{tramite.titulo}</p>
+                        <td className="px-4 py-4 max-w-[240px] xl:max-w-[320px]">
+                          <p className="font-semibold text-slate-900 line-clamp-2 break-words" title={tramite.titulo}>
+                            {tramite.titulo}
+                          </p>
                           <p className="mt-1 text-xs text-slate-500">Botón público: Descargar Formulario</p>
                         </td>
                         <td className="max-w-[280px] px-4 py-4 text-sm text-slate-600">
                           {Array.isArray(tramite.requisitos) && tramite.requisitos.length > 0 ? (
                             <ul className="space-y-1">
                               {tramite.requisitos.slice(0, 3).map((req, i) => (
-                                <li key={i} className="line-clamp-1">• {req.texto}</li>
+                                <li key={i} className="line-clamp-1 break-words" title={req.texto}>• {req.texto}</li>
                               ))}
                               {tramite.requisitos.length > 3 && (
                                 <li className="text-xs text-slate-500">+ {tramite.requisitos.length - 3} requisito(s) más</li>
@@ -323,13 +404,13 @@ function AdminTramites() {
                         </td>
                         <td className="px-4 py-4">
                           <div className="flex justify-end gap-2">
-                            <button type="button" onClick={() => handleEditar(tramite)}
-                              className="inline-flex items-center gap-2 rounded-xl bg-blue-50 px-4 py-2 text-sm font-medium text-blue-600 transition hover:bg-blue-100">
-                              <Pencil className="h-4 w-4" /> Editar
+                            <button type="button" onClick={() => handleEditar(tramite)} title="Editar"
+                              className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600 transition hover:bg-blue-100 hover:scale-105 active:scale-95">
+                              <Pencil className="h-5 w-5" />
                             </button>
-                            <button type="button" onClick={() => handleEliminar(tramite._id)}
-                              className="inline-flex items-center gap-2 rounded-xl bg-red-50 px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-100">
-                              <Trash2 className="h-4 w-4" /> Eliminar
+                            <button type="button" onClick={() => handleEliminar(tramite._id)} title="Eliminar"
+                              className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 text-red-600 transition hover:bg-red-100 hover:scale-105 active:scale-95">
+                              <Trash2 className="h-5 w-5" />
                             </button>
                           </div>
                         </td>
@@ -345,8 +426,10 @@ function AdminTramites() {
               {tramitesFiltrados.map((tramite) => (
                 <div key={tramite._id} className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
                   <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <h3 className="text-lg font-semibold text-slate-900">{tramite.titulo}</h3>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="text-lg font-semibold text-slate-900 line-clamp-2 break-words" title={tramite.titulo}>
+                        {tramite.titulo}
+                      </h3>
                       <p className="mt-1 text-xs text-slate-500">Botón público: Descargar Formulario</p>
                     </div>
                   </div>
@@ -354,7 +437,7 @@ function AdminTramites() {
                     <p className="mb-2 text-sm font-semibold text-slate-800">Requisitos:</p>
                     <ul className="space-y-1 text-sm text-slate-600">
                       {Array.isArray(tramite.requisitos) && tramite.requisitos.length > 0
-                        ? tramite.requisitos.slice(0, 3).map((req, i) => <li key={i}>• {req.texto}</li>)
+                        ? tramite.requisitos.slice(0, 3).map((req, i) => <li key={i} className="line-clamp-1 break-words" title={req.texto}>• {req.texto}</li>)
                         : <li>Sin requisitos registrados.</li>}
                     </ul>
                   </div>
@@ -364,14 +447,14 @@ function AdminTramites() {
                       <Upload className="h-4 w-4" /> Ver archivo
                     </a>
                   )}
-                  <div className="mt-5 flex gap-3">
-                    <button type="button" onClick={() => handleEditar(tramite)}
-                      className="flex-1 rounded-2xl bg-blue-50 px-4 py-3 text-blue-600 transition hover:bg-blue-100">
-                      <span className="inline-flex items-center gap-2"><Pencil className="h-4 w-4" /> Editar</span>
+                  <div className="mt-5 flex justify-end gap-2 border-t border-slate-100 pt-4">
+                    <button type="button" onClick={() => handleEditar(tramite)} title="Editar"
+                      className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-blue-600 transition hover:bg-blue-100 active:scale-95">
+                      <Pencil className="h-5 w-5" />
                     </button>
-                    <button type="button" onClick={() => handleEliminar(tramite._id)}
-                      className="flex-1 rounded-2xl bg-red-50 px-4 py-3 text-red-600 transition hover:bg-red-100">
-                      <span className="inline-flex items-center gap-2"><Trash2 className="h-4 w-4" /> Eliminar</span>
+                    <button type="button" onClick={() => handleEliminar(tramite._id)} title="Eliminar"
+                      className="flex h-11 w-11 items-center justify-center rounded-xl bg-red-50 text-red-600 transition hover:bg-red-100 active:scale-95">
+                      <Trash2 className="h-5 w-5" />
                     </button>
                   </div>
                 </div>
@@ -384,6 +467,37 @@ function AdminTramites() {
           </div>
         )}
       </section>
+      {confirmacionNavegacion && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm animate-fade-in">
+          <div className="w-full max-w-md scale-95 overflow-hidden rounded-3xl border border-slate-100 bg-white p-6 shadow-2xl transition-all animate-scale-up">
+            <div className="flex flex-col items-center text-center">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-100 text-amber-600 mb-4">
+                <AlertTriangle className="h-7 w-7" />
+              </div>
+              <h3 className="text-xl font-bold text-slate-900">¿Salir sin guardar los cambios?</h3>
+              <p className="mt-2 text-sm text-slate-500">
+                Tienes modificaciones pendientes en esta sección. Si sales ahora, perderás todos tus cambios en la gestión de trámites de forma permanente.
+              </p>
+            </div>
+            <div className="mt-6 flex flex-col gap-2 sm:flex-row">
+              <button
+                type="button"
+                onClick={confirmacionNavegacion.onCancel}
+                className="flex-1 rounded-2xl bg-slate-100 py-3.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-200 active:scale-[0.98] cursor-pointer"
+              >
+                Permanecer aquí
+              </button>
+              <button
+                type="button"
+                onClick={confirmacionNavegacion.onConfirm}
+                className="flex-1 rounded-2xl bg-amber-600 py-3.5 text-sm font-semibold text-white transition hover:bg-amber-700 active:scale-[0.98] shadow-lg shadow-amber-100 cursor-pointer"
+              >
+                Salir sin guardar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

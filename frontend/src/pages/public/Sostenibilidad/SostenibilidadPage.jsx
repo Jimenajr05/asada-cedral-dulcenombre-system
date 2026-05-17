@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { hero, compromiso, pilares } from "./SostenibilidadData";
 import { getSostenibilidad } from "../../../services/sostenibilidadService";
+import { FiZoomIn, FiX } from "react-icons/fi";
 
 /* ─── Íconos ─────────────────────────────────────────── */
 const IconShield = () => (
@@ -113,6 +114,18 @@ const construirUrlImagen = (url) => {
 
 const GallerySection = ({ title, description, images = [], total = null }) => {
   const scrollRef = useRef(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [activeImage, setActiveImage] = useState(null);
+
+  const openModal = (img) => {
+    setActiveImage(img);
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+    setActiveImage(null);
+  };
 
   const scrollGallery = (direction) => {
     if (!scrollRef.current) return;
@@ -127,19 +140,19 @@ const GallerySection = ({ title, description, images = [], total = null }) => {
   };
 
   return (
-    <section className="py-16 lg:py-20">
+    <section className="py-12 lg:py-20">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-10">
+        <div className="text-center mb-8 sm:mb-10">
           <SectionLabel>Galería</SectionLabel>
           <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 mt-3 mb-4">
             {title}
           </h2>
-          <p className="text-slate-600 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-sm sm:text-base text-slate-600 max-w-3xl mx-auto leading-relaxed">
             {description}
           </p>
 
           {total && (
-            <div className="mt-5 inline-flex items-center gap-2 rounded-full bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700">
+            <div className="mt-4 sm:mt-5 inline-flex items-center gap-2 rounded-full bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700">
               <IconHydrant />
               <span>{total}</span>
             </div>
@@ -150,7 +163,7 @@ const GallerySection = ({ title, description, images = [], total = null }) => {
           <button
             type="button"
             onClick={() => scrollGallery("left")}
-            className="absolute left-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/95 p-3 text-slate-700 shadow-lg border border-slate-200 opacity-0 transition-all duration-300 group-hover:opacity-100 hover:scale-105 hover:bg-white"
+            className="absolute left-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/95 p-3 text-slate-700 shadow-lg border border-slate-200 hidden md:inline-flex opacity-0 transition-all duration-300 group-hover:opacity-100 hover:scale-105 hover:bg-white"
             aria-label={`Ver imágenes anteriores de ${title}`}
           >
             <IconChevronLeft />
@@ -159,7 +172,7 @@ const GallerySection = ({ title, description, images = [], total = null }) => {
           <button
             type="button"
             onClick={() => scrollGallery("right")}
-            className="absolute right-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/95 p-3 text-slate-700 shadow-lg border border-slate-200 opacity-0 transition-all duration-300 group-hover:opacity-100 hover:scale-105 hover:bg-white"
+            className="absolute right-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/95 p-3 text-slate-700 shadow-lg border border-slate-200 hidden md:inline-flex opacity-0 transition-all duration-300 group-hover:opacity-100 hover:scale-105 hover:bg-white"
             aria-label={`Ver imágenes siguientes de ${title}`}
           >
             <IconChevronRight />
@@ -167,30 +180,79 @@ const GallerySection = ({ title, description, images = [], total = null }) => {
 
           <div
             ref={scrollRef}
-            className="flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-4 scrollbar-hide"
+            className={`flex gap-4 sm:gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-4 scrollbar-hide ${
+              images.length <= 2
+                ? "md:justify-center"
+                : images.length === 3
+                ? "lg:justify-center"
+                : ""
+            }`}
           >
             {images.map((image, index) => (
               <div
                 key={`${image.alt || "imagen"}-${index}`}
-                className="min-w-[280px] sm:min-w-[320px] md:min-w-[340px] snap-start group/card overflow-hidden rounded-2xl bg-white border border-slate-100 shadow-sm flex-shrink-0"
+                className="min-w-[240px] sm:min-w-[320px] md:min-w-[340px] snap-start group/card overflow-hidden rounded-2xl bg-white border border-slate-100 shadow-sm flex-shrink-0 flex flex-col"
               >
-                <div className="h-72 overflow-hidden">
+                {/* IMAGEN */}
+                <button
+                  type="button"
+                  onClick={() => openModal(image)}
+                  className="relative w-full h-52 sm:h-72 group/zoom overflow-hidden flex flex-col p-0 border-none outline-none bg-transparent grow"
+                >
                   <img
                     src={construirUrlImagen(image.src)}
                     alt={image.alt || "Imagen de galería"}
-                    className="h-full w-full object-cover transition duration-500 group-hover/card:scale-105"
+                    className="block w-full h-full object-cover transition duration-500 group-hover/card:scale-105"
                   />
-                </div>
-                <div className="p-4">
-                  <p className="text-sm text-slate-600">
-                    {image.alt || "Imagen de galería"}
-                  </p>
-                </div>
+
+                  {/* Overlay */}
+                  <div className="absolute inset-0 bg-slate-900/0 group-hover/zoom:bg-slate-900/20 transition flex items-center justify-center">
+                    <div className="opacity-0 group-hover/zoom:opacity-100 transition-all duration-300 transform scale-75 group-hover/zoom:scale-100">
+                      <div className="bg-white/90 text-slate-900 p-3 rounded-full shadow-md">
+                        <FiZoomIn className="text-xl" />
+                      </div>
+                    </div>
+                  </div>
+                </button>
+
+                {/* TEXTO */}
+                {image.alt && image.alt !== "Imagen de galería" && (
+                  <div className="p-4 border-t border-slate-50">
+                    <p className="text-sm text-slate-600 leading-snug break-words whitespace-normal">
+                      {image.alt}
+                    </p>
+                  </div>
+                )}
               </div>
             ))}
           </div>
         </div>
       </div>
+
+      {/* MODAL */}
+      {modalOpen && activeImage && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/80 p-4 backdrop-blur-sm"
+          onClick={closeModal}
+        >
+          <div className="relative max-w-5xl w-full flex flex-col items-center">
+            <button
+              className="absolute -top-12 right-4 sm:right-0 text-white hover:text-blue-300 flex items-center gap-2"
+              onClick={closeModal}
+            >
+              <span className="text-sm font-semibold">CERRAR</span>
+              <FiX className="text-2xl" />
+            </button>
+
+            <img
+              src={construirUrlImagen(activeImage.src)}
+              alt="Vista ampliada"
+              className="max-h-[85vh] w-auto max-w-full object-contain rounded-xl shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        </div>
+      )}
     </section>
   );
 };
@@ -261,31 +323,31 @@ export default function SustainabilityPage() {
           </svg>
         </div>
 
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-28 text-center">
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-20 sm:pt-16 sm:pb-28 text-center">
           <span className="section-badge bg-sky-500/20 border border-sky-400/30 text-sky-300 mb-5">
             Medio ambiente
           </span>
-          <h1 className="mt-4 text-4xl sm:text-5xl font-extrabold text-white mb-5" style={{ fontFamily: "var(--font-display)" }}>
+          <h1 className="mt-4 text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-5" style={{ fontFamily: "var(--font-display)" }}>
             {hero.title}
           </h1>
-          <p className="text-lg sm:text-xl text-blue-100 leading-relaxed max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base md:text-lg lg:text-xl text-blue-100 leading-relaxed max-w-2xl mx-auto">
             {hero.subtitle}
           </p>
         </div>
       </section>
 
-      <section className="py-16 lg:py-20">
+      <section className="py-12 lg:py-20">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <SectionLabel>Compromiso ambiental</SectionLabel>
           <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 mt-3 mb-6">
             {compromiso.title}
           </h2>
-          <p className="text-slate-600 leading-relaxed max-w-4xl mx-auto">
+          <p className="text-sm sm:text-base text-slate-600 leading-relaxed max-w-4xl mx-auto">
             {compromiso.text}
           </p>
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 grid grid-cols-1 md:grid-cols-3 gap-5">
           {pilares.map((item, index) => {
             const Icon = pillarIcons[index];
             const colors = [
@@ -297,17 +359,17 @@ export default function SustainabilityPage() {
             return (
               <div
                 key={item.title}
-                className="bg-white rounded-xl border border-slate-100 shadow-sm p-7 text-center"
+                className="bg-white rounded-xl border border-slate-100 shadow-sm p-5 sm:p-7 text-center"
               >
                 <div
-                  className={`mx-auto mb-5 w-14 h-14 rounded-full flex items-center justify-center ${colors[index]}`}
+                  className={`mx-auto mb-4 w-11 h-11 sm:w-14 sm:h-14 rounded-full flex items-center justify-center ${colors[index]}`}
                 >
                   <Icon />
                 </div>
-                <h3 className="text-xl font-semibold text-slate-800 mb-3">
+                <h3 className="text-lg sm:text-xl font-bold text-slate-800 mb-2">
                   {item.title}
                 </h3>
-                <p className="text-sm text-slate-600 leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                   {item.desc}
                 </p>
               </div>
