@@ -85,12 +85,14 @@ function EnlaceCard({ link }) {
   const { Icon, color } = getLinkEstilo(link.label);
   const colors = colorMap[color];
   return (
-    <div className={`bg-white rounded-xl border ${colors.border} shadow-sm p-7 flex flex-col gap-5`}>
-      <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${colors.icon}`}>
-        <Icon />
-      </div>
-      <div className="flex-1">
-        <h3 className="text-base font-bold text-slate-800 mb-1">{link.label}</h3>
+    <div className={`bg-white rounded-xl border ${colors.border} shadow-sm p-7 flex flex-col gap-5 h-full justify-between`}>
+      <div>
+        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${colors.icon} mb-5`}>
+          <Icon />
+        </div>
+        <div className="min-w-0">
+          <h3 className="text-base font-bold text-slate-800 mb-1 break-words">{link.label}</h3>
+        </div>
       </div>
       <a
         href={link.url}
@@ -284,10 +286,46 @@ export default function TransparenciaPage() {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {enlaces.map((link) => (
-              <EnlaceCard key={link._id} link={link} />
-            ))}
+          <div className="relative group">
+            {/* Flecha izquierda */}
+            <button
+              onClick={() =>
+                document
+                  .getElementById("scrollEnlaces")
+                  .scrollBy({ left: -340, behavior: "smooth" })
+              }
+              className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white/90 backdrop-blur-md shadow-md rounded-full p-2.5 opacity-0 group-hover:opacity-100 transition hover:scale-110"
+            >
+              <svg className="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+
+            {/* Flecha derecha */}
+            <button
+              onClick={() =>
+                document
+                  .getElementById("scrollEnlaces")
+                  .scrollBy({ left: 340, behavior: "smooth" })
+              }
+              className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white/90 backdrop-blur-md shadow-md rounded-full p-2.5 opacity-0 group-hover:opacity-100 transition hover:scale-110"
+            >
+              <svg className="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+
+            {/* CONTENEDOR */}
+            <div
+              id="scrollEnlaces"
+              className="flex gap-5 overflow-x-auto pb-4 scroll-smooth snap-x snap-mandatory scrollbar-hide"
+            >
+              {enlaces.map((link) => (
+                <div key={link._id} className="snap-start min-w-[280px] sm:min-w-[340px] max-w-[280px] sm:max-w-[340px] flex-shrink-0 flex flex-col">
+                  <EnlaceCard link={link} />
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </section>

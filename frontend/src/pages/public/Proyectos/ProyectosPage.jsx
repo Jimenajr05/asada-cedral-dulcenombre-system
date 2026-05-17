@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FileText, ChevronDown, ChevronUp, FolderOpen, Image as ImageIcon, Clock, Activity } from "lucide-react";
+import { FileText, ChevronDown, ChevronUp, FolderOpen, Image as ImageIcon, Clock, Activity, Search } from "lucide-react";
 import { getProyectosPublico, BASE_URL } from "../../../services/proyectoService";
 import { FiZoomIn, FiX } from "react-icons/fi";
 
@@ -34,6 +34,7 @@ export default function ProyectosPage() {
   const [expandido, setExpandido] = useState(null);
   const [imagenActiva, setImagenActiva] = useState(null);
   const [paginaActual, setPaginaActual] = useState(1);
+  const [proyectoSearch, setProyectoSearch] = useState("");
   const proyectosPorPagina = 5;
 
   useEffect(() => {
@@ -43,12 +44,26 @@ export default function ProyectosPage() {
       .finally(() => setLoading(false));
   }, []);
 
+  useEffect(() => {
+    setPaginaActual(1);
+  }, [proyectoSearch]);
+
+  const proyectosFiltrados = proyectos.filter((p) => {
+    const term = proyectoSearch.toLowerCase().trim();
+    if (!term) return true;
+    return (
+      (p.titulo || "").toLowerCase().includes(term) ||
+      (p.descripcion || "").toLowerCase().includes(term) ||
+      (p.estado || "").toLowerCase().includes(term)
+    );
+  });
+
   const indexInicio = (paginaActual - 1) * proyectosPorPagina;
   const indexFin = indexInicio + proyectosPorPagina;
 
-  const proyectosPaginados = proyectos.slice(indexInicio, indexFin);
+  const proyectosPaginados = proyectosFiltrados.slice(indexInicio, indexFin);
 
-  const totalPaginas = Math.ceil(proyectos.length / proyectosPorPagina);
+  const totalPaginas = Math.ceil(proyectosFiltrados.length / proyectosPorPagina);
 
   return (
     <main className="bg-slate-50 text-slate-900">
@@ -79,19 +94,46 @@ export default function ProyectosPage() {
 
       {/* CONTENIDO */}
       <section className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
+        {!loading && (
+          <div className="mb-8 flex flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">Resultados</p>
+              <p className="mt-0.5 text-xl font-bold text-slate-900">
+                {proyectosFiltrados.length} {proyectosFiltrados.length === 1 ? "proyecto" : "proyectos"}
+              </p>
+            </div>
+
+            <div className="relative w-full md:max-w-md">
+              <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+                <Search className="h-4 w-4" />
+              </span>
+              <input
+                type="text"
+                value={proyectoSearch}
+                onChange={(e) => setProyectoSearch(e.target.value)}
+                placeholder="Buscar proyecto..."
+                className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3.5 pl-14 pr-4 text-slate-900 text-sm outline-none transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-100"
+              />
+            </div>
+          </div>
+        )}
 
         {loading ? (
           <div className="flex flex-col items-center justify-center py-24 text-slate-400">
             <div className="h-10 w-10 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600 mb-4" />
             <p>Cargando proyectos...</p>
           </div>
-        ) : proyectos.length === 0 ? (
+        ) : proyectosFiltrados.length === 0 ? (
           <div className="flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-slate-200 bg-white py-24 text-center">
             <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50">
               <FolderOpen className="h-8 w-8 text-blue-400" />
             </div>
-            <h3 className="text-xl font-bold text-slate-700">No hay proyectos aún</h3>
-            <p className="mt-2 text-slate-400">Próximamente se publicarán los proyectos en curso.</p>
+            <h3 className="text-xl font-bold text-slate-700">
+              {proyectoSearch.trim() ? "Sin resultados" : "No hay proyectos aún"}
+            </h3>
+            <p className="mt-2 text-slate-400">
+              {proyectoSearch.trim() ? "No se encontraron proyectos que coincidan con la búsqueda." : "Próximamente se publicarán los proyectos en curso."}
+            </p>
           </div>
         ) : (
           <div className="space-y-5">

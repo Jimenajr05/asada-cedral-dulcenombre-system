@@ -7,6 +7,7 @@ import {
   FiCheckCircle,
   FiZoomIn,
   FiX,
+  FiSearch,
 } from "react-icons/fi";
 
 const WaterDropBg = () => (
@@ -140,12 +141,12 @@ function AvisoCard({ aviso, destacado = false }) {
               </div>
             </div>
 
-            <h3 className="mb-4 text-2xl font-bold leading-tight text-slate-900 md:text-3xl break-all">
+            <h3 className="mb-4 text-2xl font-bold leading-tight text-slate-900 md:text-3xl break-words">
               {aviso?.titulo || "Sin título"}
             </h3>
 
             <div className="max-h-25 overflow-y-auto pr-2 custom-scrollbar">
-              <p className="text-lg leading-relaxed text-slate-700 whitespace-pre-line break-all">
+              <p className="text-lg leading-relaxed text-slate-700 whitespace-pre-line break-words">
                 {aviso?.descripcion || "Sin descripción"}
               </p>
             </div>
@@ -229,17 +230,25 @@ export default function AvisosPage() {
     obtenerAvisos();
   }, []);
 
+  const [avisoSearch, setAvisoSearch] = useState("");
+
   useEffect(() => {
     setPaginaActual(1);
-  }, [filtroActivo]);
+  }, [filtroActivo, avisoSearch]);
 
   const avisosFiltrados = useMemo(() => {
-    if (filtroActivo === "todos") {
-      return avisosData;
-    }
+    const base = filtroActivo === "todos"
+      ? avisosData
+      : avisosData.filter((aviso) => aviso?.tipo === filtroActivo);
 
-    return avisosData.filter((aviso) => aviso?.tipo === filtroActivo);
-  }, [avisosData, filtroActivo]);
+    const term = avisoSearch.toLowerCase().trim();
+    if (!term) return base;
+
+    return base.filter((aviso) =>
+      (aviso?.titulo || "").toLowerCase().includes(term) ||
+      (aviso?.descripcion || "").toLowerCase().includes(term)
+    );
+  }, [avisosData, filtroActivo, avisoSearch]);
 
   const avisoDestacado = avisosFiltrados.find((aviso) => aviso?.fijado);
 
@@ -315,6 +324,29 @@ export default function AvisosPage() {
       {!loading && !error && (
         <section className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8 lg:py-14">
           <div className="space-y-8">
+            {/* BUSCADOR DE AVISOS */}
+            <div className="flex flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm md:flex-row md:items-center md:justify-between">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">Resultados</p>
+                <p className="mt-0.5 text-xl font-bold text-slate-900">
+                  {avisosSinDestacado.length + (avisoDestacado ? 1 : 0)} {avisosSinDestacado.length + (avisoDestacado ? 1 : 0) === 1 ? "aviso" : "avisos"}
+                </p>
+              </div>
+
+              <div className="relative w-full md:max-w-md">
+                <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+                  <FiSearch className="text-base" />
+                </span>
+                <input
+                  type="text"
+                  value={avisoSearch}
+                  onChange={(e) => setAvisoSearch(e.target.value)}
+                  placeholder="Buscar comunicado..."
+                  className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3.5 pl-14 pr-4 text-slate-900 text-sm outline-none transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-100"
+                />
+              </div>
+            </div>
+
             {avisoDestacado && <AvisoCard aviso={avisoDestacado} destacado />}
 
             {avisosPaginados.map((aviso) => (
@@ -368,9 +400,9 @@ export default function AvisosPage() {
             )}
 
             {!avisoDestacado && avisosSinDestacado.length === 0 && (
-              <div className="rounded-2xl border border-slate-200 bg-white p-10 text-center shadow-sm">
+              <div className="rounded-3xl border border-slate-200 bg-white p-10 text-center shadow-sm">
                 <p className="text-lg text-slate-600">
-                  No hay avisos disponibles para esta categoría.
+                  {avisoSearch.trim() ? "No se encontraron avisos que coincidan con la búsqueda." : "No hay avisos disponibles para esta categoría."}
                 </p>
               </div>
             )}

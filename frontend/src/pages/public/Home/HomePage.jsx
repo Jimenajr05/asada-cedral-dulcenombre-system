@@ -9,6 +9,7 @@ import {
   FaLeaf,
 } from "react-icons/fa";
 import { FiAlertCircle, FiInfo, FiCheckCircle, FiCalendar } from "react-icons/fi";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { quickAccess, missionCards } from "./HomeData";
 
 function getIcon(icon) {
@@ -61,6 +62,19 @@ function tipoConfig(tipo) {
 
 export default function HomePage() {
   const navigate = useNavigate();
+  
+  const scrollSlider = (direction) => {
+    const slider = document.getElementById("notices-slider");
+    if (!slider) return;
+    const cardWidth = slider.firstElementChild?.offsetWidth || 0;
+    const gap = 24; // gap-6 is 24px
+    const scrollAmount = cardWidth + gap;
+    if (direction === "left") {
+      slider.scrollBy({ left: -scrollAmount, behavior: "smooth" });
+    } else {
+      slider.scrollBy({ left: scrollAmount, behavior: "smooth" });
+    }
+  };
 
   const [notices, setNotices] = useState([]);
   const [loadingNotices, setLoadingNotices] = useState(true);
@@ -80,18 +94,20 @@ export default function HomePage() {
         }
 
         const avisosFormateados = Array.isArray(data)
-          ? data.map((aviso) => ({
-            ...aviso,
-            date: aviso.createdAt
-              ? new Date(aviso.createdAt).toLocaleDateString("es-CR", {
-                day: "numeric",
-                month: "long",
-                year: "numeric",
-              })
-              : "Sin fecha",
-            desc: aviso.descripcion,
-            tipo: aviso.tipo,
-          }))
+          ? data
+            .filter((aviso) => aviso.fijado)
+            .map((aviso) => ({
+              ...aviso,
+              date: aviso.createdAt
+                ? new Date(aviso.createdAt).toLocaleDateString("es-CR", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })
+                : "Sin fecha",
+              desc: aviso.descripcion,
+              tipo: aviso.tipo,
+            }))
           : [];
 
         setNotices(avisosFormateados);
@@ -192,6 +208,15 @@ export default function HomePage() {
 
       {/* AVISOS */}
       <section className="px-4 py-20 sm:px-6 lg:px-8">
+        <style>{`
+          .no-scrollbar::-webkit-scrollbar {
+            display: none;
+          }
+          .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+          }
+        `}</style>
         <div className="mx-auto max-w-7xl">
           <div className="mb-10 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
@@ -203,7 +228,7 @@ export default function HomePage() {
 
             <button
               onClick={() => navigate("/avisos")}
-              className="w-fit text-left text-sm font-semibold text-primary transition hover:opacity-80 sm:text-base"
+              className="w-fit text-left text-sm font-semibold text-sky-600 hover:text-sky-800 transition sm:text-base"
             >
               Ver todos →
             </button>
@@ -221,46 +246,75 @@ export default function HomePage() {
             </div>
           )}
 
-          {!loadingNotices && !errorNotices && noticesPreview.length > 0 && (
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-              {noticesPreview.map((notice, index) => {
-                const badge = tipoConfig(notice.tipo);
+          {!loadingNotices && !errorNotices && notices.length > 0 && (
+            <div className="relative group/slider">
+              {/* Botón Anterior */}
+              {notices.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => scrollSlider("left")}
+                  className="absolute left-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/95 p-3 text-slate-700 shadow-lg border border-slate-200 opacity-0 transition-all duration-300 group-hover/slider:opacity-100 hover:scale-105 hover:bg-white active:scale-95 focus:outline-none"
+                  aria-label="Ver avisos anteriores"
+                >
+                  <ChevronLeft className="h-6 w-6" />
+                </button>
+              )}
 
-                return (
-                  <div
-                    key={notice._id || index}
-                    className="card-hover rounded-2xl border border-slate-100 bg-white shadow-md group overflow-hidden"
-                  >
-                    <div className="p-6">
-                      <div className="mb-5 flex flex-wrap items-center gap-3">
-                        <div
-                          className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide ${badge.className}`}
-                        >
-                          {badge.icon}
-                          <span>{badge.label}</span>
+              {/* Botón Siguiente */}
+              {notices.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => scrollSlider("right")}
+                  className="absolute right-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/95 p-3 text-slate-700 shadow-lg border border-slate-200 opacity-0 transition-all duration-300 group-hover/slider:opacity-100 hover:scale-105 hover:bg-white active:scale-95 focus:outline-none"
+                  aria-label="Ver avisos siguientes"
+                >
+                  <ChevronRight className="h-6 w-6" />
+                </button>
+              )}
+
+              <div 
+                id="notices-slider" 
+                className="flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar pb-6"
+              >
+                {notices.map((notice, index) => {
+                  const badge = tipoConfig(notice.tipo);
+
+                  return (
+                    <div
+                      key={notice._id || index}
+                      className="w-full shrink-0 snap-start md:w-[calc(50%-12px)] xl:w-[calc(33.333%-16px)] card-hover rounded-2xl border border-slate-100 bg-white shadow-md group overflow-hidden flex flex-col justify-between"
+                    >
+                      <div className="p-6">
+                        <div className="mb-5 flex flex-wrap items-center gap-3">
+                          <div
+                            className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide ${badge.className}`}
+                          >
+                            {badge.icon}
+                            <span>{badge.label}</span>
+                          </div>
+
+                          <div className="inline-flex items-center gap-1.5 text-xs text-slate-400">
+                            <FiCalendar />
+                            <span>{notice.date || "Sin fecha"}</span>
+                          </div>
                         </div>
 
-                        <div className="inline-flex items-center gap-1.5 text-xs text-slate-400">
-                          <FiCalendar />
-                          <span>{notice.date || "Sin fecha"}</span>
-                        </div>
+                        <h3 className="text-xl font-bold leading-snug text-slate-900 group-hover:text-sky-700 transition-colors break-words" style={{ fontFamily: "var(--font-display)" }}>
+                          {notice.titulo || "Sin título"}
+                        </h3>
+
+                        <p className="mt-3 text-sm leading-7 text-slate-500 line-clamp-3 break-words">
+                          {notice.desc || "Sin descripción"}
+                        </p>
                       </div>
-
-                      <h3 className="text-xl font-bold leading-snug text-slate-900 group-hover:text-sky-700 transition-colors" style={{ fontFamily: "var(--font-display)" }}>
-                        {notice.titulo || "Sin título"}
-                      </h3>
-
-                      <p className="mt-3 text-sm leading-7 text-slate-500 line-clamp-3">
-                        {notice.desc || "Sin descripción"}
-                      </p>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
           )}
 
-          {!loadingNotices && !errorNotices && noticesPreview.length === 0 && (
+          {!loadingNotices && !errorNotices && notices.length === 0 && (
             <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
               <p className="text-slate-600">No hay avisos disponibles.</p>
             </div>

@@ -185,18 +185,18 @@ const GallerySection = ({ title, description, images = [], total = null }) => {
             {images.map((image, index) => (
               <div
                 key={`${image.alt || "imagen"}-${index}`}
-                className="min-w-[280px] sm:min-w-[320px] md:min-w-[340px] snap-start group/card overflow-hidden rounded-2xl bg-white border border-slate-100 shadow-sm flex-shrink-0"
+                className="min-w-[280px] sm:min-w-[320px] md:min-w-[340px] snap-start group/card overflow-hidden rounded-2xl bg-white border border-slate-100 shadow-sm flex-shrink-0 flex flex-col"
               >
                 {/* IMAGEN */}
                 <button
                   type="button"
                   onClick={() => openModal(image)}
-                  className="relative w-full h-72 group/zoom overflow-hidden block"
+                  className="relative w-full h-72 group/zoom overflow-hidden flex flex-col p-0 border-none outline-none bg-transparent grow"
                 >
                   <img
                     src={construirUrlImagen(image.src)}
                     alt={image.alt || "Imagen de galería"}
-                    className="w-full h-full object-cover transition duration-500 group-hover/card:scale-105"
+                    className="block w-full h-full object-cover transition duration-500 group-hover/card:scale-105"
                   />
 
                   {/* Overlay */}
@@ -210,11 +210,13 @@ const GallerySection = ({ title, description, images = [], total = null }) => {
                 </button>
 
                 {/* TEXTO */}
-                <div className="p-4">
-                  <p className="text-sm text-slate-600 leading-snug break-words whitespace-normal">
-                    {image.alt || "Imagen de galería"}
-                  </p>
-                </div>
+                {image.alt && image.alt !== "Imagen de galería" && (
+                  <div className="p-4 border-t border-slate-50">
+                    <p className="text-sm text-slate-600 leading-snug break-words whitespace-normal">
+                      {image.alt}
+                    </p>
+                  </div>
+                )}
               </div>
             ))}
           </div>

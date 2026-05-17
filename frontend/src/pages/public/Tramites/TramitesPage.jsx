@@ -286,7 +286,7 @@ export default function TramitesPage() {
                   </div>
 
                   <div className="min-w-0 flex-1 w-full overflow-hidden">
-                    <h3 className="text-xl font-bold leading-tight text-slate-900 break-all whitespace-normal" style={{ fontFamily: "var(--font-display)" }}>
+                    <h3 className="text-xl font-bold leading-tight text-slate-900 break-words whitespace-normal" style={{ fontFamily: "var(--font-display)" }}>
                       {t.titulo}
                     </h3>
                   </div>
@@ -306,7 +306,7 @@ export default function TramitesPage() {
                           <span className="mt-[5px] flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full bg-sky-100">
                             <span className="h-1.5 w-1.5 rounded-full bg-sky-500" />
                           </span>
-                          <span className="break-all whitespace-normal leading-relaxed flex-1 min-w-0">{r.texto}</span>
+                          <span className="break-words whitespace-normal leading-relaxed flex-1 min-w-0">{r.texto}</span>
                         </li>
                       ))}
                     </ul>
