@@ -9,6 +9,7 @@ const {
   updateReunion,
   deleteReunion,
   addCertificado,
+  updateCertificado,
   deleteCertificado,
 } = require("../controllers/transparenciaController");
 
@@ -22,6 +23,7 @@ router.delete("/reuniones/:id", auth, deleteReunion);
 
 // ── Certificados (protegido) ─────────────────────────────────────────────────
 router.post("/certificados",      auth, uploadCert.single("imagen"), addCertificado);
+router.put("/certificados/:id",   auth, uploadCert.single("imagen"), updateCertificado);
 router.delete("/certificados/:id", auth, deleteCertificado);
 
 module.exports = router;
