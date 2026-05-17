@@ -91,3 +91,17 @@ export const deleteCertificado = async (id) => {
   if (!response.ok) throw new Error(data.message || "Error al eliminar certificado");
   return data;
 };
+
+export const updateCertificado = async (id, formData) => {
+  const response = await fetch(`${API_URL}/certificados/${id}`, {
+    method: "PUT",
+    headers: {
+      "Authorization": `Bearer ${getToken()}`,
+    },
+    credentials: "include",
+    body: formData,
+  });
+  const data = await parseResponse(response);
+  if (!response.ok) throw new Error(data.message || "Error al actualizar certificado");
+  return data;
+};
