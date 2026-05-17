@@ -8,10 +8,9 @@ function Toast({ toast }) {
   const ok = toast.type === "success";
   return (
     <div
-      className={`fixed top-5 right-5 z-50 flex items-start gap-3 rounded-2xl px-5 py-4 shadow-2xl border animate-slide-right ${
+      className={`fixed top-4 right-4 left-4 sm:top-6 sm:right-6 sm:left-auto z-50 flex items-start gap-3 rounded-2xl px-4 py-3 sm:px-5 sm:py-4 shadow-2xl border animate-slide-right w-auto sm:w-[380px] ${
         ok ? "bg-emerald-50 border-emerald-200 text-emerald-800" : "bg-red-50 border-red-200 text-red-800"
       }`}
-      style={{ minWidth: 280, maxWidth: 380 }}
     >
       <div className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-white text-sm font-bold ${ok ? "bg-emerald-500" : "bg-red-500"}`}>
         {ok ? "✓" : "✕"}
@@ -72,7 +71,7 @@ function PasswordStrength({ password }) {
       </div>
 
       {/* Checklist */}
-      <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1">
         {checks.map((c) => (
           <div key={c.label} className="flex items-center gap-1.5">
             <span className={`text-xs ${c.ok ? "text-emerald-500" : "text-slate-300"}`}>
@@ -129,7 +128,7 @@ function AdminRegister() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4 py-6 sm:py-12">
       <Toast toast={toast} />
 
       <div className="w-full max-w-5xl overflow-hidden rounded-3xl bg-white shadow-2xl shadow-slate-200/80 grid grid-cols-1 md:grid-cols-2">
@@ -166,10 +165,13 @@ function AdminRegister() {
         </div>
 
         {/* Panel derecho */}
-        <div className="flex items-center justify-center px-8 py-12 md:px-12">
+        <div className="flex items-center justify-center px-4 py-8 sm:px-8 sm:py-12 md:px-12">
           <div className="w-full max-w-md">
-            <div className="mb-8">
-              <h2 className="text-3xl font-extrabold text-slate-900" style={{ fontFamily: "var(--font-display)" }}>
+            <div className="mb-6 sm:mb-8">
+              <div className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-teal-50 border border-teal-100 px-3 py-1 text-xs font-semibold text-teal-700 md:hidden">
+                💧 ASADA Cedral y Dulce Nombre
+              </div>
+              <h2 className="text-3xl font-extrabold text-slate-900 leading-tight" style={{ fontFamily: "var(--font-display)" }}>
                 Registrarse
               </h2>
               <p className="mt-2 text-sm text-slate-500">

@@ -340,13 +340,13 @@ function AdminAvisos() {
       <Toast toasts={toasts} />
 
       {/* ENCABEZADO */}
-      <div className="mb-6 flex items-start justify-between">
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-4xl font-bold text-slate-900 md:text-5xl">Gestión de Avisos</h1>
-          <p className="mt-2 text-lg text-slate-700">Crear, editar y administrar avisos públicos.</p>
+          <h1 className="text-3xl font-bold text-slate-900 sm:text-4xl md:text-5xl">Gestión de Avisos</h1>
+          <p className="mt-2 text-sm text-slate-700 sm:text-base md:text-lg">Crear, editar y administrar avisos públicos.</p>
         </div>
         <button type="button" onClick={abrirNuevoFormulario}
-          className="inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-6 py-4 font-semibold text-white shadow-sm transition hover:bg-blue-700">
+          className="inline-flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-6 py-4 font-semibold text-white shadow-sm transition hover:bg-blue-700 w-full sm:w-auto">
           <Plus className="h-5 w-5" /> Nuevo Aviso
         </button>
       </div>

@@ -154,7 +154,7 @@ export default function ProyectosPage() {
 
                   {/* Cabecera */}
                   <button onClick={() => setExpandido(abierto ? null : proyecto._id)}
-                    className="w-full text-left px-6 py-5 hover:bg-slate-50 transition-colors">
+                    className="w-full text-left px-4 sm:px-6 py-4 sm:py-5 hover:bg-slate-50 transition-colors">
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex items-start gap-4 min-w-0">
                         {/* Ícono */}
@@ -207,7 +207,7 @@ export default function ProyectosPage() {
 
                   {/* Detalle expandido */}
                   {abierto && (
-                    <div className="border-t border-slate-100 bg-slate-50 px-6 pb-8 pt-6 space-y-8">
+                    <div className="border-t border-slate-100 bg-slate-50 px-4 sm:px-6 pb-6 sm:pb-8 pt-5 sm:pt-6 space-y-8">
 
                       {/* Descripción completa */}
                       {proyecto.descripcion && (
@@ -278,16 +278,18 @@ export default function ProyectosPage() {
                               <a key={doc._id}
                                 href={doc.url?.startsWith("http") ? doc.url : `${BASE_URL}${doc.url}`}
                                 target="_blank" rel="noreferrer"
-                                className="group flex items-start gap-3 rounded-2xl border border-slate-200 bg-white px-5 py-3.5 text-sm font-medium text-slate-700 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700 shadow-sm">
-                                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-100 group-hover:bg-blue-200 transition">
-                                  <FileText className="h-4 w-4 text-blue-600" />
+                                className="group flex flex-col sm:flex-row sm:items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 sm:px-5 sm:py-3.5 text-sm font-medium text-slate-700 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700 shadow-sm">
+                                <div className="flex items-center gap-3 min-w-0 flex-1">
+                                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-100 group-hover:bg-blue-200 transition">
+                                    <FileText className="h-4 w-4 text-blue-600" />
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <p className="break-words whitespace-normal leading-snug">
+                                      {doc.nombre}
+                                    </p>
+                                  </div>
                                 </div>
-                                <div className="flex-1 min-w-0">
-                                  <p className="break-words whitespace-normal leading-snug">
-                                    {doc.nombre}
-                                  </p>
-                                </div>
-                                <span className="ml-auto text-xs text-slate-400 group-hover:text-blue-500">Descargar →</span>
+                                <span className="text-xs text-sky-600 font-bold sm:text-slate-400 group-hover:text-blue-500 sm:ml-auto self-end sm:self-center shrink-0">Descargar →</span>
                               </a>
                             ))}
                           </div>

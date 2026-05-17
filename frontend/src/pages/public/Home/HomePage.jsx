@@ -146,25 +146,25 @@ export default function HomePage() {
               ASADA Cedral y Dulce Nombre
             </span>
 
-            <h1 className="mt-4 text-4xl font-extrabold leading-tight sm:text-5xl lg:text-6xl xl:text-7xl" style={{ fontFamily: "var(--font-display)" }}>
+            <h1 className="mt-4 text-3xl font-extrabold leading-tight sm:text-5xl lg:text-6xl xl:text-7xl" style={{ fontFamily: "var(--font-display)" }}>
               Agua Potable para{" "}
               <span className="text-gradient-water">Nuestra Comunidad</span>
             </h1>
 
-            <p className="mt-6 max-w-xl text-base leading-7 text-slate-300 sm:text-lg">
+            <p className="mt-6 max-w-xl text-sm leading-relaxed text-slate-300 sm:text-lg">
               Gestión responsable y sostenible del recurso hídrico al servicio de todos, con transparencia y compromiso comunitario.
             </p>
 
-            <div className="mt-10 flex flex-wrap gap-4">
+            <div className="mt-10 flex flex-col sm:flex-row gap-4">
               <button
                 onClick={() => navigate("/sobre-nosotros")}
-                className="btn-glow inline-flex items-center gap-2 rounded-xl bg-sky-500 px-8 py-3.5 text-sm font-semibold text-white shadow-lg"
+                className="w-full sm:w-auto btn-glow inline-flex items-center justify-center gap-2 rounded-xl bg-sky-500 px-8 py-3.5 text-sm font-semibold text-white shadow-lg"
               >
                 Conocer más
               </button>
               <button
                 onClick={() => navigate("/contacto")}
-                className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-8 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-8 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20"
               >
                 Contacto
               </button>
@@ -176,29 +176,27 @@ export default function HomePage() {
       {/* QUICK ACCESS */}
       <section className="relative z-10 -mt-12 px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3.5 lg:grid-cols-4">
             {quickAccess.map((item) => (
               <div
                 key={item.title}
                 onClick={() => navigate(item.path)}
                 className="card-hover cursor-pointer rounded-2xl border border-white/60 bg-white/90 shadow-xl shadow-slate-200/60 backdrop-blur-sm group"
               >
-                <div className="p-6">
+                <div className="p-4 sm:p-6">
                   <div
-                    className={`flex h-13 w-13 items-center justify-center rounded-xl text-xl text-white shadow-sm transition-transform duration-300 group-hover:scale-110 group-hover:rotate-2 ${item.bg}`}
-                    style={{ height: 52, width: 52 }}
+                    className={`flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl text-lg sm:text-xl text-white shadow-sm transition-transform duration-300 group-hover:scale-110 group-hover:rotate-2 ${item.bg}`}
                   >
                     {getIcon(item.icon)}
                   </div>
 
-                  <h3 className="mt-4 text-lg font-bold text-slate-900" style={{ fontFamily: "var(--font-display)" }}>
+                  <h3 className="mt-3 sm:mt-4 text-[14.5px] sm:text-lg font-bold text-slate-900 leading-tight" style={{ fontFamily: "var(--font-display)" }}>
                     {item.title}
                   </h3>
 
-                  <p className="mt-1 text-sm leading-relaxed text-slate-500">
+                  <p className="mt-1 text-xs leading-relaxed text-slate-400">
                     {item.subtitle}
                   </p>
-
                 </div>
               </div>
             ))}
@@ -253,7 +251,7 @@ export default function HomePage() {
                 <button
                   type="button"
                   onClick={() => scrollSlider("left")}
-                  className="absolute left-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/95 p-3 text-slate-700 shadow-lg border border-slate-200 opacity-0 transition-all duration-300 group-hover/slider:opacity-100 hover:scale-105 hover:bg-white active:scale-95 focus:outline-none"
+                  className="absolute left-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/95 p-3 text-slate-700 shadow-lg border border-slate-200 hidden md:inline-flex opacity-0 transition-all duration-300 group-hover/slider:opacity-100 hover:scale-105 hover:bg-white active:scale-95 focus:outline-none"
                   aria-label="Ver avisos anteriores"
                 >
                   <ChevronLeft className="h-6 w-6" />
@@ -265,7 +263,7 @@ export default function HomePage() {
                 <button
                   type="button"
                   onClick={() => scrollSlider("right")}
-                  className="absolute right-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/95 p-3 text-slate-700 shadow-lg border border-slate-200 opacity-0 transition-all duration-300 group-hover/slider:opacity-100 hover:scale-105 hover:bg-white active:scale-95 focus:outline-none"
+                  className="absolute right-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/95 p-3 text-slate-700 shadow-lg border border-slate-200 hidden md:inline-flex opacity-0 transition-all duration-300 group-hover/slider:opacity-100 hover:scale-105 hover:bg-white active:scale-95 focus:outline-none"
                   aria-label="Ver avisos siguientes"
                 >
                   <ChevronRight className="h-6 w-6" />
@@ -282,7 +280,7 @@ export default function HomePage() {
                   return (
                     <div
                       key={notice._id || index}
-                      className="w-full shrink-0 snap-start md:w-[calc(50%-12px)] xl:w-[calc(33.333%-16px)] card-hover rounded-2xl border border-slate-100 bg-white shadow-md group overflow-hidden flex flex-col justify-between"
+                      className="w-[85%] sm:w-[calc(50%-12px)] md:w-[calc(50%-12px)] xl:w-[calc(33.333%-16px)] shrink-0 snap-start card-hover rounded-2xl border border-slate-100 bg-white shadow-md group overflow-hidden flex flex-col justify-between"
                     >
                       <div className="p-6">
                         <div className="mb-5 flex flex-wrap items-center gap-3">
@@ -346,21 +344,21 @@ export default function HomePage() {
             </button>
           </div>
 
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+          <div className="grid grid-cols-2 gap-4">
             {missionCards.map((card) => (
               <div
                 key={card.title}
-                className="card-hover rounded-2xl border border-slate-100 bg-white p-6 shadow-sm"
+                className="card-hover rounded-2xl border border-slate-100 bg-white p-4 sm:p-6 shadow-sm"
               >
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-50 text-2xl text-sky-600">
+                <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-sky-50 text-xl sm:text-2xl text-sky-600">
                   {getIcon(card.icon)}
                 </div>
 
-                <h3 className="mt-4 text-base font-bold text-slate-900" style={{ fontFamily: "var(--font-display)" }}>
+                <h3 className="mt-3 sm:mt-4 text-[14.5px] sm:text-lg font-bold text-slate-900" style={{ fontFamily: "var(--font-display)" }}>
                   {card.title}
                 </h3>
 
-                <p className="mt-2 text-sm leading-relaxed text-slate-500">
+                <p className="mt-1 text-xs sm:text-sm leading-relaxed text-slate-500">
                   {card.text}
                 </p>
               </div>
@@ -372,7 +370,7 @@ export default function HomePage() {
       {/* CTA */}
       <section className="px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-5xl">
-          <div className="relative overflow-hidden rounded-3xl bg-slate-900 px-8 py-16 text-center text-white shadow-2xl lg:px-20">
+          <div className="relative overflow-hidden rounded-3xl bg-slate-900 px-6 py-12 text-center text-white shadow-2xl sm:px-8 sm:py-16 lg:px-20">
             {/* Glow blobs */}
             <div className="pointer-events-none absolute -top-20 -left-20 h-64 w-64 rounded-full bg-sky-500/20 blur-[80px]" />
             <div className="pointer-events-none absolute -bottom-20 -right-20 h-64 w-64 rounded-full bg-teal-500/20 blur-[80px]" />
@@ -380,26 +378,26 @@ export default function HomePage() {
             <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 0)", backgroundSize: "28px 28px" }} />
 
             <div className="relative z-10">
-              <h2 className="text-3xl font-extrabold sm:text-4xl lg:text-5xl" style={{ fontFamily: "var(--font-display)" }}>
+              <h2 className="text-2xl font-extrabold sm:text-4xl lg:text-5xl" style={{ fontFamily: "var(--font-display)" }}>
                 ¿Necesitas ayuda?
               </h2>
 
-              <p className="mx-auto mt-5 max-w-xl text-base leading-7 text-slate-300">
+              <p className="mx-auto mt-5 max-w-xl text-sm leading-relaxed text-slate-300 sm:text-base">
                 Nuestro equipo está disponible para atenderte y orientarte con
                 cualquier consulta relacionada con nuestros servicios.
               </p>
 
-              <div className="mt-10 flex flex-wrap justify-center gap-4">
+              <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4 max-w-md mx-auto w-full">
                 <button
                   onClick={() => navigate("/contacto")}
-                  className="btn-glow inline-flex items-center gap-2 rounded-xl bg-sky-500 px-8 py-3.5 text-sm font-bold text-white"
+                  className="btn-glow inline-flex items-center justify-center gap-2 rounded-xl bg-sky-500 px-8 py-3.5 text-sm font-bold text-white w-full sm:w-auto"
                 >
                   Contactar ahora
                 </button>
 
                 <button
                   onClick={() => navigate("/tramites")}
-                  className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-8 py-3.5 text-sm font-bold text-white backdrop-blur-sm transition hover:bg-white/20"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-8 py-3.5 text-sm font-bold text-white backdrop-blur-sm transition hover:bg-white/20 w-full sm:w-auto"
                 >
                   Ver trámites
                 </button>

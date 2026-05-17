@@ -11,13 +11,13 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 /* ========================= TOAST ========================= */
 function Toast({ toasts, removeToast }) {
   return (
-    <div className="fixed top-6 right-6 z-50 flex flex-col gap-3" style={{ minWidth: 300, maxWidth: 400 }}>
+    <div className="fixed top-4 right-4 left-4 sm:top-6 sm:right-6 sm:left-auto z-50 flex flex-col gap-3 w-auto sm:w-[380px]">
       {toasts.map((t) => {
         const isSuccess = t.type === "success";
         const isConfirm = t.type === "confirm";
         return (
           <div key={t.id}
-            className={`flex items-start gap-3 rounded-2xl border px-5 py-4 shadow-2xl backdrop-blur-md
+            className={`flex items-start gap-3 rounded-2xl border px-4 py-3 sm:px-5 sm:py-4 shadow-2xl backdrop-blur-md
               ${isSuccess ? "bg-emerald-50 border-emerald-200 text-emerald-800"
                 : isConfirm ? "bg-amber-50 border-amber-200 text-amber-800"
                   : "bg-red-50 border-red-200 text-red-800"}`}
@@ -48,12 +48,7 @@ function Toast({ toasts, removeToast }) {
           </div>
         );
       })}
-      <style>{`
-        @keyframes slideIn {
-          from { opacity: 0; transform: translateX(40px); }
-          to   { opacity: 1; transform: translateX(0); }
-        }
-      `}</style>
+      <style>{`@keyframes slideIn { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } } @media (min-width: 640px) { @keyframes slideIn { from { opacity:0; transform:translateX(40px); } to { opacity:1; transform:translateX(0); } } }`}</style>
     </div>
   );
 }
@@ -276,25 +271,25 @@ function AdminSostenibilidad() {
       <Toast toasts={toasts} removeToast={removeToast} />
 
       <div>
-        <h1 className="text-4xl font-bold text-slate-900 md:text-5xl">Gestión de Sostenibilidad</h1>
-        <p className="mt-2 text-lg text-slate-700">Administra las imágenes de las galerías de sostenibilidad.</p>
+        <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 md:text-5xl leading-tight">Gestión de Sostenibilidad</h1>
+        <p className="mt-2 text-sm sm:text-base md:text-lg text-slate-700">Administra las imágenes de las galerías de sostenibilidad.</p>
       </div>
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-6">
-        <div className="mb-6 flex items-center gap-3">
+      <section className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-center gap-3">
           <ImagePlus className="h-6 w-6 text-blue-600" />
-          <h2 className="text-2xl font-bold text-slate-900">Galerías de Sostenibilidad</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-900">Galerías de Sostenibilidad</h2>
         </div>
 
         {/* Tabs */}
-        <div className="mb-6 flex flex-wrap gap-3">
+        <div className="mb-6 flex flex-wrap gap-2 sm:gap-3">
           {[
             { key: "culturaHidrica", label: "Actividades Cultura Hídrica" },
             { key: "mantenimiento", label: "Mantenimiento de estructuras" },
             { key: "hidrantes", label: "Hidrantes" },
           ].map(({ key, label }) => (
             <button key={key} type="button" onClick={() => cambiarGaleria(key)}
-              className={`rounded-2xl px-4 py-3 font-semibold transition ${galeriaActiva === key ? "bg-blue-600 text-white" : "bg-slate-200 text-slate-700 hover:bg-slate-300"}`}>
+              className={`rounded-2xl px-3 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm font-semibold transition ${galeriaActiva === key ? "bg-blue-600 text-white" : "bg-slate-200 text-slate-700 hover:bg-slate-300"}`}>
               {label}
             </button>
           ))}
@@ -302,14 +297,14 @@ function AdminSostenibilidad() {
 
         {/* Total hidrantes */}
         {galeriaActiva === "hidrantes" && (
-          <div className="mb-6 rounded-2xl border border-slate-200 bg-slate-50 p-5">
-            <h3 className="text-lg font-bold text-slate-900 mb-4">Total mostrado en la galería de hidrantes</h3>
+          <div className="mb-6 rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:p-5">
+            <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-4">Total mostrado en la galería de hidrantes</h3>
             <div className="flex flex-col gap-4 md:flex-row">
               <input type="text" value={totalHidrantes} onChange={(e) => setTotalHidrantes(e.target.value)}
                 placeholder="Ejemplo: 20 hidrantes instalados"
                 className="flex-1 rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200" />
               <button type="button" onClick={handleGuardarTotalHidrantes}
-                className="rounded-2xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700">
+                className="w-full md:w-auto rounded-2xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700">
                 Guardar total
               </button>
             </div>
@@ -328,7 +323,7 @@ function AdminSostenibilidad() {
 
             <div>
               <label className="mb-2 block text-sm font-semibold text-slate-900">Imagen:</label>
-              <div className="relative flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/50 p-8 text-center transition hover:border-blue-400 hover:bg-blue-50/20">
+              <div className="relative flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/50 p-4 sm:p-8 text-center transition hover:border-blue-400 hover:bg-blue-50/20">
                 {previewImagen ? (
                   <div className="relative group flex flex-col items-center">
                     <div
@@ -375,13 +370,13 @@ function AdminSostenibilidad() {
             </div>
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3">
             <button type="submit"
-              className="rounded-2xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700">
+              className="w-full sm:w-auto rounded-2xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700 text-center">
               {editandoImagen !== null ? "Guardar cambios" : "Agregar imagen"}
             </button>
             <button type="button" onClick={limpiarImagenForm}
-              className="rounded-2xl bg-slate-200 px-6 py-3 font-semibold text-slate-700 transition hover:bg-slate-300">
+              className="w-full sm:w-auto rounded-2xl bg-slate-200 px-6 py-3 font-semibold text-slate-700 transition hover:bg-slate-300 text-center">
               Cancelar
             </button>
           </div>
@@ -398,7 +393,7 @@ function AdminSostenibilidad() {
           <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
             {galeriaActual?.images?.length > 0 ? (
               <div className="max-h-[720px] overflow-y-auto pr-2">
-                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                <div className="grid grid-cols-1 min-[400px]:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                   {galeriaActual.images.map((image, index) => (
                     <div key={index} className="overflow-hidden rounded-2xl border border-slate-200 bg-white p-3 flex flex-col justify-between">
                       <div>

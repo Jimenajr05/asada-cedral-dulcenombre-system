@@ -15,7 +15,7 @@ import {
 /* ========================= TOAST ========================= */
 function Toast({ toasts, removeToast }) {
   return (
-    <div className="fixed top-6 right-6 z-50 flex flex-col gap-3" style={{ minWidth: 300, maxWidth: 400 }}>
+    <div className="fixed top-6 right-4 sm:right-6 z-50 flex flex-col gap-3 w-[calc(100vw-2rem)] sm:w-80 md:w-96">
       {toasts.map((t) => {
         const isSuccess = t.type === "success";
         const isConfirm = t.type === "confirm";
@@ -329,12 +329,12 @@ export default function AdminProyectos() {
       {/* Encabezado */}
       <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
         <div>
-          <h1 className="text-4xl font-bold text-slate-900 md:text-5xl">Gestión de Proyectos</h1>
-          <p className="mt-2 text-lg text-slate-700">Administra proyectos, fotos, documentos y actualizaciones.</p>
+          <h1 className="text-3xl font-bold text-slate-900 sm:text-4xl md:text-5xl">Gestión de Proyectos</h1>
+          <p className="mt-2 text-sm text-slate-700 sm:text-base md:text-lg">Administra proyectos, fotos, documentos y actualizaciones.</p>
         </div>
         {!showForm && (
           <button onClick={() => { resetForm(); setShowForm(true); }}
-            className="inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700">
+            className="inline-flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700 w-full sm:w-auto">
             <Plus className="h-5 w-5" /> Nuevo proyecto
           </button>
         )}
@@ -421,7 +421,7 @@ export default function AdminProyectos() {
                 return (
                   <div key={proyecto._id} className="rounded-2xl border border-slate-200 bg-white overflow-hidden">
                     {/* Cabecera */}
-                    <div className="flex items-center justify-between gap-4 px-6 py-5">
+                    <div className="flex flex-col gap-4 px-4 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
                       <div className="flex items-center gap-3 min-w-0 flex-1">
                         <FolderOpen className="h-5 w-5 shrink-0 text-blue-600" />
                         <div className="min-w-0 flex-1">
@@ -432,7 +432,7 @@ export default function AdminProyectos() {
                           {proyecto.descripcion && <p className="text-sm text-slate-500 line-clamp-1 mt-0.5">{proyecto.descripcion}</p>}
                         </div>
                       </div>
-                      <div className="flex shrink-0 items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto sm:justify-end">
                         <button onClick={() => handleEditar(proyecto)} title="Editar"
                           className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600 transition hover:bg-blue-100 hover:scale-105 active:scale-95">
                           <Pencil className="h-5 w-5" />
@@ -442,7 +442,7 @@ export default function AdminProyectos() {
                           <Trash2 className="h-5 w-5" />
                         </button>
                         <button onClick={() => setExpandido(abierto ? null : proyecto._id)}
-                          className="flex items-center gap-1 rounded-xl bg-slate-100 px-3 py-2 text-sm text-slate-600 hover:bg-slate-200 transition">
+                          className="flex items-center justify-center gap-1 rounded-xl bg-slate-100 px-3 py-2 text-sm text-slate-600 hover:bg-slate-200 transition flex-1 sm:flex-none">
                           {abierto ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                           {abierto ? "Cerrar" : "Gestionar"}
                         </button>
@@ -468,7 +468,7 @@ export default function AdminProyectos() {
                           </div>
                           {proyecto.fotos?.length > 0 ? (
                             <div className="max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
-                              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+                              <div className="grid grid-cols-1 min-[400px]:grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
                                 {proyecto.fotos.map((foto) => (
                                   <div key={foto._id} className="relative group overflow-hidden rounded-2xl border border-slate-200 bg-white">
                                     <img src={foto.src?.startsWith("http") ? foto.src : `${BASE_URL}${foto.src}`} alt={foto.alt}
@@ -505,10 +505,12 @@ export default function AdminProyectos() {
                               <div className="space-y-2">
                                 {proyecto.documentos.map((doc) => (
                                   <div key={doc._id} className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3">
-                                    <a href={doc.url?.startsWith("http") ? doc.url : `${BASE_URL}${doc.url}`} target="_blank" rel="noreferrer"
-                                      className="flex items-center gap-2 text-sm font-medium text-blue-600 hover:underline truncate">
-                                      <FileText className="h-4 w-4 shrink-0" /> {doc.nombre}
-                                    </a>
+                                    <div className="flex-1 min-w-0">
+                                      <a href={doc.url?.startsWith("http") ? doc.url : `${BASE_URL}${doc.url}`} target="_blank" rel="noreferrer"
+                                        className="flex items-center gap-2 text-sm font-medium text-blue-600 hover:underline truncate w-full">
+                                        <FileText className="h-4 w-4 shrink-0" /> <span className="truncate">{doc.nombre}</span>
+                                      </a>
+                                    </div>
                                     <button onClick={() => handleEliminarDoc(proyecto._id, doc._id)}
                                       className="shrink-0 flex items-center gap-1 rounded-xl bg-red-50 px-3 py-1.5 text-xs text-red-600 hover:bg-red-100 transition">
                                       <Trash2 className="h-3.5 w-3.5" /> Eliminar
@@ -551,9 +553,11 @@ export default function AdminProyectos() {
                                       </div>
                                     </div>
                                   ) : (
-                                    <div className="flex items-start justify-between gap-3">
-                                      <p className="text-sm text-slate-700 whitespace-pre-wrap">{act.texto}</p>
-                                      <div className="flex shrink-0 gap-1.5">
+                                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                                      <div className="flex-1 min-w-0">
+                                        <p className="text-sm text-slate-700 whitespace-pre-wrap break-words leading-relaxed">{act.texto}</p>
+                                      </div>
+                                      <div className="flex shrink-0 gap-1.5 justify-end sm:justify-start">
                                         <button onClick={() => { setEditandoActId(act._id); setEditandoActTexto(act.texto); }} title="Editar actualización"
                                           className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-blue-600 transition hover:bg-blue-100 hover:scale-105 active:scale-95">
                                           <Pencil className="h-4 w-4" />

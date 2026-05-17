@@ -68,7 +68,7 @@ function FiltroButton({ filtro, activo, onClick }) {
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-xl px-5 py-3 text-base font-semibold transition ${activo
+      className={`rounded-xl px-3.5 py-2 sm:px-5 sm:py-3 text-sm sm:text-base font-semibold transition ${activo
         ? filtro.key === "todos"
           ? "bg-blue-600 text-white hover:bg-blue-700"
           : config.activeButton
@@ -146,7 +146,7 @@ function AvisoCard({ aviso, destacado = false }) {
             </h3>
 
             <div className="max-h-25 overflow-y-auto pr-2 custom-scrollbar">
-              <p className="text-lg leading-relaxed text-slate-700 whitespace-pre-line break-words">
+              <p className="text-base sm:text-lg leading-relaxed text-slate-700 whitespace-pre-line break-words">
                 {aviso?.descripcion || "Sin descripción"}
               </p>
             </div>
@@ -281,10 +281,10 @@ export default function AvisosPage() {
           <span className="section-badge bg-sky-500/20 border border-sky-400/30 text-sky-300 mb-5">
             Comunicados oficiales
           </span>
-          <h1 className="mt-4 mb-5 text-4xl font-extrabold text-white sm:text-5xl" style={{ fontFamily: "var(--font-display)" }}>
+          <h1 className="mt-4 mb-5 text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white" style={{ fontFamily: "var(--font-display)" }}>
             Avisos Importantes
           </h1>
-          <p className="mx-auto max-w-2xl text-lg leading-relaxed text-blue-100">
+          <p className="mx-auto max-w-2xl text-base sm:text-lg leading-relaxed text-blue-100">
             Mantente informado sobre nuestros servicios y actividades.
           </p>
         </div>

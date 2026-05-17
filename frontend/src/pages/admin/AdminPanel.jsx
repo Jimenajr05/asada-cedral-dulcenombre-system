@@ -18,13 +18,13 @@ const prioridadConfig = {
 /* ========================= TOAST ========================= */
 function Toast({ toasts, removeToast }) {
   return (
-    <div className="fixed top-6 right-6 z-50 flex flex-col gap-3" style={{ minWidth: 300, maxWidth: 400 }}>
+    <div className="fixed top-4 right-4 left-4 sm:top-6 sm:right-6 sm:left-auto z-50 flex flex-col gap-3 w-auto sm:w-[380px]">
       {toasts.map((t) => {
         const isSuccess = t.type === "success";
         const isConfirm = t.type === "confirm";
         return (
           <div key={t.id}
-            className={`flex items-start gap-3 rounded-2xl border px-5 py-4 shadow-2xl backdrop-blur-md
+            className={`flex items-start gap-3 rounded-2xl border px-4 py-3 sm:px-5 sm:py-4 shadow-2xl backdrop-blur-md
               ${isSuccess ? "bg-emerald-50 border-emerald-200 text-emerald-800"
                 : isConfirm ? "bg-amber-50 border-amber-200 text-amber-800"
                 : "bg-red-50 border-red-200 text-red-800"}`}
@@ -46,7 +46,7 @@ function Toast({ toasts, removeToast }) {
           </div>
         );
       })}
-      <style>{`@keyframes slideIn { from { opacity:0; transform:translateX(40px); } to { opacity:1; transform:translateX(0); } }`}</style>
+      <style>{`@keyframes slideIn { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } } @media (min-width: 640px) { @keyframes slideIn { from { opacity:0; transform:translateX(40px); } to { opacity:1; transform:translateX(0); } } }`}</style>
     </div>
   );
 }
@@ -169,9 +169,9 @@ export default function AdminPanel() {
 
       {/* Encabezado */}
       <div>
-        <p className="text-xs font-bold uppercase tracking-widest text-sky-600">Sistema ASADA</p>
-        <h1 className="mt-1 text-3xl font-extrabold text-slate-900 sm:text-4xl" style={{ fontFamily: "var(--font-display)" }}>Dashboard</h1>
-        <p className="mt-1 text-sm text-slate-500">Resumen general del sistema ASADA Cedral y Dulce Nombre</p>
+        <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-sky-600">Sistema ASADA</p>
+        <h1 className="mt-1 text-2xl font-extrabold text-slate-900 sm:text-3xl md:text-4xl" style={{ fontFamily: "var(--font-display)" }}>Dashboard</h1>
+        <p className="mt-1 text-xs text-slate-500 sm:text-sm">Resumen general del sistema ASADA Cedral y Dulce Nombre</p>
       </div>
 
       {/* Stats */}
@@ -208,7 +208,7 @@ export default function AdminPanel() {
                 const Icon = a.icon;
                 return (
                   <Link key={a.label} to={a.path}
-                    className={`flex items-center gap-3 rounded-xl border border-slate-100 px-4 py-3.5 text-sm font-semibold transition hover:shadow-sm ${a.color}`}>
+                    className={`flex items-center gap-2 sm:gap-3 rounded-xl border border-slate-100 px-3 py-3 sm:px-4 sm:py-3.5 text-xs sm:text-sm font-semibold transition hover:shadow-sm ${a.color}`}>
                     <Icon className="h-4 w-4 shrink-0" strokeWidth={2} />
                     <span>{a.label}</span>
                   </Link>
@@ -225,7 +225,7 @@ export default function AdminPanel() {
               {novedades.map((novedad) => {
                 const isAviso = novedad.tipoNovedad === "aviso";
                 return (
-                  <div key={novedad._id} className="flex items-start gap-4 rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                  <div key={novedad._id} className="flex items-start gap-3 sm:gap-4 rounded-2xl border border-slate-100 bg-slate-50 p-3 sm:p-4">
                     <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${isAviso ? "bg-blue-100" : "bg-indigo-100"}`}>
                       {isAviso ? (
                         novedad.tipo === "urgente" ? (
@@ -312,7 +312,7 @@ export default function AdminPanel() {
                       <button onClick={() => handleToggle(tarea._id)}
                         className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 border-slate-400 hover:border-emerald-500 hover:bg-emerald-50 transition">
                       </button>
-                      <div className="overflow-x-auto overflow-y-hidden whitespace-nowrap custom-scrollbar flex-1 min-w-0 text-sm font-medium text-slate-800 py-1">
+                      <div className="break-words flex-1 min-w-0 text-sm font-medium text-slate-800 py-1">
                         {tarea.texto}
                       </div>
                     </div>
@@ -344,7 +344,7 @@ export default function AdminPanel() {
                         className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500 border-2 border-emerald-500 transition">
                         <Check className="h-3 w-3 text-white" />
                       </button>
-                      <div className="overflow-x-auto overflow-y-hidden whitespace-nowrap custom-scrollbar flex-1 min-w-0 text-sm text-slate-500 line-through py-1">
+                      <div className="break-words flex-1 min-w-0 text-sm text-slate-500 line-through py-1">
                         {tarea.texto}
                       </div>
                     </div>

@@ -26,7 +26,7 @@ function ContactItem({ icon, title, items }) {
         {icon}
       </div>
 
-      <div className="min-w-0">
+      <div className="min-w-0 flex-1">
         <h3 className="text-sm font-semibold tracking-wide text-slate-900 uppercase">
           {title}
         </h3>
@@ -44,7 +44,7 @@ function ContactItem({ icon, title, items }) {
                   href={gmailUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="block truncate text-slate-600 hover:underline transition"
+                  className="block break-all sm:break-normal text-slate-600 hover:underline transition"
                 >
                   {item}
                 </a>
@@ -52,7 +52,7 @@ function ContactItem({ icon, title, items }) {
             }
 
             return (
-              <p key={item} className="truncate text-slate-600">
+              <p key={item} className="break-words text-slate-600 whitespace-normal">
                 {item}
               </p>
             );
@@ -139,33 +139,33 @@ export default function ContactoPage() {
           </svg>
         </div>
 
-        <div className="relative mx-auto max-w-4xl px-4 pb-28 pt-16 text-center sm:px-6 lg:px-8">
+        <div className="relative mx-auto max-w-4xl px-4 pb-20 pt-12 sm:pb-28 sm:pt-16 text-center sm:px-6 lg:px-8">
           <span className="section-badge mb-5 border border-sky-400/30 bg-sky-500/20 text-sky-300">
             Atención al abonado
           </span>
 
           <h1
-            className="mb-5 mt-4 text-4xl font-extrabold text-white sm:text-5xl"
+            className="mb-5 mt-4 text-3xl font-extrabold text-white sm:text-4xl md:text-5xl"
             style={{ fontFamily: "var(--font-display)" }}
           >
             {hero.title}
           </h1>
 
-          <p className="mx-auto max-w-2xl text-lg leading-relaxed text-blue-100">
+          <p className="mx-auto max-w-2xl text-base sm:text-lg leading-relaxed text-blue-100">
             {hero.subtitle}
           </p>
         </div>
       </section>
 
       {/* CONTENIDO */}
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-7xl px-4 py-10 sm:py-16 sm:px-6 lg:px-8">
         <div className="grid gap-8 lg:grid-cols-[405px_minmax(0,1fr)] lg:items-start">
 
           {/* IZQUIERDA */}
           <div className="space-y-6">
 
             {/* CONTACTO */}
-            <div className="relative h-full flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div className="relative flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 shadow-sm">
 
               {/* decorativo MUY suave */}
               <div className="pointer-events-none absolute -top-10 -right-10 h-32 w-32 rounded-full bg-slate-100 blur-2xl" />
@@ -174,8 +174,8 @@ export default function ContactoPage() {
               <div className="relative">
 
                 {/* TÍTULO */}
-                <div className="ml-4">
-                  <h2 className="text-3xl font-bold text-slate-900">
+                <div className="ml-2 sm:ml-4">
+                  <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">
                     Información de Contacto
                   </h2>
 
@@ -219,7 +219,7 @@ export default function ContactoPage() {
             </div>
 
             {/* EMERGENCIA (DENTRO DE IZQUIERDA) */}
-            <div className="rounded-2xl border border-blue-200 bg-blue-50 p-6 shadow-sm">
+            <div className="rounded-2xl border border-blue-200 bg-blue-50 p-4 sm:p-6 shadow-sm">
               <h3 className="mb-3 text-2xl font-bold text-slate-900">
                 {contactInfo.emergencia.titulo}
               </h3>
@@ -251,8 +251,8 @@ export default function ContactoPage() {
           </div>
 
           {/* DERECHA */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 className="mb-2 text-3xl font-bold text-slate-900">
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 shadow-sm">
+            <h2 className="mb-2 text-2xl sm:text-3xl font-bold text-slate-900">
               Envíanos un mensaje
             </h2>
 
@@ -367,7 +367,7 @@ export default function ContactoPage() {
               title="Ubicación ASADA Cedral y Dulce Nombre"
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3928.5!2d-84.4362427!3d10.3735681!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8fa065002f2cf143%3A0x3e834fd6aad3eb40!2sASADA+CEDRAL+Y+DULCE+NOMBRE!5e1!3m2!1ses!2scr!4v1700000000000!5m2!1ses!2scr"
               width="100%"
-              height="520"
+              className="h-[300px] sm:h-[400px] md:h-[520px] w-full"
               style={{ border: 0, display: "block" }}
               allowFullScreen
               loading="lazy"

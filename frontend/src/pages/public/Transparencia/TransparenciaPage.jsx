@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { hero } from "./TransparenciaData";
-import { FiZoomIn, FiX } from "react-icons/fi";
+import { FiZoomIn, FiX, FiSearch } from "react-icons/fi";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
@@ -216,6 +216,7 @@ export default function TransparenciaPage() {
   const [reuniones, setReuniones] = useState([]);
   const [certificados, setCertificados] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [busquedaReuniones, setBusquedaReuniones] = useState("");
 
   useEffect(() => {
     const cargar = async () => {
@@ -244,6 +245,28 @@ export default function TransparenciaPage() {
     cargar();
   }, []);
 
+  const reunionesFiltradas = useMemo(() => {
+    const texto = busquedaReuniones.trim().toLowerCase();
+
+    if (!texto) return reuniones;
+
+    return reuniones.filter((r) => {
+      const desc = r.descripcion?.toLowerCase() || "";
+      const tipo = r.tipo?.toLowerCase() || "";
+      const fechaFormateada = r.fecha
+        ? new Date(r.fecha + "T00:00:00")
+          .toLocaleDateString("es-CR", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          })
+          .toLowerCase()
+        : "";
+
+      return desc.includes(texto) || tipo.includes(texto) || fechaFormateada.includes(texto);
+    });
+  }, [reuniones, busquedaReuniones]);
+
   return (
     <div className="bg-slate-50">
       {/* HERO */}
@@ -258,21 +281,21 @@ export default function TransparenciaPage() {
           </svg>
         </div>
 
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-28 text-center">
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-20 sm:pt-16 sm:pb-28 text-center">
           <span className="section-badge bg-sky-500/20 border border-sky-400/30 text-sky-300 mb-5">
             Rendición de cuentas
           </span>
-          <h1 className="mt-4 text-4xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight mb-5" style={{ fontFamily: "var(--font-display)" }}>
+          <h1 className="mt-4 text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-tight mb-5" style={{ fontFamily: "var(--font-display)" }}>
             {hero.title}
           </h1>
-          <p className="text-blue-100 text-lg max-w-2xl mx-auto leading-relaxed">
+          <p className="text-blue-100 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
             {hero.subtitle}
           </p>
         </div>
       </section>
 
       {/* ENLACES */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 lg:py-20">
         <div className="text-center mb-10">
           <SectionLabel>Documentos institucionales</SectionLabel>
           <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 mt-3">
@@ -294,7 +317,8 @@ export default function TransparenciaPage() {
                   .getElementById("scrollEnlaces")
                   .scrollBy({ left: -340, behavior: "smooth" })
               }
-              className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white/90 backdrop-blur-md shadow-md rounded-full p-2.5 opacity-0 group-hover:opacity-100 transition hover:scale-110"
+              className={`absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white/90 backdrop-blur-md shadow-md rounded-full p-2.5 opacity-0 group-hover:opacity-100 transition hover:scale-110 ${enlaces.length <= 2 ? "md:hidden" : enlaces.length === 3 ? "lg:hidden" : ""
+                }`}
             >
               <svg className="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
@@ -308,7 +332,8 @@ export default function TransparenciaPage() {
                   .getElementById("scrollEnlaces")
                   .scrollBy({ left: 340, behavior: "smooth" })
               }
-              className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white/90 backdrop-blur-md shadow-md rounded-full p-2.5 opacity-0 group-hover:opacity-100 transition hover:scale-110"
+              className={`absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white/90 backdrop-blur-md shadow-md rounded-full p-2.5 opacity-0 group-hover:opacity-100 transition hover:scale-110 ${enlaces.length <= 2 ? "md:hidden" : enlaces.length === 3 ? "lg:hidden" : ""
+                }`}
             >
               <svg className="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
@@ -318,7 +343,12 @@ export default function TransparenciaPage() {
             {/* CONTENEDOR */}
             <div
               id="scrollEnlaces"
-              className="flex gap-5 overflow-x-auto pb-4 scroll-smooth snap-x snap-mandatory scrollbar-hide"
+              className={`flex gap-5 overflow-x-auto pb-4 scroll-smooth snap-x snap-mandatory scrollbar-hide ${enlaces.length <= 2
+                ? "md:justify-center"
+                : enlaces.length === 3
+                  ? "lg:justify-center"
+                  : ""
+                }`}
             >
               {enlaces.map((link) => (
                 <div key={link._id} className="snap-start min-w-[280px] sm:min-w-[340px] max-w-[280px] sm:max-w-[340px] flex-shrink-0 flex flex-col">
@@ -331,7 +361,7 @@ export default function TransparenciaPage() {
       </section>
 
       {/* REUNIONES */}
-      <section className="bg-white py-16 lg:py-20">
+      <section className="bg-white py-10 sm:py-16 lg:py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <SectionLabel>Gobierno institucional</SectionLabel>
@@ -342,26 +372,59 @@ export default function TransparenciaPage() {
               Calendario actualizado de sesiones ordinarias y extraordinarias.
             </p>
           </div>
+
+          {!loading && reuniones.length > 0 && (
+            <div className="mb-6 flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 mr-4 shadow-sm md:flex-row md:items-center md:justify-between">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">Sesiones</p>
+                <p className="mt-0.5 text-xl font-bold text-slate-900">
+                  {reunionesFiltradas.length} reunión
+                  {reunionesFiltradas.length !== 1 ? "es" : ""}
+                </p>
+              </div>
+
+              <div className="relative w-full md:max-w-xs">
+                <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-blue-500">
+                  <FiSearch className="text-lg" />
+                </span>
+                <input
+                  type="text"
+                  value={busquedaReuniones}
+                  onChange={(e) => setBusquedaReuniones(e.target.value)}
+                  placeholder="Buscar sesión, tipo o fecha..."
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 py-3 pl-14 pr-4 text-slate-900 text-sm outline-none transition focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-blue-100"
+                />
+              </div>
+            </div>
+          )}
+
           {loading ? (
             <div className="rounded-xl border border-slate-200 bg-slate-50 p-8 text-center text-slate-500">
               Cargando reuniones...
             </div>
-          ) : reuniones.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[300px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-sky-400 scrollbar-track-slate-100">
-              {reuniones.map((r) => (
-                <ReunionCard key={r._id} reunion={r} />
-              ))}
-            </div>
-          ) : (
+          ) : reuniones.length === 0 ? (
             <div className="rounded-xl border border-slate-200 bg-slate-50 p-8 text-center text-slate-500">
               No hay reuniones registradas en este momento.
+            </div>
+          ) : reunionesFiltradas.length === 0 ? (
+            <div className="rounded-xl border border-slate-200 bg-slate-50 p-8 text-center text-slate-500">
+              No se encontraron reuniones con esa búsqueda.
+            </div>
+          ) : (
+            <div
+              className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[300px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-sky-400 scrollbar-track-slate-100"
+              style={{ scrollbarGutter: "stable" }}
+            >
+              {reunionesFiltradas.map((r) => (
+                <ReunionCard key={r._id} reunion={r} />
+              ))}
             </div>
           )}
         </div>
       </section>
 
       {/* CERTIFICADOS */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 lg:py-20">
         <div className="text-center mb-10">
           <SectionLabel>Acreditaciones</SectionLabel>
           <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 mt-3">
@@ -386,7 +449,8 @@ export default function TransparenciaPage() {
                   .getElementById("scrollCertificados")
                   .scrollBy({ left: -320, behavior: "smooth" })
               }
-              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 opacity-0 hover:opacity-100 transition"
+              className={`absolute left-0 top-1/2 -translate-y-1/2 z-10 opacity-0 hover:opacity-100 transition ${certificados.length <= 2 ? "md:hidden" : certificados.length <= 4 ? "lg:hidden" : ""
+                }`}
             >
               <div className="bg-white/90 backdrop-blur-md shadow-lg hover:shadow-xl rounded-full p-3 hover:scale-110 transition border border-slate-200">
                 <svg className="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
@@ -402,7 +466,8 @@ export default function TransparenciaPage() {
                   .getElementById("scrollCertificados")
                   .scrollBy({ left: 320, behavior: "smooth" })
               }
-              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 opacity-0 hover:opacity-100 transition"
+              className={`absolute right-0 top-1/2 -translate-y-1/2 z-10 opacity-0 hover:opacity-100 transition ${certificados.length <= 2 ? "md:hidden" : certificados.length <= 4 ? "lg:hidden" : ""
+                }`}
             >
               <div className="bg-white/90 backdrop-blur-md shadow-lg hover:shadow-xl rounded-full p-3 hover:scale-110 transition border border-slate-200">
                 <svg className="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
@@ -414,7 +479,12 @@ export default function TransparenciaPage() {
             {/* CONTENEDOR */}
             <div
               id="scrollCertificados"
-              className="flex gap-5 overflow-x-auto pb-4 scroll-smooth snap-x snap-mandatory scrollbar-hide"
+              className={`flex gap-5 overflow-x-auto pb-4 scroll-smooth snap-x snap-mandatory scrollbar-hide ${certificados.length <= 2
+                ? "md:justify-center"
+                : certificados.length <= 4
+                  ? "lg:justify-center"
+                  : ""
+                }`}
             >
               {certificados.map((cert) => (
                 <div key={cert._id} className="snap-start min-w-[260px] max-w-[260px]">

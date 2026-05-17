@@ -148,7 +148,7 @@ export default function AboutPage() {
           <span className="section-badge bg-sky-500/20 border border-sky-400/30 text-sky-300 mb-5">
             ASADA Cedral y Dulce Nombre
           </span>
-          <h1 className="mt-4 text-4xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight mb-5" style={{ fontFamily: "var(--font-display)" }}>
+          <h1 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight mb-5" style={{ fontFamily: "var(--font-display)" }}>
             {heroContent.title}
           </h1>
           <p className="text-blue-100 text-lg max-w-2xl mx-auto leading-relaxed">

@@ -35,13 +35,13 @@ const saveLink = async (id, label, url) => {
 /* ========================= TOAST ========================= */
 function Toast({ toasts, removeToast }) {
   return (
-    <div className="fixed top-6 right-6 z-50 flex flex-col gap-3" style={{ minWidth: 300, maxWidth: 400 }}>
+    <div className="fixed top-6 right-4 sm:right-6 z-50 flex flex-col gap-3 w-[calc(100vw-2rem)] sm:w-80 md:w-96">
       {toasts.map((t) => {
         const isSuccess = t.type === "success";
         const isConfirm = t.type === "confirm";
         return (
           <div key={t.id}
-            className={`flex items-start gap-3 rounded-2xl border px-5 py-4 shadow-2xl backdrop-blur-md
+            className={`flex items-start gap-3 rounded-2xl border px-4 py-3 sm:px-5 sm:py-4 shadow-2xl backdrop-blur-md
               ${isSuccess ? "bg-emerald-50 border-emerald-200 text-emerald-800"
                 : isConfirm ? "bg-amber-50 border-amber-200 text-amber-800"
                   : "bg-red-50 border-red-200 text-red-800"}`}
@@ -72,12 +72,7 @@ function Toast({ toasts, removeToast }) {
           </div>
         );
       })}
-      <style>{`
-        @keyframes slideIn {
-          from { opacity: 0; transform: translateX(40px); }
-          to   { opacity: 1; transform: translateX(0); }
-        }
-      `}</style>
+      <style>{`@keyframes slideIn { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } } @media (min-width: 640px) { @keyframes slideIn { from { opacity:0; transform:translateX(40px); } to { opacity:1; transform:translateX(0); } } }`}</style>
     </div>
   );
 }
@@ -523,20 +518,20 @@ function AdminTransparencia() {
       <Toast toasts={toasts} removeToast={removeToast} />
 
       <div>
-        <h1 className="text-4xl font-bold text-slate-900 md:text-5xl">Gestión de Transparencia</h1>
-        <p className="mt-2 text-lg text-slate-700">Administra los enlaces institucionales, reuniones y certificados.</p>
+        <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 md:text-5xl leading-tight">Gestión de Transparencia</h1>
+        <p className="mt-2 text-sm sm:text-base md:text-lg text-slate-700">Administra los enlaces institucionales, reuniones y certificados.</p>
       </div>
 
       {/* LINKS */}
-      <section className="rounded-2xl border border-slate-200 bg-white p-6">
+      <section className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
         <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
           <div className="flex items-center gap-3">
             <LinkIcon className="h-6 w-6 text-blue-600" />
-            <h2 className="text-2xl font-bold text-slate-900">Enlaces institucionales</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900">Enlaces institucionales</h2>
           </div>
           {!mostrandoFormNuevoLink && (
             <button onClick={() => setMostrandoFormNuevoLink(true)}
-              className="flex items-center gap-1.5 rounded-2xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 shadow-sm hover:shadow active:scale-95">
+              className="w-full sm:w-auto flex items-center justify-center gap-1.5 rounded-2xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 shadow-sm hover:shadow active:scale-95">
               + Crear nuevo enlace
             </button>
           )}
@@ -560,13 +555,13 @@ function AdminTransparencia() {
                 />
               </div>
             </div>
-            <div className="flex gap-2 justify-end">
+            <div className="flex flex-col sm:flex-row gap-2 justify-end">
               <button onClick={handleCrearLink} disabled={guardando}
-                className="rounded-2xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-60">
+                className="w-full sm:w-auto rounded-2xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-60 text-center">
                 {guardando ? "Creando..." : "Crear enlace"}
               </button>
               <button onClick={() => { setMostrandoFormNuevoLink(false); setNuevoLinkUrl(""); setNuevoLinkLabel(""); }}
-                className="rounded-2xl bg-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-300">
+                className="w-full sm:w-auto rounded-2xl bg-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-300 text-center">
                 Cancelar
               </button>
             </div>
@@ -592,13 +587,13 @@ function AdminTransparencia() {
                         placeholder="https://..." />
                     </div>
                   </div>
-                  <div className="flex gap-2 justify-end">
+                  <div className="flex flex-col sm:flex-row gap-2 justify-end">
                     <button onClick={handleGuardarLink} disabled={guardando}
-                      className="rounded-2xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-60">
+                      className="w-full sm:w-auto rounded-2xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-60 text-center">
                       {guardando ? "Guardando..." : "Guardar"}
                     </button>
                     <button onClick={() => { setLinkEditando(null); setLinkUrl(""); setLinkLabel(""); }}
-                      className="rounded-2xl bg-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-300">
+                      className="w-full sm:w-auto rounded-2xl bg-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-300 text-center">
                       Cancelar
                     </button>
                   </div>
@@ -627,10 +622,10 @@ function AdminTransparencia() {
       </section>
 
       {/* REUNIONES */}
-      <section ref={reunionFormRef} className="rounded-2xl border border-slate-200 bg-white p-6 scroll-mt-6">
-        <div className="mb-6 flex items-center gap-3">
+      <section ref={reunionFormRef} className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 scroll-mt-6">
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-center gap-3">
           <CalendarDays className="h-6 w-6 text-blue-600" />
-          <h2 className="text-2xl font-bold text-slate-900">Fechas de Reuniones de Junta Directiva</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-900">Fechas de Reuniones de Junta Directiva</h2>
         </div>
         {editandoReunion && (
           <div className="mb-5 flex items-center gap-3 rounded-2xl bg-amber-50 border border-amber-200 px-5 py-3">
@@ -670,14 +665,14 @@ function AdminTransparencia() {
               <CalendarDays className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
             </div>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3">
             <button type="submit" disabled={guardando}
-              className="rounded-2xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:opacity-60">
+              className="w-full sm:w-auto rounded-2xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:opacity-60">
               {guardando ? "Guardando..." : editandoReunion ? "Guardar cambios" : "Agregar reunión"}
             </button>
             {editandoReunion && (
               <button type="button" onClick={limpiarReunionForm}
-                className="rounded-2xl bg-slate-200 px-6 py-3 font-semibold text-slate-700 transition hover:bg-slate-300">
+                className="w-full sm:w-auto rounded-2xl bg-slate-200 px-6 py-3 font-semibold text-slate-700 transition hover:bg-slate-300">
                 Cancelar
               </button>
             )}
@@ -711,21 +706,21 @@ function AdminTransparencia() {
 
         <div className="space-y-3">
           {reunionesPaginadas.length > 0 ? reunionesPaginadas.map((r) => (
-            <div key={r._id} className="flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4">
-              <div>
-                <div className="flex items-center gap-2">
-                  <p className="text-sm font-semibold text-slate-800">{r.descripcion}</p>
-                  <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${r.tipo === "extraordinaria" ? "bg-amber-100 text-amber-700" : "bg-blue-50 text-blue-600"}`}>
+            <div key={r._id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4">
+              <div className="flex-1 min-w-0">
+                <div className="flex flex-wrap items-center gap-2 mb-2">
+                  <span className={`rounded-full px-2 py-0.5 text-xs font-medium shrink-0 ${r.tipo === "extraordinaria" ? "bg-amber-100 text-amber-700" : "bg-blue-50 text-blue-600"}`}>
                     {r.tipo === "extraordinaria" ? "Extraordinaria" : "Ordinaria"}
                   </span>
+                  {r.fecha && (
+                    <p className="text-xs text-slate-500 shrink-0">
+                      • {new Date(r.fecha + "T00:00:00").toLocaleDateString("es-CR", { day: "numeric", month: "long", year: "numeric" })}
+                    </p>
+                  )}
                 </div>
-                {r.fecha && (
-                  <p className="text-xs text-slate-500 mt-0.5">
-                    {new Date(r.fecha + "T00:00:00").toLocaleDateString("es-CR", { day: "numeric", month: "long", year: "numeric" })}
-                  </p>
-                )}
+                <p className="text-sm font-semibold text-slate-800 break-words whitespace-normal leading-relaxed">{r.descripcion}</p>
               </div>
-              <div className="flex shrink-0 gap-2">
+              <div className="flex gap-2 justify-end shrink-0 border-t border-slate-200/60 sm:border-t-0 pt-3.5 sm:pt-0">
                 <button onClick={() => handleEditarReunion(r)} title="Editar"
                   className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600 transition hover:bg-blue-100 hover:scale-105 active:scale-95">
                   <Pencil className="h-5 w-5" />
@@ -790,14 +785,14 @@ function AdminTransparencia() {
       </section>
 
       {/* CERTIFICADOS */}
-      <section ref={certFormRef} className="rounded-2xl border border-slate-200 bg-white p-6">
-        <div className="mb-6 flex items-center gap-3">
+      <section ref={certFormRef} className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-center gap-3">
           <ImageIcon className="h-6 w-6 text-blue-600" />
-          <h2 className="text-2xl font-bold text-slate-900">Certificados</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-900">Certificados</h2>
         </div>
         <form onSubmit={handleGuardarCert} className="space-y-5">
           {editandoCert !== null && (
-            <div className="flex items-center justify-between gap-4 rounded-2xl bg-amber-50 border border-amber-200 p-4 text-sm text-amber-800 animate-fade-in">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 rounded-2xl bg-amber-50 border border-amber-200 p-4 text-sm text-amber-800 animate-fade-in">
               <div className="flex items-center gap-2">
                 <span className="relative flex h-2.5 w-2.5 shrink-0">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
@@ -805,7 +800,7 @@ function AdminTransparencia() {
                 </span>
                 <span>Estás en <strong>Modo Edición</strong> para el certificado <strong>{certForm.titulo}</strong>. Edita los campos abajo y presiona "Guardar cambios".</span>
               </div>
-              <button type="button" onClick={limpiarCertForm} className="text-xs font-bold text-amber-700 hover:underline shrink-0">
+              <button type="button" onClick={limpiarCertForm} className="text-xs font-bold text-amber-700 hover:underline shrink-0 text-left">
                 Cancelar edición
               </button>
             </div>
@@ -818,7 +813,7 @@ function AdminTransparencia() {
           </div>
           <div>
             <label className="mb-2 block text-sm font-semibold text-slate-900">Imagen:</label>
-            <div className="relative flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/50 p-8 text-center transition hover:border-blue-400 hover:bg-blue-50/20">
+            <div className="relative flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/50 p-4 sm:p-8 text-center transition hover:border-blue-400 hover:bg-blue-50/20">
               {certForm.preview ? (
                 <div className="relative group flex flex-col items-center">
                   <div
@@ -861,14 +856,14 @@ function AdminTransparencia() {
                 onChange={handleCertFileChange} className="hidden" />
             </div>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3">
             <button type="submit" disabled={guardando}
-              className="rounded-2xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:opacity-60">
+              className="w-full sm:w-auto rounded-2xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:opacity-60 text-center">
               {guardando ? "Guardando..." : editandoCert ? "Guardar cambios" : "Agregar certificado"}
             </button>
             {(certForm.preview || editandoCert) && (
               <button type="button" onClick={limpiarCertForm}
-                className="rounded-2xl bg-slate-200 px-6 py-3 font-semibold text-slate-700 transition hover:bg-slate-300">
+                className="w-full sm:w-auto rounded-2xl bg-slate-200 px-6 py-3 font-semibold text-slate-700 transition hover:bg-slate-300 text-center">
                 Cancelar
               </button>
             )}
@@ -900,7 +895,7 @@ function AdminTransparencia() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-1 min-[480px]:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
           {certificadosPaginados.length > 0 ? certificadosPaginados.map((cert) => (
             <div key={cert._id} className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
               <div className="aspect-[4/3] overflow-hidden bg-slate-200">
@@ -908,13 +903,13 @@ function AdminTransparencia() {
                   alt={cert.titulo || "Certificado"} className="h-full w-full object-cover" />
               </div>
               {cert.titulo && <p className="px-4 py-3 text-sm font-semibold text-slate-700">{cert.titulo}</p>}
-              <div className="flex gap-2 px-4 pb-4">
+              <div className="flex flex-col min-[540px]:flex-row gap-2 px-4 pb-4">
                 <button onClick={() => handleEditarCert(cert)} disabled={guardando}
-                  className="flex flex-1 items-center justify-center gap-1.5 rounded-2xl bg-blue-50 px-3 py-2 text-sm text-blue-600 transition hover:bg-blue-100 disabled:opacity-60">
+                  className="flex flex-1 items-center justify-center gap-1.5 rounded-2xl bg-blue-50 px-3 py-2 text-sm text-blue-600 transition hover:bg-blue-100 disabled:opacity-60 text-center w-full">
                   <Pencil className="h-4 w-4" /> Editar
                 </button>
                 <button onClick={() => handleEliminarCert(cert._id)} disabled={guardando}
-                  className="flex flex-1 items-center justify-center gap-1.5 rounded-2xl bg-red-50 px-3 py-2 text-sm text-red-600 transition hover:bg-red-100 disabled:opacity-60">
+                  className="flex flex-1 items-center justify-center gap-1.5 rounded-2xl bg-red-50 px-3 py-2 text-sm text-red-600 transition hover:bg-red-100 disabled:opacity-60 text-center w-full">
                   <Trash2 className="h-4 w-4" /> Eliminar
                 </button>
               </div>

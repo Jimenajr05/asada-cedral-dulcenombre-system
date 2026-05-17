@@ -10,7 +10,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
 function Toast({ toasts, removeToast }) {
   return (
-    <div className="fixed top-6 right-6 z-50 flex flex-col gap-3" style={{ minWidth: 300, maxWidth: 400 }}>
+    <div className="fixed top-6 right-4 sm:right-6 z-50 flex flex-col gap-3 w-[calc(100vw-2rem)] sm:w-80 md:w-96">
       {toasts.map((t) => {
         const isSuccess = t.type === "success";
         const isConfirm = t.type === "confirm";
@@ -323,8 +323,8 @@ function AdminSobreNosotros() {
       <Toast toasts={toasts} removeToast={removeToast} />
 
       <div>
-        <h1 className="text-4xl font-bold text-slate-900 md:text-5xl">Gestión de Sobre Nosotros</h1>
-        <p className="mt-2 text-lg text-slate-700">Administra la junta directiva y la sección de cobertura y alcance.</p>
+        <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 md:text-5xl leading-tight">Gestión de Sobre Nosotros</h1>
+        <p className="mt-2 text-sm sm:text-base md:text-lg text-slate-700">Administra la junta directiva y la sección de cobertura y alcance.</p>
       </div>
 
       {/* PERÍODO */}
@@ -335,24 +335,24 @@ function AdminSobreNosotros() {
             <input type="text" value={periodo} onChange={(e) => setPeriodo(e.target.value)}
               placeholder="Ejemplo: 2025 – 2029"
               className="flex-1 rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-500 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200" />
-            <div className="flex gap-2">
+            <div className="flex gap-2 w-full sm:w-auto">
               <button onClick={async () => { await guardarPeriodo(); setEditandoPeriodo(false); }}
-                className="rounded-2xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700">
+                className="flex-1 rounded-2xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700 text-center w-full sm:w-auto">
                 Guardar
               </button>
               <button onClick={() => { setPeriodo(data.periodo || ""); setEditandoPeriodo(false); }}
-                className="rounded-2xl bg-slate-200 px-6 py-3 font-semibold text-slate-700 transition hover:bg-slate-300">
+                className="flex-1 rounded-2xl bg-slate-200 px-6 py-3 font-semibold text-slate-700 transition hover:bg-slate-300 text-center w-full sm:w-auto">
                 Cancelar
               </button>
             </div>
           </div>
         ) : (
-          <div className="flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4">
             <p className="text-slate-800 font-medium break-all">
               {data.periodo || <span className="text-slate-400 italic">Sin período definido</span>}
             </p>
             <button onClick={() => setEditandoPeriodo(true)}
-              className="flex items-center gap-2 rounded-2xl bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-600 transition hover:bg-blue-100">
+              className="flex items-center justify-center gap-2 rounded-2xl bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-600 transition hover:bg-blue-100 w-full sm:w-auto">
               <Pencil className="h-4 w-4" /> Editar
             </button>
           </div>
@@ -366,7 +366,7 @@ function AdminSobreNosotros() {
         </div>
         <form onSubmit={handleGuardarMiembro} className="space-y-5">
           {editandoMiembro !== null && (
-            <div className="flex items-center justify-between gap-4 rounded-2xl bg-amber-50 border border-amber-200 p-4 text-sm text-amber-800 animate-fade-in">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 rounded-2xl bg-amber-50 border border-amber-200 p-4 text-sm text-amber-800 animate-fade-in">
               <div className="flex items-center gap-2">
                 <span className="relative flex h-2.5 w-2.5 shrink-0">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
@@ -374,7 +374,7 @@ function AdminSobreNosotros() {
                 </span>
                 <span>Estás en <strong>Modo Edición</strong> para el miembro <strong>{miembroForm.nombre}</strong>. Edita los campos abajo y presiona "Guardar cambios".</span>
               </div>
-              <button type="button" onClick={limpiarMiembroForm} className="text-xs font-bold text-amber-700 hover:underline shrink-0">
+              <button type="button" onClick={limpiarMiembroForm} className="text-xs font-bold text-amber-700 hover:underline shrink-0 text-left">
                 Cancelar edición
               </button>
             </div>
@@ -439,13 +439,13 @@ function AdminSobreNosotros() {
                 onChange={handleMiembroFileChange} className="hidden" />
             </div>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3">
             <button type="submit"
-              className="rounded-2xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700">
+              className="w-full sm:w-auto rounded-2xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700 text-center">
               {editandoMiembro !== null ? "Guardar cambios" : "Agregar miembro"}
             </button>
             <button type="button" onClick={limpiarMiembroForm}
-              className="rounded-2xl bg-slate-200 px-6 py-3 font-semibold text-slate-700 transition hover:bg-slate-300">
+              className="w-full sm:w-auto rounded-2xl bg-slate-200 px-6 py-3 font-semibold text-slate-700 transition hover:bg-slate-300 text-center">
               Cancelar
             </button>
           </div>
@@ -464,14 +464,22 @@ function AdminSobreNosotros() {
                   <h3 className="mt-3 text-sm font-bold text-slate-900 w-full break-all">{miembro.nombre}</h3>
                   <p className="text-xs text-slate-500 w-full break-all mt-0.5">{miembro.cargo}</p>
                 </div>
-                <div className="mt-4 flex gap-2">
-                  <button type="button" onClick={() => handleEditarMiembro(miembro, index)}
-                    className="flex flex-1 items-center justify-center gap-1 rounded-xl bg-blue-50 px-2 py-1.5 text-xs font-semibold text-blue-600 transition hover:bg-blue-100">
-                    <Pencil className="h-3.5 w-3.5" /> Editar
+                <div className="mt-4 flex justify-center gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => handleEditarMiembro(miembro, index)}
+                    title="Editar miembro"
+                    className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600 transition hover:bg-blue-100 hover:scale-105 active:scale-95"
+                  >
+                    <Pencil className="h-4 w-4" />
                   </button>
-                  <button type="button" onClick={() => handleEliminarMiembro(index)}
-                    className="flex flex-1 items-center justify-center gap-1 rounded-xl bg-red-50 px-2 py-1.5 text-xs font-semibold text-red-600 transition hover:bg-red-100">
-                    <Trash2 className="h-3.5 w-3.5" /> Eliminar
+                  <button
+                    type="button"
+                    onClick={() => handleEliminarMiembro(index)}
+                    title="Eliminar miembro"
+                    className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 text-red-600 transition hover:bg-red-100 hover:scale-105 active:scale-95"
+                  >
+                    <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
               </div>
@@ -489,7 +497,7 @@ function AdminSobreNosotros() {
         </div>
         <form onSubmit={handleGuardarCobertura} className="space-y-5">
           {editandoCobertura !== null && (
-            <div className="flex items-center justify-between gap-4 rounded-2xl bg-amber-50 border border-amber-200 p-4 text-sm text-amber-800 animate-fade-in">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 rounded-2xl bg-amber-50 border border-amber-200 p-4 text-sm text-amber-800 animate-fade-in">
               <div className="flex items-center gap-2">
                 <span className="relative flex h-2.5 w-2.5 shrink-0">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
@@ -497,7 +505,7 @@ function AdminSobreNosotros() {
                 </span>
                 <span>Estás en <strong>Modo Edición</strong> para la cobertura <strong>"{coberturaForm.valor}"</strong>. Edita los campos abajo y presiona "Guardar cambios".</span>
               </div>
-              <button type="button" onClick={limpiarCoberturaForm} className="text-xs font-bold text-amber-700 hover:underline shrink-0">
+              <button type="button" onClick={limpiarCoberturaForm} className="text-xs font-bold text-amber-700 hover:underline shrink-0 text-left">
                 Cancelar edición
               </button>
             </div>
@@ -516,13 +524,13 @@ function AdminSobreNosotros() {
                 className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-500 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200" />
             </div>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3">
             <button type="submit"
-              className="rounded-2xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700">
+              className="w-full sm:w-auto rounded-2xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700 text-center">
               {editandoCobertura !== null ? "Guardar cambios" : "Agregar dato"}
             </button>
             <button type="button" onClick={limpiarCoberturaForm}
-              className="rounded-2xl bg-slate-200 px-6 py-3 font-semibold text-slate-700 transition hover:bg-slate-300">
+              className="w-full sm:w-auto rounded-2xl bg-slate-200 px-6 py-3 font-semibold text-slate-700 transition hover:bg-slate-300 text-center">
               Cancelar
             </button>
           </div>
@@ -536,14 +544,22 @@ function AdminSobreNosotros() {
                   <p className="text-2xl font-extrabold text-blue-700 w-full break-all">{item.valor}</p>
                   <p className="mt-1 text-xs text-slate-500 w-full break-all">{item.descripcion}</p>
                 </div>
-                <div className="mt-4 flex gap-2">
-                  <button type="button" onClick={() => handleEditarCobertura(item, index)}
-                    className="flex flex-1 items-center justify-center gap-1 rounded-xl bg-blue-50 px-2 py-1.5 text-xs font-semibold text-blue-600 transition hover:bg-blue-100">
-                    <Pencil className="h-3.5 w-3.5" /> Editar
+                <div className="mt-4 flex justify-center gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => handleEditarCobertura(item, index)}
+                    title="Editar cobertura"
+                    className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600 transition hover:bg-blue-100 hover:scale-105 active:scale-95"
+                  >
+                    <Pencil className="h-4 w-4" />
                   </button>
-                  <button type="button" onClick={() => handleEliminarCobertura(index)}
-                    className="flex flex-1 items-center justify-center gap-1 rounded-xl bg-red-50 px-2 py-1.5 text-xs font-semibold text-red-600 transition hover:bg-red-100">
-                    <Trash2 className="h-3.5 w-3.5" /> Eliminar
+                  <button
+                    type="button"
+                    onClick={() => handleEliminarCobertura(index)}
+                    title="Eliminar cobertura"
+                    className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 text-red-600 transition hover:bg-red-100 hover:scale-105 active:scale-95"
+                  >
+                    <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
               </div>

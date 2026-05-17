@@ -284,12 +284,12 @@ function AdminTramites() {
 
       <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
         <div>
-          <h1 className="text-4xl font-bold text-slate-900">Gestión de Trámites</h1>
-          <p className="mt-2 text-lg text-slate-700">Administra los trámites y archivos descargables del sitio.</p>
+          <h1 className="text-3xl font-bold text-slate-900 sm:text-4xl">Gestión de Trámites</h1>
+          <p className="mt-2 text-sm text-slate-700 sm:text-base md:text-lg">Administra los trámites y archivos descargables del sitio.</p>
         </div>
         {!mostrarFormulario && (
           <button type="button" onClick={abrirFormularioNuevo}
-            className="inline-flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700">
+            className="inline-flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700 w-full sm:w-auto">
             <Plus className="h-5 w-5" /> Agregar trámite
           </button>
         )}

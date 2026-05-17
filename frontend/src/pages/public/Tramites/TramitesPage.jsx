@@ -217,10 +217,10 @@ export default function TramitesPage() {
           <span className="section-badge bg-sky-500/20 border border-sky-400/30 text-sky-300 mb-5">
             Servicios institucionales
           </span>
-          <h1 className="mt-4 mb-4 text-4xl font-extrabold text-white sm:text-5xl" style={{ fontFamily: "var(--font-display)" }}>
+          <h1 className="mt-4 mb-4 text-3xl font-extrabold text-white sm:text-5xl" style={{ fontFamily: "var(--font-display)" }}>
             {hero.title}
           </h1>
-          <p className="mx-auto max-w-2xl text-lg text-blue-100">
+          <p className="mx-auto max-w-2xl text-base text-blue-100 sm:text-lg">
             {hero.subtitle}
           </p>
         </div>
@@ -238,7 +238,7 @@ export default function TramitesPage() {
           </p>
         </div>
 
-        <div className="mb-8 flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:flex-row md:items-center md:justify-between">
+        <div className="mb-8 flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 shadow-sm md:flex-row md:items-center md:justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">Resultados</p>
             <p className="mt-0.5 text-xl font-bold text-slate-900">
@@ -274,36 +274,36 @@ export default function TramitesPage() {
             No se encontraron trámites con esa búsqueda.
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-6 xl:grid-cols-2 max-h-[850px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-sky-400 scrollbar-track-slate-100">
+          <div className="grid grid-cols-1 gap-6 xl:grid-cols-2 lg:max-h-[850px] lg:overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-sky-400 scrollbar-track-slate-100">
             {tramitesFiltrados.map((t) => (
               <article
                 key={t._id}
-                className="card-hover flex h-full flex-col rounded-2xl border border-slate-100 bg-white p-6 shadow-md"
+                className="card-hover flex h-full flex-col rounded-2xl border border-slate-100 bg-white p-4 sm:p-6 shadow-md"
               >
-                <div className="mb-5 flex items-start gap-4 min-w-0 w-full overflow-hidden">
-                  <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-400 to-sky-600 text-white shadow-sm shadow-sky-200">
+                <div className="mb-4 flex items-start gap-3 sm:gap-4 min-w-0 w-full overflow-hidden">
+                  <div className="flex h-11 w-11 sm:h-14 sm:w-14 flex-shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-br from-sky-400 to-sky-600 text-white shadow-sm shadow-sky-200">
                     <IconFile />
                   </div>
 
                   <div className="min-w-0 flex-1 w-full overflow-hidden">
-                    <h3 className="text-xl font-bold leading-tight text-slate-900 break-words whitespace-normal" style={{ fontFamily: "var(--font-display)" }}>
+                    <h3 className="text-lg sm:text-xl font-bold leading-tight text-slate-900 break-words whitespace-normal" style={{ fontFamily: "var(--font-display)" }}>
                       {t.titulo}
                     </h3>
                   </div>
                 </div>
 
-                <div className="mb-3">
-                  <p className="text-xs font-bold uppercase tracking-widest text-slate-400">
+                <div className="mb-2">
+                  <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-slate-400">
                     Requisitos
                   </p>
                 </div>
 
-                <div className="mb-5 min-h-[160px] flex-1 rounded-xl border border-slate-100 bg-slate-50 p-4 overflow-hidden min-w-0 w-full">
+                <div className="mb-4 min-h-[100px] sm:min-h-[160px] flex-1 rounded-xl border border-slate-100 bg-slate-50 p-3 sm:p-4 overflow-hidden min-w-0 w-full">
                   {Array.isArray(t.requisitos) && t.requisitos.length > 0 ? (
-                    <ul className="max-h-56 space-y-2.5 overflow-y-auto pr-2 text-sm text-slate-700 w-full overflow-hidden">
+                    <ul className="max-h-56 space-y-2 overflow-y-auto pr-1 sm:pr-2 text-xs sm:text-sm text-slate-700 w-full overflow-hidden">
                       {t.requisitos.map((r, index) => (
-                        <li key={index} className="flex items-start gap-3 min-w-0 w-full overflow-hidden">
-                          <span className="mt-[5px] flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full bg-sky-100">
+                        <li key={index} className="flex items-start gap-2 sm:gap-3 min-w-0 w-full overflow-hidden">
+                          <span className="mt-[4px] flex h-3.5 w-3.5 flex-shrink-0 items-center justify-center rounded-full bg-sky-100">
                             <span className="h-1.5 w-1.5 rounded-full bg-sky-500" />
                           </span>
                           <span className="break-words whitespace-normal leading-relaxed flex-1 min-w-0">{r.texto}</span>
@@ -311,7 +311,7 @@ export default function TramitesPage() {
                       ))}
                     </ul>
                   ) : (
-                    <p className="text-sm text-slate-400">
+                    <p className="text-xs sm:text-sm text-slate-400">
                       Sin requisitos registrados.
                     </p>
                   )}
@@ -322,7 +322,7 @@ export default function TramitesPage() {
                     href={construirUrlArchivo(t.archivoUrl)}
                     target="_blank"
                     rel="noreferrer"
-                    className="btn-glow mt-auto block w-full rounded-xl bg-gradient-to-r from-sky-500 to-sky-600 py-3 text-center text-sm font-bold text-white shadow-md shadow-sky-200"
+                    className="btn-glow mt-auto block w-full rounded-xl bg-gradient-to-r from-sky-500 to-sky-600 py-3 text-center text-xs sm:text-sm font-bold text-white shadow-md shadow-sky-200"
                   >
                     ↓ Descargar Formulario
                   </a>
@@ -330,7 +330,7 @@ export default function TramitesPage() {
                   <button
                     type="button"
                     disabled
-                    className="mt-auto w-full cursor-not-allowed rounded-xl bg-slate-100 py-3 text-sm font-semibold text-slate-400 border border-slate-200"
+                    className="mt-auto w-full cursor-not-allowed rounded-xl bg-slate-100 py-3 text-xs sm:text-sm font-semibold text-slate-400 border border-slate-200"
                   >
                     Formulario no disponible
                   </button>
@@ -357,22 +357,24 @@ export default function TramitesPage() {
           Formas de Pago
         </h2>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
           {formasPago.map((p, i) => {
             const Icon = paymentIcons[i] || IconCard;
 
             return (
               <div
                 key={i}
-                className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
+                className="rounded-2xl border border-slate-200 bg-white p-3 sm:p-6 shadow-sm flex flex-col justify-between"
               >
-                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-sky-50 text-sky-600">
-                  <Icon />
-                </div>
+                <div>
+                  <div className="mx-auto mb-3 flex h-8 w-8 sm:h-12 sm:w-12 items-center justify-center rounded-lg sm:rounded-xl bg-sky-50 text-sky-600">
+                    <Icon />
+                  </div>
 
-                <h3 className="font-semibold text-slate-800">{p.title}</h3>
-                <p className="mt-2 text-sm text-slate-600">{p.detail}</p>
-                <p className="mt-3 text-xs leading-relaxed text-slate-500">
+                  <h3 className="font-bold text-slate-800 text-xs sm:text-base leading-snug">{p.title}</h3>
+                  <p className="mt-1.5 text-[11px] sm:text-sm text-slate-600 leading-snug">{p.detail}</p>
+                </div>
+                <p className="mt-2.5 text-[9px] sm:text-xs leading-relaxed text-slate-400">
                   {p.extra}
                 </p>
               </div>
@@ -397,12 +399,12 @@ export default function TramitesPage() {
             {sinpeMovilInfo.pasos.map((paso, index) => (
               <div
                 key={index}
-                className="rounded-2xl border border-green-200 bg-green-50 p-6 text-left"
+                className="rounded-2xl border border-green-200 bg-green-50 p-4 sm:p-6 text-left"
               >
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-700 text-xl font-bold text-white">
+                <div className="mb-3.5 flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-green-700 text-sm sm:text-lg font-bold text-white shadow-sm">
                   {index + 1}
                 </div>
-                <p className="text-sm leading-relaxed text-slate-700">{paso}</p>
+                <p className="text-xs sm:text-sm leading-relaxed text-slate-700">{paso}</p>
               </div>
             ))}
           </div>
@@ -411,29 +413,29 @@ export default function TramitesPage() {
 
       {/* CONSULTA DE RECIBOS */}
       <section className="mx-auto max-w-6xl px-4 py-6">
-        <div className="rounded-2xl border border-sky-100 bg-gradient-to-r from-sky-50/50 to-white p-6 shadow-sm md:p-8">
+        <div className="rounded-2xl border border-sky-100 bg-gradient-to-r from-sky-50/50 to-white p-5 sm:p-8 shadow-sm">
           <div className="flex flex-col gap-6 text-left md:flex-row md:items-center md:justify-between">
-            <div className="flex items-start gap-4">
-              <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-sky-500 text-white shadow-lg shadow-sky-100">
+            <div className="flex items-start gap-3 sm:gap-4">
+              <div className="flex h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 items-center justify-center rounded-lg sm:rounded-xl bg-sky-500 text-white shadow-lg shadow-sky-100">
                 <IconReceipt />
               </div>
 
               <div>
-                <h3 className="mb-2 text-xl font-bold text-slate-800">
+                <h3 className="mb-1 text-lg sm:text-xl font-bold text-slate-800">
                   {recibos.title}
                 </h3>
-                <p className="max-w-2xl leading-relaxed text-slate-600">
+                <p className="max-w-2xl text-xs sm:text-base leading-relaxed text-slate-600">
                   {recibos.text}
                 </p>
               </div>
             </div>
 
-            <div className="flex-shrink-0">
+            <div className="flex-shrink-0 w-full md:w-auto">
               <a
                 href={recibos.url}
                 target="_blank"
                 rel="noreferrer"
-                className="btn-glow inline-flex items-center justify-center rounded-xl bg-sky-500 px-8 py-3.5 text-sm font-bold text-white shadow-lg transition hover:bg-sky-600"
+                className="btn-glow inline-flex items-center justify-center rounded-xl bg-sky-500 px-8 py-3.5 text-xs sm:text-sm font-bold text-white shadow-lg transition hover:bg-sky-600 w-full sm:w-auto"
               >
                 {recibos.linkLabel}
               </a>
@@ -444,17 +446,17 @@ export default function TramitesPage() {
 
       {/* AYUDA */}
       <section className="mx-auto max-w-4xl px-4 pb-20 pt-16">
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-sky-500 to-sky-600 p-10 text-center text-white shadow-xl shadow-sky-200">
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-sky-500 to-sky-600 px-6 py-10 sm:p-10 text-center text-white shadow-xl shadow-sky-200">
           <WaterDropBg />
 
           <div className="relative z-10">
-            <h3 className="mb-2 text-3xl font-bold" style={{ fontFamily: "var(--font-display)" }}>{ayuda.title}</h3>
-            <p className="mx-auto mb-8 max-w-2xl text-sky-50">{ayuda.text}</p>
+            <h3 className="mb-2 text-2xl sm:text-3xl font-bold" style={{ fontFamily: "var(--font-display)" }}>{ayuda.title}</h3>
+            <p className="mx-auto mb-8 max-w-2xl text-sky-50 text-sm sm:text-base">{ayuda.text}</p>
 
-            <div className="flex flex-wrap justify-center gap-4">
+            <div className="flex flex-col sm:flex-row justify-center gap-4 max-w-md mx-auto w-full">
               <a
                 href="tel:24609775"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-8 py-3.5 text-sm font-bold text-sky-600 shadow-lg shadow-sky-700/10 transition hover:bg-sky-50"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-8 py-3.5 text-sm font-bold text-sky-600 shadow-lg shadow-sky-700/10 transition hover:bg-sky-50 w-full sm:w-auto"
               >
                 <IconPhone />
                 <span>Llamar</span>
@@ -464,7 +466,7 @@ export default function TramitesPage() {
                 href="https://wa.me/50684976556"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/30 bg-white/10 px-8 py-3.5 text-sm font-bold text-white backdrop-blur-sm transition hover:bg-white/20"
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/30 bg-white/10 px-8 py-3.5 text-sm font-bold text-white backdrop-blur-sm transition hover:bg-white/20 w-full sm:w-auto"
               >
                 <IconMail />
                 <span>Enviar mensaje</span>
