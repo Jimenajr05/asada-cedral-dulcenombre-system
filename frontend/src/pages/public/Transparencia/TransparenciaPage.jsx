@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { hero } from "./TransparenciaData";
+import { FiZoomIn, FiX } from "react-icons/fi";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
@@ -61,16 +62,16 @@ const WaterDropBg = () => (
 // Asigna icono y color según el nombre del link guardado en BD
 const getLinkEstilo = (label = "") => {
   const l = label.toLowerCase();
-  if (l.includes("asamblea"))    return { Icon: IconFile,  color: "blue" };
-  if (l.includes("financiero"))  return { Icon: IconChart, color: "emerald" };
-  if (l.includes("tarifa"))      return { Icon: IconTag,   color: "violet" };
+  if (l.includes("asamblea")) return { Icon: IconFile, color: "blue" };
+  if (l.includes("financiero")) return { Icon: IconChart, color: "emerald" };
+  if (l.includes("tarifa")) return { Icon: IconTag, color: "violet" };
   return { Icon: IconFile, color: "blue" };
 };
 
 const colorMap = {
-  blue:    { icon: "bg-blue-100 text-blue-700",       btn: "bg-blue-600 hover:bg-blue-700",       border: "border-blue-100" },
+  blue: { icon: "bg-blue-100 text-blue-700", btn: "bg-blue-600 hover:bg-blue-700", border: "border-blue-100" },
   emerald: { icon: "bg-emerald-100 text-emerald-700", btn: "bg-emerald-600 hover:bg-emerald-700", border: "border-emerald-100" },
-  violet:  { icon: "bg-violet-100 text-violet-700",   btn: "bg-violet-600 hover:bg-violet-700",   border: "border-violet-100" },
+  violet: { icon: "bg-violet-100 text-violet-700", btn: "bg-violet-600 hover:bg-violet-700", border: "border-violet-100" },
 };
 
 const SectionLabel = ({ children }) => (
@@ -110,9 +111,9 @@ function ReunionCard({ reunion }) {
       <div className="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
         <IconCalendar />
       </div>
-      <div className="flex-1 min-w-0">
+      <div className="flex-1 min-w-0 max-h-28 overflow-y-auto pr-1">
         <div className="flex items-center gap-2 flex-wrap">
-          <p className="text-sm font-semibold text-slate-800 leading-snug">{reunion.descripcion}</p>
+          <p className="text-sm font-semibold text-slate-800 leading-snug break-words">{reunion.descripcion}</p>
           {reunion.tipo === "extraordinaria" && (
             <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700">
               Extraordinaria
@@ -133,35 +134,86 @@ function ReunionCard({ reunion }) {
   );
 }
 
+/* ───────── CARD ───────── */
 function CertificadoCard({ cert }) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const src = cert.imagenUrl?.startsWith("http")
     ? cert.imagenUrl
     : `${API_BASE_URL}${cert.imagenUrl}`;
+
   return (
-    <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
-      <div className="aspect-[4/3] bg-slate-100 overflow-hidden">
-        <img
-          src={src}
-          alt={cert.titulo}
-          className="w-full h-full object-cover transition-transform hover:scale-105"
-          loading="lazy"
-        />
+    <>
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden transition hover:shadow-md">
+
+        {/* IMAGEN */}
+        <button
+          type="button"
+          onClick={() => setIsModalOpen(true)}
+          className="relative w-full aspect-[4/3] group overflow-hidden"
+        >
+          <img
+            src={src}
+            alt={cert.titulo}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+
+          {/* Overlay */}
+          <div className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/20 transition flex items-center justify-center">
+
+            <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-75 group-hover:scale-100">
+              <div className="bg-white/90 text-slate-900 p-3 rounded-full shadow-md">
+                <FiZoomIn className="text-xl" />
+              </div>
+            </div>
+
+          </div>
+        </button>
+
+        {/* TEXTO */}
+        {cert.titulo && (
+          <div className="p-4">
+            <p className="text-sm font-semibold text-slate-700 leading-snug break-words whitespace-normal">
+              {cert.titulo}
+            </p>
+          </div>
+        )}
       </div>
-      {cert.titulo && (
-        <div className="p-4">
-          <p className="text-sm font-semibold text-slate-700 leading-snug">{cert.titulo}</p>
+
+      {/* MODAL */}
+      {isModalOpen && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/80 p-4 backdrop-blur-sm"
+          onClick={() => setIsModalOpen(false)}
+        >
+          <div className="relative max-w-5xl w-full flex flex-col items-center">
+            <button
+              className="absolute -top-12 right-0 text-white hover:text-blue-300 flex items-center gap-2"
+              onClick={() => setIsModalOpen(false)}
+            >
+              <span className="text-sm font-semibold">CERRAR</span>
+              <FiX className="text-2xl" />
+            </button>
+
+            <img
+              src={src}
+              alt="Vista ampliada"
+              className="max-h-[85vh] w-auto max-w-full object-contain rounded-xl shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
         </div>
       )}
-    </div>
+    </>
   );
 }
 
 // ── Página principal ──────────────────────────────────────────────────────────
 export default function TransparenciaPage() {
-  const [enlaces,      setEnlaces]      = useState([]);
-  const [reuniones,    setReuniones]    = useState([]);
+  const [enlaces, setEnlaces] = useState([]);
+  const [reuniones, setReuniones] = useState([]);
   const [certificados, setCertificados] = useState([]);
-  const [loading,      setLoading]      = useState(true);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const cargar = async () => {
@@ -173,7 +225,7 @@ export default function TransparenciaPage() {
 
         if (resTransparencia.ok) {
           const data = await resTransparencia.json();
-          setReuniones(Array.isArray(data.reuniones)    ? data.reuniones    : []);
+          setReuniones(Array.isArray(data.reuniones) ? data.reuniones : []);
           setCertificados(Array.isArray(data.certificados) ? data.certificados : []);
         }
 
@@ -257,7 +309,7 @@ export default function TransparenciaPage() {
               Cargando reuniones...
             </div>
           ) : reuniones.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[300px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-sky-400 scrollbar-track-slate-100">
               {reuniones.map((r) => (
                 <ReunionCard key={r._id} reunion={r} />
               ))}
@@ -281,15 +333,57 @@ export default function TransparenciaPage() {
             Documentos y acreditaciones oficiales de la ASADA.
           </p>
         </div>
+
         {loading ? (
           <div className="rounded-xl border border-slate-200 bg-white p-8 text-center text-slate-500">
             Cargando certificados...
           </div>
         ) : certificados.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            {certificados.map((cert) => (
-              <CertificadoCard key={cert._id} cert={cert} />
-            ))}
+          <div className="relative">
+
+            {/* Flecha izquierda */}
+            <button
+              onClick={() =>
+                document
+                  .getElementById("scrollCertificados")
+                  .scrollBy({ left: -320, behavior: "smooth" })
+              }
+              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 opacity-0 hover:opacity-100 transition"
+            >
+              <div className="bg-white/90 backdrop-blur-md shadow-lg hover:shadow-xl rounded-full p-3 hover:scale-110 transition border border-slate-200">
+                <svg className="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+              </div>
+            </button>
+
+            {/* Flecha derecha */}
+            <button
+              onClick={() =>
+                document
+                  .getElementById("scrollCertificados")
+                  .scrollBy({ left: 320, behavior: "smooth" })
+              }
+              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 opacity-0 hover:opacity-100 transition"
+            >
+              <div className="bg-white/90 backdrop-blur-md shadow-lg hover:shadow-xl rounded-full p-3 hover:scale-110 transition border border-slate-200">
+                <svg className="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </button>
+
+            {/* CONTENEDOR */}
+            <div
+              id="scrollCertificados"
+              className="flex gap-5 overflow-x-auto pb-4 scroll-smooth snap-x snap-mandatory scrollbar-hide"
+            >
+              {certificados.map((cert) => (
+                <div key={cert._id} className="snap-start min-w-[260px] max-w-[260px]">
+                  <CertificadoCard cert={cert} />
+                </div>
+              ))}
+            </div>
           </div>
         ) : (
           <div className="rounded-xl border border-slate-200 bg-white p-8 text-center text-slate-500">

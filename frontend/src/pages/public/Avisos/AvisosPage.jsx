@@ -186,6 +186,8 @@ export default function AvisosPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [filtroActivo, setFiltroActivo] = useState("todos");
+  const [paginaActual, setPaginaActual] = useState(1);
+  const avisosPorPagina = 5;
 
   useEffect(() => {
     const obtenerAvisos = async () => {
@@ -227,6 +229,10 @@ export default function AvisosPage() {
     obtenerAvisos();
   }, []);
 
+  useEffect(() => {
+    setPaginaActual(1);
+  }, [filtroActivo]);
+
   const avisosFiltrados = useMemo(() => {
     if (filtroActivo === "todos") {
       return avisosData;
@@ -237,10 +243,17 @@ export default function AvisosPage() {
 
   const avisoDestacado = avisosFiltrados.find((aviso) => aviso?.fijado);
 
-  const avisosNormales = useMemo(() => {
+  const avisosSinDestacado = useMemo(() => {
     if (!avisoDestacado) return avisosFiltrados;
     return avisosFiltrados.filter((aviso) => aviso?._id !== avisoDestacado._id);
   }, [avisosFiltrados, avisoDestacado]);
+
+  const indexInicio = (paginaActual - 1) * avisosPorPagina;
+  const indexFin = indexInicio + avisosPorPagina;
+
+  const avisosPaginados = avisosSinDestacado.slice(indexInicio, indexFin);
+
+  const totalPaginas = Math.ceil(avisosSinDestacado.length / avisosPorPagina);
 
   return (
     <main className="bg-slate-50 text-slate-900">
@@ -304,11 +317,57 @@ export default function AvisosPage() {
           <div className="space-y-8">
             {avisoDestacado && <AvisoCard aviso={avisoDestacado} destacado />}
 
-            {avisosNormales.map((aviso) => (
+            {avisosPaginados.map((aviso) => (
               <AvisoCard key={aviso._id} aviso={aviso} />
             ))}
 
-            {!avisoDestacado && avisosNormales.length === 0 && (
+            {totalPaginas > 1 && (
+              <div className="flex justify-center items-center mt-10">
+                <div className="flex items-center gap-1 rounded-2xl bg-white/80 backdrop-blur px-2 py-2 shadow-sm border border-slate-200">
+
+                  {/* anterior */}
+                  <button
+                    onClick={() => setPaginaActual((p) => Math.max(p - 1, 1))}
+                    disabled={paginaActual === 1}
+                    className="px-3 py-2 rounded-xl text-sm font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 disabled:opacity-40"
+                  >
+                    ←
+                  </button>
+
+                  {/* páginas */}
+                  {[...Array(totalPaginas)].map((_, i) => {
+                    const page = i + 1;
+                    const active = paginaActual === page;
+
+                    return (
+                      <button
+                        key={page}
+                        onClick={() => setPaginaActual(page)}
+                        className={`min-w-[36px] h-9 rounded-xl text-sm font-semibold transition
+              ${active
+                            ? "bg-blue-600 text-white shadow-md scale-105"
+                            : "bg-transparent text-slate-600 hover:bg-slate-100"
+                          }`}
+                      >
+                        {page}
+                      </button>
+                    );
+                  })}
+
+                  {/* siguiente */}
+                  <button
+                    onClick={() => setPaginaActual((p) => Math.min(p + 1, totalPaginas))}
+                    disabled={paginaActual === totalPaginas}
+                    className="px-3 py-2 rounded-xl text-sm font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 disabled:opacity-40"
+                  >
+                    →
+                  </button>
+
+                </div>
+              </div>
+            )}
+
+            {!avisoDestacado && avisosSinDestacado.length === 0 && (
               <div className="rounded-2xl border border-slate-200 bg-white p-10 text-center shadow-sm">
                 <p className="text-lg text-slate-600">
                   No hay avisos disponibles para esta categoría.

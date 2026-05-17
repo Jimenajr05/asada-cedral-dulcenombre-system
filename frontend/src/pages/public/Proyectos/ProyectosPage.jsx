@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { FileText, ChevronDown, ChevronUp, FolderOpen, Image as ImageIcon, Clock, Activity } from "lucide-react";
 import { getProyectosPublico, BASE_URL } from "../../../services/proyectoService";
+import { FiZoomIn, FiX } from "react-icons/fi";
 
 const estadoConfig = {
-  "En progreso": { color: "bg-blue-100 text-blue-700 border-blue-200",    dot: "bg-blue-500" },
-  "Completado":  { color: "bg-emerald-100 text-emerald-700 border-emerald-200", dot: "bg-emerald-500" },
-  "Pausado":     { color: "bg-amber-100 text-amber-700 border-amber-200",  dot: "bg-amber-500" },
-  "Planificado": { color: "bg-slate-100 text-slate-600 border-slate-200",  dot: "bg-slate-400" },
+  "En progreso": { color: "bg-blue-100 text-blue-700 border-blue-200", dot: "bg-blue-500" },
+  "Completado": { color: "bg-emerald-100 text-emerald-700 border-emerald-200", dot: "bg-emerald-500" },
+  "Pausado": { color: "bg-amber-100 text-amber-700 border-amber-200", dot: "bg-amber-500" },
+  "Planificado": { color: "bg-slate-100 text-slate-600 border-slate-200", dot: "bg-slate-400" },
 };
 
 const WaterDropBg = () => (
@@ -29,8 +30,11 @@ function StatChip({ icon: Icon, count, label }) {
 
 export default function ProyectosPage() {
   const [proyectos, setProyectos] = useState([]);
-  const [loading,   setLoading]   = useState(true);
+  const [loading, setLoading] = useState(true);
   const [expandido, setExpandido] = useState(null);
+  const [imagenActiva, setImagenActiva] = useState(null);
+  const [paginaActual, setPaginaActual] = useState(1);
+  const proyectosPorPagina = 5;
 
   useEffect(() => {
     getProyectosPublico()
@@ -38,6 +42,13 @@ export default function ProyectosPage() {
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
+
+  const indexInicio = (paginaActual - 1) * proyectosPorPagina;
+  const indexFin = indexInicio + proyectosPorPagina;
+
+  const proyectosPaginados = proyectos.slice(indexInicio, indexFin);
+
+  const totalPaginas = Math.ceil(proyectos.length / proyectosPorPagina);
 
   return (
     <main className="bg-slate-50 text-slate-900">
@@ -84,14 +95,14 @@ export default function ProyectosPage() {
           </div>
         ) : (
           <div className="space-y-5">
-            {proyectos.map((proyecto, i) => {
-              const abierto  = expandido === proyecto._id;
-              const cfg      = estadoConfig[proyecto.estado] || estadoConfig["Planificado"];
-              const nFotos   = proyecto.fotos?.length || 0;
-              const nDocs    = proyecto.documentos?.length || 0;
-              const nActs    = proyecto.actualizaciones?.length || 0;
+            {proyectosPaginados.map((proyecto, i) => {
+              const abierto = expandido === proyecto._id;
+              const cfg = estadoConfig[proyecto.estado] || estadoConfig["Planificado"];
+              const nFotos = proyecto.fotos?.length || 0;
+              const nDocs = proyecto.documentos?.length || 0;
+              const nActs = proyecto.actualizaciones?.length || 0;
               const ultimaAct = proyecto.actualizaciones?.length
-                ? [...proyecto.actualizaciones].sort((a,b) => new Date(b.fecha) - new Date(a.fecha))[0]
+                ? [...proyecto.actualizaciones].sort((a, b) => new Date(b.fecha) - new Date(a.fecha))[0]
                 : null;
 
               return (
@@ -109,10 +120,12 @@ export default function ProyectosPage() {
                           <FolderOpen className="h-5 w-5 text-blue-600" />
                         </div>
 
-                        <div className="min-w-0 flex-1">
+                        <div className="flex-1 w-full min-w-0">
                           {/* Título + estado */}
                           <div className="flex flex-wrap items-center gap-2 mb-1">
-                            <h2 className="text-lg font-bold text-slate-900 leading-tight">{proyecto.titulo}</h2>
+                            <h2 className="text-lg font-bold text-slate-900 leading-tight break-words whitespace-normal w-full">
+                              {proyecto.titulo}
+                            </h2>
                             <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-semibold ${cfg.color}`}>
                               <span className={`h-1.5 w-1.5 rounded-full ${cfg.dot}`} />
                               {proyecto.estado}
@@ -121,14 +134,18 @@ export default function ProyectosPage() {
 
                           {/* Descripción preview */}
                           {proyecto.descripcion && (
-                            <p className="text-sm text-slate-500 line-clamp-2 mb-3">{proyecto.descripcion}</p>
+                            <p className="text-sm text-slate-500 mb-4 leading-relaxed">
+                              {proyecto.descripcion.length > 50
+                                ? proyecto.descripcion.substring(0, 50) + "..."
+                                : proyecto.descripcion}
+                            </p>
                           )}
 
                           {/* Chips de stats */}
                           <div className="flex flex-wrap gap-2">
-                            <StatChip icon={ImageIcon} count={nFotos}  label={nFotos === 1 ? "foto" : "fotos"} />
-                            <StatChip icon={FileText}  count={nDocs}   label={nDocs === 1 ? "documento" : "documentos"} />
-                            <StatChip icon={Activity}  count={nActs}   label={nActs === 1 ? "actualización" : "actualizaciones"} />
+                            <StatChip icon={ImageIcon} count={nFotos} label={nFotos === 1 ? "foto" : "fotos"} />
+                            <StatChip icon={FileText} count={nDocs} label={nDocs === 1 ? "documento" : "documentos"} />
+                            <StatChip icon={Activity} count={nActs} label={nActs === 1 ? "actualización" : "actualizaciones"} />
                             {ultimaAct && (
                               <div className="flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-600">
                                 <Clock className="h-3.5 w-3.5" />
@@ -152,7 +169,7 @@ export default function ProyectosPage() {
 
                       {/* Descripción completa */}
                       {proyecto.descripcion && (
-                        <p className="text-slate-700 leading-relaxed">{proyecto.descripcion}</p>
+                        <p className="text-sm text-slate-500 mb-3 break-words whitespace-normal">{proyecto.descripcion}</p>
                       )}
 
                       {/* Fotos */}
@@ -161,18 +178,49 @@ export default function ProyectosPage() {
                           <h3 className="mb-4 flex items-center gap-2 text-base font-bold text-slate-900">
                             <ImageIcon className="h-4 w-4 text-blue-500" /> Fotos del proyecto
                           </h3>
+
                           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                            {proyecto.fotos.map((foto) => (
-                              <div key={foto._id} className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-                                <div className="overflow-hidden">
-                                  <img
-                                    src={foto.src?.startsWith("http") ? foto.src : `${BASE_URL}${foto.src}`}
-                                    alt={foto.alt || "Foto del proyecto"}
-                                    className="h-40 w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                            {proyecto.fotos.map((foto) => {
+                              const src = foto.src?.startsWith("http")
+                                ? foto.src
+                                : `${BASE_URL}${foto.src}`;
+
+                              return (
+                                <div
+                                  key={foto._id}
+                                  className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
+                                >
+                                  {/* IMAGEN CON LUPA */}
+                                  <button
+                                    type="button"
+                                    onClick={() => setImagenActiva(src)}
+                                    className="relative w-full aspect-[4/3] group overflow-hidden"
+                                  >
+                                    <img
+                                      src={src}
+                                      alt={foto.alt || "Foto del proyecto"}
+                                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                    />
+
+                                    {/* Overlay */}
+                                    <div className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/20 transition flex items-center justify-center">
+                                      <div className="opacity-0 group-hover:opacity-100 transition duration-300 ease-out transform scale-90 group-hover:scale-100">
+                                        <div className="bg-white/90 p-2 rounded-full shadow-md">
+                                          <FiZoomIn className="text-lg text-slate-800" />
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </button>
+
+                                  {/* Texto */}
+                                  {foto.alt && (
+                                    <p className="px-3 py-2 text-xs text-slate-500 break-words whitespace-normal">
+                                      {foto.alt}
+                                    </p>
+                                  )}
                                 </div>
-                                {foto.alt && <p className="px-3 py-2 text-xs text-slate-500">{foto.alt}</p>}
-                              </div>
-                            ))}
+                              );
+                            })}
                           </div>
                         </div>
                       )}
@@ -188,11 +236,15 @@ export default function ProyectosPage() {
                               <a key={doc._id}
                                 href={doc.url?.startsWith("http") ? doc.url : `${BASE_URL}${doc.url}`}
                                 target="_blank" rel="noreferrer"
-                                className="group flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-5 py-3.5 text-sm font-medium text-slate-700 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700 shadow-sm">
+                                className="group flex items-start gap-3 rounded-2xl border border-slate-200 bg-white px-5 py-3.5 text-sm font-medium text-slate-700 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700 shadow-sm">
                                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-100 group-hover:bg-blue-200 transition">
                                   <FileText className="h-4 w-4 text-blue-600" />
                                 </div>
-                                {doc.nombre}
+                                <div className="flex-1 min-w-0">
+                                  <p className="break-words whitespace-normal leading-snug">
+                                    {doc.nombre}
+                                  </p>
+                                </div>
                                 <span className="ml-auto text-xs text-slate-400 group-hover:text-blue-500">Descargar →</span>
                               </a>
                             ))}
@@ -219,7 +271,7 @@ export default function ProyectosPage() {
                                       {new Date(act.fecha).toLocaleDateString("es-CR", { day: "numeric", month: "long", year: "numeric" })}
                                       {idx === 0 && <span className="ml-2 rounded-full bg-blue-100 px-2 py-0.5 text-blue-600">Más reciente</span>}
                                     </p>
-                                    <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed">{act.texto}</p>
+                                    <p className="text-sm text-slate-700 whitespace-pre-wrap break-words leading-relaxed">{act.texto}</p>
                                   </div>
                                 </div>
                               ))}
@@ -239,6 +291,77 @@ export default function ProyectosPage() {
                 </div>
               );
             })}
+
+            {totalPaginas > 1 && (
+              <div className="flex justify-center items-center mt-10">
+                <div className="flex items-center gap-1 rounded-2xl bg-white/80 backdrop-blur px-2 py-2 shadow-sm border border-slate-200">
+
+                  {/* Botón anterior */}
+                  <button
+                    onClick={() => setPaginaActual((p) => Math.max(p - 1, 1))}
+                    disabled={paginaActual === 1}
+                    className="px-3 py-2 rounded-xl text-sm font-medium transition bg-slate-100 text-slate-600 hover:bg-slate-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    ←
+                  </button>
+
+                  {/* Números de página */}
+                  {[...Array(totalPaginas)].map((_, i) => {
+                    const page = i + 1;
+                    const active = paginaActual === page;
+
+                    return (
+                      <button
+                        key={page}
+                        onClick={() => setPaginaActual(page)}
+                        className={`min-w-[36px] h-9 rounded-xl text-sm font-semibold transition-all duration-200
+              ${active
+                            ? "bg-blue-600 text-white shadow-md scale-105"
+                            : "bg-transparent text-slate-600 hover:bg-slate-100"
+                          }`}
+                      >
+                        {page}
+                      </button>
+                    );
+                  })}
+
+                  {/* Botón siguiente */}
+                  <button
+                    onClick={() => setPaginaActual((p) => Math.min(p + 1, totalPaginas))}
+                    disabled={paginaActual === totalPaginas}
+                    className="px-3 py-2 rounded-xl text-sm font-medium transition bg-slate-100 text-slate-600 hover:bg-slate-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    →
+                  </button>
+
+                </div>
+              </div>
+            )}
+
+            {/* MODAL IMAGEN */}
+            {imagenActiva && (
+              <div
+                className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/80 p-4 backdrop-blur-sm"
+                onClick={() => setImagenActiva(null)}
+              >
+                <div className="relative max-w-5xl w-full flex flex-col items-center">
+                  <button
+                    className="absolute -top-12 right-0 text-white hover:text-blue-300 flex items-center gap-2"
+                    onClick={() => setImagenActiva(null)}
+                  >
+                    <span className="text-sm font-semibold">CERRAR</span>
+                    <FiX className="text-2xl" />
+                  </button>
+
+                  <img
+                    src={imagenActiva}
+                    alt="Vista ampliada"
+                    className="max-h-[85vh] w-auto max-w-full object-contain rounded-xl shadow-2xl"
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                </div>
+              </div>
+            )}
           </div>
         )}
       </section>

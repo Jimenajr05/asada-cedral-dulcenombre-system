@@ -274,19 +274,19 @@ export default function TramitesPage() {
             No se encontraron trámites con esa búsqueda.
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+          <div className="grid grid-cols-1 gap-6 xl:grid-cols-2 max-h-[850px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-sky-400 scrollbar-track-slate-100">
             {tramitesFiltrados.map((t) => (
               <article
                 key={t._id}
                 className="card-hover flex h-full flex-col rounded-2xl border border-slate-100 bg-white p-6 shadow-md"
               >
-                <div className="mb-5 flex items-start gap-4">
+                <div className="mb-5 flex items-start gap-4 min-w-0 w-full overflow-hidden">
                   <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-400 to-sky-600 text-white shadow-sm shadow-sky-200">
                     <IconFile />
                   </div>
 
-                  <div className="min-w-0">
-                    <h3 className="text-xl font-bold leading-tight text-slate-900" style={{ fontFamily: "var(--font-display)" }}>
+                  <div className="min-w-0 flex-1 w-full overflow-hidden">
+                    <h3 className="text-xl font-bold leading-tight text-slate-900 break-all whitespace-normal" style={{ fontFamily: "var(--font-display)" }}>
                       {t.titulo}
                     </h3>
                   </div>
@@ -298,15 +298,15 @@ export default function TramitesPage() {
                   </p>
                 </div>
 
-                <div className="mb-5 min-h-[160px] flex-1 rounded-xl border border-slate-100 bg-slate-50 p-4">
+                <div className="mb-5 min-h-[160px] flex-1 rounded-xl border border-slate-100 bg-slate-50 p-4 overflow-hidden min-w-0 w-full">
                   {Array.isArray(t.requisitos) && t.requisitos.length > 0 ? (
-                    <ul className="max-h-56 space-y-2.5 overflow-y-auto pr-2 text-sm text-slate-700">
+                    <ul className="max-h-56 space-y-2.5 overflow-y-auto pr-2 text-sm text-slate-700 w-full overflow-hidden">
                       {t.requisitos.map((r, index) => (
-                        <li key={index} className="flex items-start gap-3">
+                        <li key={index} className="flex items-start gap-3 min-w-0 w-full overflow-hidden">
                           <span className="mt-[5px] flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full bg-sky-100">
                             <span className="h-1.5 w-1.5 rounded-full bg-sky-500" />
                           </span>
-                          <span className="leading-relaxed">{r.texto}</span>
+                          <span className="break-all whitespace-normal leading-relaxed flex-1 min-w-0">{r.texto}</span>
                         </li>
                       ))}
                     </ul>
@@ -446,7 +446,7 @@ export default function TramitesPage() {
       <section className="mx-auto max-w-4xl px-4 pb-20 pt-16">
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-sky-500 to-sky-600 p-10 text-center text-white shadow-xl shadow-sky-200">
           <WaterDropBg />
-          
+
           <div className="relative z-10">
             <h3 className="mb-2 text-3xl font-bold" style={{ fontFamily: "var(--font-display)" }}>{ayuda.title}</h3>
             <p className="mx-auto mb-8 max-w-2xl text-sky-50">{ayuda.text}</p>

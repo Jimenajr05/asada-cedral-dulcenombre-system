@@ -88,9 +88,8 @@ const WaterDropBg = () => (
 
 const SectionLabel = ({ children, light = false }) => (
   <span
-    className={`inline-block text-xs font-semibold tracking-widest uppercase px-3 py-1 rounded-full ${
-      light ? "bg-white/15 text-blue-100" : "bg-blue-50 text-blue-600"
-    }`}
+    className={`inline-block text-xs font-semibold tracking-widest uppercase px-3 py-1 rounded-full ${light ? "bg-white/15 text-blue-100" : "bg-blue-50 text-blue-600"
+      }`}
   >
     {children}
   </span>
@@ -160,92 +159,127 @@ export default function AboutPage() {
 
       {/* QUIÉNES SOMOS */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
-        <div className="text-center mb-10">
+        <div className="text-center mb-12">
           <SectionLabel>Identidad institucional</SectionLabel>
           <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 mt-3">
             Quiénes somos
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-7 flex flex-col gap-4">
-            <div className="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
-              <IconTarget />
-            </div>
-            <div>
-              <h3 className="text-base font-bold text-slate-800 mb-2">
+        {/* FILA 1 */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+
+          {/* MISIÓN */}
+          <div className="group bg-white rounded-2xl border border-slate-200 p-7 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:scale-110 transition">
+                <IconTarget />
+              </div>
+              <h3 className="text-lg font-bold text-slate-800">
                 {mision.label}
               </h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                {mision.text}
-              </p>
             </div>
+
+            <p className="text-slate-600 text-sm leading-relaxed">
+              {mision.text}
+            </p>
           </div>
 
-          <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-7 flex flex-col gap-4">
-            <div className="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
-              <IconEye />
-            </div>
-            <div>
-              <h3 className="text-base font-bold text-slate-800 mb-2">
+          {/* VISIÓN */}
+          <div className="group bg-white rounded-2xl border border-slate-200 p-7 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:scale-110 transition">
+                <IconEye />
+              </div>
+              <h3 className="text-lg font-bold text-slate-800">
                 {vision.label}
               </h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                {vision.text}
-              </p>
             </div>
-          </div>
 
-          <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-7 flex flex-col gap-4">
-            <div className="w-10 h-10 rounded-lg bg-violet-50 text-violet-600 flex items-center justify-center">
+            <p className="text-slate-600 text-sm leading-relaxed">
+              {vision.text}
+            </p>
+          </div>
+        </div>
+
+        {/* FILA 2 */}
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8 hover:shadow-lg transition-all duration-300">
+
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-11 h-11 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center">
               <IconStar />
             </div>
-            <div>
-              <h3 className="text-base font-bold text-slate-800 mb-3">
-                Valores
-              </h3>
-              <ul className="flex flex-col gap-3">
-                {valores.map((v) => (
-                  <li key={v.nombre}>
-                    <p className="text-sm font-semibold text-slate-800">
-                      {v.nombre}
-                    </p>
-                    <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
-                      {v.descripcion}
-                    </p>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <h3 className="text-lg font-bold text-slate-800">
+              Valores
+            </h3>
           </div>
+
+          {/* GRID DE VALORES */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {valores.map((v) => (
+              <div
+                key={v.nombre}
+                className="bg-sky-50 rounded-xl p-4 border border-sky-100 hover:bg-sky-100 hover:shadow-sm transition"
+              >
+                <p className="text-sm font-semibold text-slate-800">
+                  {v.nombre}
+                </p>
+                <p className="text-sm text-slate-600 leading-relaxed mt-1">
+                  {v.descripcion}
+                </p>
+              </div>
+            ))}
+          </div>
+
         </div>
       </section>
 
       {/* RESEÑA HISTÓRICA */}
       <section className="bg-white py-16 lg:py-20">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+
+          <div className="text-center mb-14">
             <SectionLabel>Nuestra trayectoria</SectionLabel>
             <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 mt-3">
               Reseña Histórica
             </h2>
           </div>
 
-          <div className="bg-slate-50 rounded-xl border border-slate-100 p-8 sm:p-10 flex flex-col gap-8">
-            {historia.map((bloque, index) => (
-              <div key={bloque.id}>
-                <h3 className="text-xs font-bold uppercase tracking-widest text-blue-600 mb-2">
-                  {bloque.titulo}
-                </h3>
-                <p className="text-slate-700 text-sm leading-relaxed">
-                  {bloque.texto}
-                </p>
-                {index < historia.length - 1 && (
-                  <hr className="mt-8 border-slate-200" />
-                )}
-              </div>
-            ))}
+          <div className="relative">
+
+            {/* Línea vertical */}
+            <div className="absolute left-4 top-0 h-full w-[2px] bg-sky-100"></div>
+
+            <div className="flex flex-col gap-10">
+              {historia.map((bloque, index) => (
+                <div key={bloque.id} className="relative flex items-start gap-6 group">
+
+                  {/* Punto */}
+                  <div className="relative z-10 flex-shrink-0">
+                    <div className="w-8 h-8 rounded-full bg-sky-500 flex items-center justify-center shadow-md group-hover:scale-110 transition">
+                      <div className="w-3 h-3 bg-white rounded-full"></div>
+                    </div>
+                  </div>
+
+                  {/* Card */}
+                  <div className="bg-sky-50 border border-sky-100 rounded-xl p-6 shadow-sm hover:shadow-md transition w-full">
+
+                    <h3 className="text-sm font-bold uppercase tracking-widest text-sky-600 mb-2">
+                      {bloque.titulo}
+                    </h3>
+
+                    <p className="text-slate-700 text-sm leading-relaxed">
+                      {bloque.texto}
+                    </p>
+
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
+
         </div>
       </section>
 
@@ -265,54 +299,92 @@ export default function AboutPage() {
           )}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {juntaDirectiva.miembros.length > 0 ? (
-            juntaDirectiva.miembros.map((m, i) => {
-              const iniciales = m.nombre
-                .split(" ")
-                .slice(0, 2)
-                .map((n) => n[0])
-                .join("");
+        <div className="relative group">
 
-              return (
-                <div
-                  key={i}
-                  className="bg-white rounded-xl border border-slate-100 shadow-sm p-5 flex flex-col items-center text-center gap-3 min-h-[230px]"
-                >
-                  <div className="w-24 h-24 rounded-full overflow-hidden bg-slate-200 flex items-center justify-center">
-                    {m.foto ? (
-                      <img
-                        src={construirUrlImagen(m.foto)}
-                        alt={m.nombre}
-                        className="h-full w-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-600 to-blue-800 text-white flex items-center justify-center text-base font-bold">
-                        {iniciales}
-                      </div>
-                    )}
-                  </div>
+          {/* Flecha izquierda */}
+          <button
+            onClick={() =>
+              document
+                .getElementById("scrollJunta")
+                .scrollBy({ left: -240, behavior: "smooth" })
+            }
+            className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white/90 backdrop-blur-md shadow-md rounded-full p-2.5 opacity-0 group-hover:opacity-100 transition hover:scale-110"
+          >
+            <svg className="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
 
-                  <div>
-                    <p className="text-sm font-semibold text-slate-800 leading-tight">
-                      {m.nombre}
-                    </p>
+          {/* Flecha derecha */}
+          <button
+            onClick={() =>
+              document
+                .getElementById("scrollJunta")
+                .scrollBy({ left: 240, behavior: "smooth" })
+            }
+            className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white/90 backdrop-blur-md shadow-md rounded-full p-2.5 opacity-0 group-hover:opacity-100 transition hover:scale-110"
+          >
+            <svg className="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+
+          {/* CONTENEDOR */}
+          <div
+            id="scrollJunta"
+            className="flex gap-4 overflow-x-auto pb-4 scroll-smooth snap-x snap-mandatory scrollbar-hide"
+          >
+            {juntaDirectiva.miembros.length > 0 ? (
+              juntaDirectiva.miembros.map((m, i) => {
+                const iniciales = m.nombre
+                  .split(" ")
+                  .slice(0, 2)
+                  .map((n) => n[0])
+                  .join("");
+
+                return (
+                  <div
+                    key={i}
+                    className="snap-start min-w-[200px] max-w-[200px] bg-white rounded-xl border border-slate-200 px-4 py-5 flex flex-col items-center text-center gap-2 shadow-sm hover:shadow-md transition"
+                  >
+                    {/* FOTO */}
+                    <div className="w-20 h-20 rounded-full overflow-hidden bg-slate-200 flex items-center justify-center">
+                      {m.foto ? (
+                        <img
+                          src={construirUrlImagen(m.foto)}
+                          alt={m.nombre}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-blue-800 text-white flex items-center justify-center text-sm font-bold">
+                          {iniciales}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* NOMBRE */}
+                    <div className="w-full text-center">
+                      <p className="text-sm font-semibold text-slate-800 leading-tight break-words whitespace-normal px-1 line-clamp-2">
+                        {m.nombre}
+                      </p>
+                    </div>
+
+                    {/* CARGO */}
                     <span
-                      className={`inline-block mt-1.5 text-xs font-semibold px-2.5 py-0.5 rounded-full ${
-                        cargoBadgeClass[m.cargo] ?? badgeDefault
-                      }`}
+                      className={`text-xs font-semibold px-3 py-1 rounded-full max-w-full truncate whitespace-nowrap ${cargoBadgeClass[m.cargo] ?? badgeDefault}`}
+                      title={m.cargo}
                     >
                       {m.cargo}
                     </span>
                   </div>
-                </div>
-              );
-            })
-          ) : (
-            <div className="col-span-full text-center text-slate-500">
-              No hay miembros registrados.
-            </div>
-          )}
+                );
+              })
+            ) : (
+              <div className="text-center text-slate-500 w-full">
+                No hay miembros registrados.
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
@@ -327,26 +399,61 @@ export default function AboutPage() {
             Cobertura y Alcance
           </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {cobertura.length > 0 ? (
-              cobertura.map((c, i) => (
-                <div
-                  key={i}
-                  className="bg-white border border-slate-200 rounded-xl p-6 text-center shadow-sm"
-                >
-                  <p className="text-3xl sm:text-4xl font-extrabold text-blue-700 leading-none">
-                    {c.valor}
-                  </p>
-                  <p className="text-slate-600 text-sm mt-2">
-                    {c.descripcion}
-                  </p>
+          <div className="relative group">
+
+            {/* Flecha izquierda */}
+            <button
+              onClick={() =>
+                document
+                  .getElementById("scrollCobertura")
+                  .scrollBy({ left: -240, behavior: "smooth" })
+              }
+              className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white/90 backdrop-blur-md shadow-md rounded-full p-2.5 opacity-0 group-hover:opacity-100 transition hover:scale-110"
+            >
+              <svg className="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+
+            {/* Flecha derecha */}
+            <button
+              onClick={() =>
+                document
+                  .getElementById("scrollCobertura")
+                  .scrollBy({ left: 240, behavior: "smooth" })
+              }
+              className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white/90 backdrop-blur-md shadow-md rounded-full p-2.5 opacity-0 group-hover:opacity-100 transition hover:scale-110"
+            >
+              <svg className="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+
+            {/* CONTENEDOR SCROLL */}
+            <div
+              id="scrollCobertura"
+              className="flex gap-5 overflow-x-auto pb-4 scroll-smooth snap-x snap-mandatory scrollbar-hide"
+            >
+              {cobertura.length > 0 ? (
+                cobertura.map((c, i) => (
+                  <div
+                    key={i}
+                    className="snap-start min-w-[200px] max-w-[200px] bg-white border border-slate-200 rounded-xl px-5 py-6 text-center shadow-sm hover:shadow-md transition"
+                  >
+                    <p className="text-3xl sm:text-4xl font-extrabold text-blue-700 leading-none w-full truncate">
+                      {c.valor}
+                    </p>
+                    <p className="text-slate-600 text-sm mt-2 break-words line-clamp-3">
+                      {c.descripcion}
+                    </p>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center text-slate-500 w-full">
+                  No hay datos de cobertura registrados.
                 </div>
-              ))
-            ) : (
-              <div className="col-span-full text-center text-slate-500">
-                No hay datos de cobertura registrados.
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       </section>

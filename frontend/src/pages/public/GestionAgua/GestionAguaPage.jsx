@@ -3,6 +3,7 @@ import {
   obtenerGestionAgua,
   BASE_URL,
 } from "../../../services/gestionAguaService";
+import { FiZoomIn, FiX } from "react-icons/fi";
 
 const IconDrop = () => (
   <svg
@@ -100,11 +101,66 @@ const WaterDropBg = () => (
   </svg>
 );
 
+const IconHome = () => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="w-5 h-5"
+  >
+    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+    <polyline points="9 22 9 12 15 12 15 22" />
+  </svg>
+);
+
+const IconLeaf = () => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="w-5 h-5"
+  >
+    <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 3.58 1 9.8a7 7 0 0 1-9 8.2z" />
+  </svg>
+);
+
+const IconCheckSimple = () => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="w-3.5 h-3.5"
+  >
+    <polyline points="20 6 9 17 4 12" />
+  </svg>
+);
+
 const SectionLabel = ({ children }) => (
   <span className="inline-block text-xs font-semibold tracking-widest uppercase px-3 py-1 rounded-full bg-blue-50 text-blue-700">
     {children}
   </span>
 );
+
+const obtenerHeaderColor = (index) => {
+  const colores = [
+    { bg: "bg-blue-50/80 border-blue-100/50", text: "text-blue-900", dot: "bg-blue-500" },
+    { bg: "bg-sky-50/80 border-sky-100/50", text: "text-sky-900", dot: "bg-sky-500" },
+    { bg: "bg-teal-50/80 border-teal-100/50", text: "text-teal-900", dot: "bg-teal-500" },
+    { bg: "bg-indigo-50/80 border-indigo-100/50", text: "text-indigo-900", dot: "bg-indigo-500" },
+    { bg: "bg-emerald-50/80 border-emerald-100/50", text: "text-emerald-900", dot: "bg-emerald-500" },
+    { bg: "bg-cyan-50/80 border-cyan-100/50", text: "text-cyan-900", dot: "bg-cyan-500" }
+  ];
+  return colores[index % colores.length];
+};
 
 function ParameterBar({ name, value, range, width }) {
   return (
@@ -136,6 +192,8 @@ function AnalisisAguaCard({ data }) {
   const fotos = data?.fotos || [];
   const totalFotos = fotos.length;
 
+  const [modalOpen, setModalOpen] = useState(false);
+
   if (!totalFotos) {
     return (
       <div className="max-w-5xl mx-auto">
@@ -165,47 +223,87 @@ function AnalisisAguaCard({ data }) {
   };
 
   return (
-    <div className="max-w-5xl mx-auto">
-      <div className="group bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
-        <div className="relative h-[420px] bg-slate-100">
-          <img
-            src={`${BASE_URL}${fotoSeleccionada.imagen}`}
-            alt={data?.titulo || "Análisis de calidad del agua"}
-            className="w-full h-full object-cover"
-          />
+    <>
+      <div className="max-w-5xl mx-auto">
+        <div className="group bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
+          <div className="relative h-[420px] bg-slate-100 overflow-hidden">
+            <img
+              src={`${BASE_URL}${fotoSeleccionada.imagen}`}
+              alt={data?.titulo || "Análisis de calidad del agua"}
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            />
 
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-slate-900/10 to-transparent" />
+            {/* Overlay de gradiente */}
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-slate-900/10 to-transparent pointer-events-none" />
 
-          <button
-            type="button"
-            onClick={irAnterior}
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/95 hover:bg-white text-slate-800 shadow flex items-center justify-center"
-            aria-label="Foto anterior"
-          >
-            <IconChevronLeft />
-          </button>
+            {/* Overlay de lupa */}
+            <button
+              type="button"
+              onClick={() => setModalOpen(true)}
+              className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/20 transition flex items-center justify-center"
+            >
+              <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-75 group-hover:scale-100">
+                <div className="bg-white/90 text-slate-900 p-3 rounded-full shadow-md">
+                  <FiZoomIn className="text-xl" />
+                </div>
+              </div>
+            </button>
 
-          <button
-            type="button"
-            onClick={irSiguiente}
-            className="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/95 hover:bg-white text-slate-800 shadow flex items-center justify-center"
-            aria-label="Siguiente foto"
-          >
-            <IconChevronRight />
-          </button>
+            <button
+              type="button"
+              onClick={irAnterior}
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/95 hover:bg-white text-slate-800 shadow flex items-center justify-center z-10 transition hover:scale-105"
+              aria-label="Foto anterior"
+            >
+              <IconChevronLeft />
+            </button>
 
-          <div className="absolute top-4 right-4 bg-white/95 text-slate-900 text-xs sm:text-sm font-semibold px-3 py-1.5 rounded-full shadow">
-            {fotoSeleccionada.fecha || "Sin fecha"}
+            <button
+              type="button"
+              onClick={irSiguiente}
+              className="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/95 hover:bg-white text-slate-800 shadow flex items-center justify-center z-10 transition hover:scale-105"
+              aria-label="Siguiente foto"
+            >
+              <IconChevronRight />
+            </button>
+
+            <div className="absolute top-4 right-4 bg-white/95 text-slate-900 text-xs sm:text-sm font-semibold px-3 py-1.5 rounded-full shadow z-10">
+              {fotoSeleccionada.fecha || "Sin fecha"}
+            </div>
+          </div>
+
+          <div className="p-6">
+            <h3 className="font-bold text-slate-900 text-2xl">
+              {data?.titulo || "Análisis de calidad del agua"}
+            </h3>
           </div>
         </div>
-
-        <div className="p-6">
-          <h3 className="font-bold text-slate-900 text-2xl">
-            {data?.titulo || "Análisis de calidad del agua"}
-          </h3>
-        </div>
       </div>
-    </div>
+
+      {modalOpen && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/80 p-4 backdrop-blur-sm"
+          onClick={() => setModalOpen(false)}
+        >
+          <div className="relative max-w-5xl w-full flex flex-col items-center">
+            <button
+              className="absolute -top-12 right-0 text-white hover:text-blue-300 flex items-center gap-2 transition"
+              onClick={() => setModalOpen(false)}
+            >
+              <span className="text-sm font-semibold">CERRAR</span>
+              <FiX className="text-2xl" />
+            </button>
+
+            <img
+              src={`${BASE_URL}${fotoSeleccionada.imagen}`}
+              alt="Zoom análisis"
+              className="w-full max-h-[85vh] object-contain rounded-xl shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
@@ -245,6 +343,8 @@ export default function GestionAguaPage() {
       </div>
     );
   }
+
+  const listaInfraestructura = data.infraestructura || [];
 
   return (
     <div className="bg-slate-50">
@@ -454,54 +554,185 @@ export default function GestionAguaPage() {
           </h2>
         </div>
 
-        <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-5">
-          {(data.infraestructura || []).map((i, index) => (
-            <div
-              key={i._id || index}
-              className="bg-white p-6 rounded-xl shadow-sm border border-slate-200"
+        {listaInfraestructura.length > 3 ? (
+          <div className="relative group/infra">
+            {/* Flecha izquierda */}
+            <button
+              onClick={() =>
+                document
+                  .getElementById("scrollInfraestructura")
+                  .scrollBy({ left: -360, behavior: "smooth" })
+              }
+              className="absolute -left-2 top-1/2 -translate-y-1/2 z-10 bg-white/90 backdrop-blur-md shadow-md rounded-full p-3 opacity-0 group-hover/infra:opacity-100 transition duration-300 hover:scale-110 text-slate-700 hover:text-blue-600 border border-slate-100"
+              aria-label="Desplazar a la izquierda"
             >
-              <h3 className="font-bold text-slate-900 mb-4 text-lg">
-                {i.titulo}
-              </h3>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
 
-              <ul className="text-sm text-slate-700 space-y-3">
-                {(i.items || []).map((item, itemIndex) => (
-                  <li key={`${item}-${itemIndex}`} className="flex gap-2">
-                    <span className="text-blue-600 font-bold">•</span>
-                    <span>{item}</span>
+            {/* Flecha derecha */}
+            <button
+              onClick={() =>
+                document
+                  .getElementById("scrollInfraestructura")
+                  .scrollBy({ left: 360, behavior: "smooth" })
+              }
+              className="absolute -right-2 top-1/2 -translate-y-1/2 z-10 bg-white/90 backdrop-blur-md shadow-md rounded-full p-3 opacity-0 group-hover/infra:opacity-100 transition duration-300 hover:scale-110 text-slate-700 hover:text-blue-600 border border-slate-100"
+              aria-label="Desplazar a la derecha"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+
+            {/* CONTENEDOR SCROLL */}
+            <div
+              id="scrollInfraestructura"
+              className="flex gap-5 overflow-x-auto pb-4 scroll-smooth snap-x snap-mandatory scrollbar-hide"
+            >
+              {listaInfraestructura.map((i, index) => {
+                const headerColor = obtenerHeaderColor(index);
+                return (
+                  <div
+                    key={i._id || index}
+                    className="snap-start min-w-[290px] sm:min-w-[340px] max-w-[360px] w-full bg-white rounded-2xl shadow-sm border border-slate-200/80 flex-shrink-0 flex flex-col justify-between overflow-hidden hover:shadow-md transition-all duration-300"
+                  >
+                    {/* Header */}
+                    <div className={`${headerColor.bg} px-6 py-4 border-b min-w-0 w-full`}>
+                      <h3 className={`font-bold ${headerColor.text} text-[16px] sm:text-[17px] break-all whitespace-normal leading-snug`}>
+                        {i.titulo}
+                      </h3>
+                    </div>
+
+                    {/* Body */}
+                    <div className="p-6 min-w-0 w-full flex-1 flex flex-col justify-center">
+                      <ul className="text-sm text-slate-600 space-y-3 w-full overflow-hidden">
+                        {(i.items || []).map((item, itemIndex) => (
+                          <li key={`${item}-${itemIndex}`} className="flex gap-2.5 items-start min-w-0 w-full overflow-hidden">
+                            <span className={`mt-[7px] h-1.5 w-1.5 rounded-full ${headerColor.dot} shrink-0`} />
+                            <span className="break-all whitespace-normal text-slate-600 leading-relaxed flex-1 min-w-0">
+                              {item}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-5">
+            {listaInfraestructura.map((i, index) => {
+              const headerColor = obtenerHeaderColor(index);
+              return (
+                <div
+                  key={i._id || index}
+                  className="bg-white rounded-2xl shadow-sm border border-slate-200/80 flex flex-col justify-between overflow-hidden hover:shadow-md transition-all duration-300"
+                >
+                  {/* Header */}
+                  <div className={`${headerColor.bg} px-6 py-4 border-b min-w-0 w-full`}>
+                    <h3 className={`font-bold ${headerColor.text} text-[16px] sm:text-[17px] break-all whitespace-normal leading-snug`}>
+                      {i.titulo}
+                    </h3>
+                  </div>
+
+                  {/* Body */}
+                  <div className="p-6 min-w-0 w-full flex-1 flex flex-col justify-center">
+                    <ul className="text-sm text-slate-600 space-y-3 w-full overflow-hidden">
+                      {(i.items || []).map((item, itemIndex) => (
+                        <li key={`${item}-${itemIndex}`} className="flex gap-2.5 items-start min-w-0 w-full overflow-hidden">
+                          <span className={`mt-[7px] h-1.5 w-1.5 rounded-full ${headerColor.dot} shrink-0`} />
+                          <span className="break-all whitespace-normal text-slate-600 leading-relaxed flex-1 min-w-0">
+                            {item}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </section>
+
+      {/* AHORRO */}
+      <section className="bg-slate-100 py-20 relative overflow-hidden">
+        {/* Soft background glow circles */}
+        <div className="pointer-events-none absolute top-10 left-10 h-72 w-72 rounded-full bg-blue-400/5 blur-[80px]" />
+        <div className="pointer-events-none absolute bottom-10 right-10 h-72 w-72 rounded-full bg-teal-400/5 blur-[80px]" />
+
+        <div className="max-w-5xl mx-auto px-4 relative">
+          <div className="text-center mb-14">
+            <SectionLabel>Uso Responsable</SectionLabel>
+            <h2 className="text-3xl sm:text-4xl font-extrabold mt-3 text-slate-900 tracking-tight" style={{ fontFamily: "var(--font-display)" }}>
+              Consejos para el Ahorro de Agua
+            </h2>
+            <p className="mt-3 text-slate-500 max-w-xl mx-auto text-sm sm:text-base">
+              Pequeños hábitos diarios hacen una gran diferencia en la conservación de nuestro recurso hídrico.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8 lg:gap-10">
+            {/* EN EL HOGAR */}
+            <div className="group bg-white/95 backdrop-blur-md rounded-3xl p-6 sm:p-8 shadow-sm hover:shadow-[0_20px_50px_-20px_rgba(59,130,246,0.12)] transition-all duration-500 hover:-translate-y-1.5 border border-slate-200/80 relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-sky-400 to-blue-500" />
+
+              <div className="flex items-center gap-4 mb-6">
+                <div className="h-12 w-12 rounded-2xl flex items-center justify-center bg-gradient-to-br from-sky-50 to-blue-100 text-blue-600 shadow-sm group-hover:scale-110 transition duration-500">
+                  <IconHome />
+                </div>
+                <div>
+                  <h3 className="font-bold text-slate-900 text-xl tracking-tight">
+                    En el Hogar
+                  </h3>
+                  <p className="text-xs text-slate-400 mt-0.5 font-medium uppercase tracking-wider">Dentro de casa</p>
+                </div>
+              </div>
+
+              <ul className="space-y-2.5 w-full">
+                {(data.ahorro?.hogar || []).map((item, index) => (
+                  <li key={`${item}-${index}`} className="group/item flex gap-3.5 items-start min-w-0 w-full overflow-hidden hover:bg-slate-50/80 p-3 rounded-2xl transition duration-300 border border-transparent hover:border-slate-100 hover:shadow-[0_4px_12px_-5px_rgba(0,0,0,0.05)] cursor-default">
+                    <span className="h-6 w-6 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 mt-0.5 shadow-sm transition-all duration-300 group-hover/item:bg-gradient-to-br group-hover/item:from-blue-500 group-hover/item:to-indigo-600 group-hover/item:text-white group-hover/item:scale-110 group-hover/item:shadow-md group-hover/item:shadow-blue-200">
+                      <IconCheckSimple />
+                    </span>
+                    <span className="break-all whitespace-normal text-slate-700 text-[14.5px] leading-relaxed flex-1 min-w-0 transition-transform duration-300 group-hover/item:translate-x-0.5">
+                      {item}
+                    </span>
                   </li>
                 ))}
               </ul>
             </div>
-          ))}
-        </div>
-      </section>
 
-      {/* AHORRO */}
-      <section className="bg-slate-100 py-16">
-        <div className="max-w-5xl mx-auto px-4">
-          <div className="text-center mb-10">
-            <SectionLabel>Ahorro</SectionLabel>
-            <h2 className="text-3xl font-bold mt-3 text-slate-900">
-              Consejos para el Ahorro de Agua
-            </h2>
-          </div>
+            {/* EN EL JARDÍN */}
+            <div className="group bg-white/95 backdrop-blur-md rounded-3xl p-6 sm:p-8 shadow-sm hover:shadow-[0_20px_50px_-20px_rgba(16,185,129,0.12)] transition-all duration-500 hover:-translate-y-1.5 border border-slate-200/80 relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-emerald-400 to-teal-500" />
 
-          <div className="grid md:grid-cols-2 gap-5">
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-              <h3 className="font-bold text-slate-900 mb-4">En el Hogar</h3>
-              <ul className="space-y-2 text-sm text-slate-700">
-                {(data.ahorro?.hogar || []).map((item, index) => (
-                  <li key={`${item}-${index}`}>✓ {item}</li>
-                ))}
-              </ul>
-            </div>
+              <div className="flex items-center gap-4 mb-6">
+                <div className="h-12 w-12 rounded-2xl flex items-center justify-center bg-gradient-to-br from-emerald-50 to-teal-100 text-emerald-600 shadow-sm group-hover:scale-110 transition duration-500">
+                  <IconLeaf />
+                </div>
+                <div>
+                  <h3 className="font-bold text-slate-900 text-xl tracking-tight">
+                    En el Jardín
+                  </h3>
+                  <p className="text-xs text-slate-400 mt-0.5 font-medium uppercase tracking-wider">Áreas verdes y exteriores</p>
+                </div>
+              </div>
 
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-              <h3 className="font-bold text-slate-900 mb-4">En el Jardín</h3>
-              <ul className="space-y-2 text-sm text-slate-700">
+              <ul className="space-y-2.5 w-full">
                 {(data.ahorro?.jardin || []).map((item, index) => (
-                  <li key={`${item}-${index}`}>✓ {item}</li>
+                  <li key={`${item}-${index}`} className="group/item flex gap-3.5 items-start min-w-0 w-full overflow-hidden hover:bg-slate-50/80 p-3 rounded-2xl transition duration-300 border border-transparent hover:border-slate-100 hover:shadow-[0_4px_12px_-5px_rgba(0,0,0,0.05)] cursor-default">
+                    <span className="h-6 w-6 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5 shadow-sm transition-all duration-300 group-hover/item:bg-gradient-to-br group-hover/item:from-emerald-500 group-hover/item:to-teal-600 group-hover/item:text-white group-hover/item:scale-110 group-hover/item:shadow-md group-hover/item:shadow-emerald-200">
+                      <IconCheckSimple />
+                    </span>
+                    <span className="break-all whitespace-normal text-slate-700 text-[14.5px] leading-relaxed flex-1 min-w-0 transition-transform duration-300 group-hover/item:translate-x-0.5">
+                      {item}
+                    </span>
+                  </li>
                 ))}
               </ul>
             </div>

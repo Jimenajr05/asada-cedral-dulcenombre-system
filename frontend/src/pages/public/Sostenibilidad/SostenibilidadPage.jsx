@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { hero, compromiso, pilares } from "./SostenibilidadData";
 import { getSostenibilidad } from "../../../services/sostenibilidadService";
+import { FiZoomIn, FiX } from "react-icons/fi";
 
 /* ─── Íconos ─────────────────────────────────────────── */
 const IconShield = () => (
@@ -113,6 +114,18 @@ const construirUrlImagen = (url) => {
 
 const GallerySection = ({ title, description, images = [], total = null }) => {
   const scrollRef = useRef(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [activeImage, setActiveImage] = useState(null);
+
+  const openModal = (img) => {
+    setActiveImage(img);
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+    setActiveImage(null);
+  };
 
   const scrollGallery = (direction) => {
     if (!scrollRef.current) return;
@@ -174,15 +187,31 @@ const GallerySection = ({ title, description, images = [], total = null }) => {
                 key={`${image.alt || "imagen"}-${index}`}
                 className="min-w-[280px] sm:min-w-[320px] md:min-w-[340px] snap-start group/card overflow-hidden rounded-2xl bg-white border border-slate-100 shadow-sm flex-shrink-0"
               >
-                <div className="h-72 overflow-hidden">
+                {/* IMAGEN */}
+                <button
+                  type="button"
+                  onClick={() => openModal(image)}
+                  className="relative w-full h-72 group/zoom overflow-hidden block"
+                >
                   <img
                     src={construirUrlImagen(image.src)}
                     alt={image.alt || "Imagen de galería"}
-                    className="h-full w-full object-cover transition duration-500 group-hover/card:scale-105"
+                    className="w-full h-full object-cover transition duration-500 group-hover/card:scale-105"
                   />
-                </div>
+
+                  {/* Overlay */}
+                  <div className="absolute inset-0 bg-slate-900/0 group-hover/zoom:bg-slate-900/20 transition flex items-center justify-center">
+                    <div className="opacity-0 group-hover/zoom:opacity-100 transition-all duration-300 transform scale-75 group-hover/zoom:scale-100">
+                      <div className="bg-white/90 text-slate-900 p-3 rounded-full shadow-md">
+                        <FiZoomIn className="text-xl" />
+                      </div>
+                    </div>
+                  </div>
+                </button>
+
+                {/* TEXTO */}
                 <div className="p-4">
-                  <p className="text-sm text-slate-600">
+                  <p className="text-sm text-slate-600 leading-snug break-words whitespace-normal">
                     {image.alt || "Imagen de galería"}
                   </p>
                 </div>
@@ -191,6 +220,31 @@ const GallerySection = ({ title, description, images = [], total = null }) => {
           </div>
         </div>
       </div>
+
+      {/* MODAL */}
+      {modalOpen && activeImage && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/80 p-4 backdrop-blur-sm"
+          onClick={closeModal}
+        >
+          <div className="relative max-w-5xl w-full flex flex-col items-center">
+            <button
+              className="absolute -top-12 right-0 text-white hover:text-blue-300 flex items-center gap-2"
+              onClick={closeModal}
+            >
+              <span className="text-sm font-semibold">CERRAR</span>
+              <FiX className="text-2xl" />
+            </button>
+
+            <img
+              src={construirUrlImagen(activeImage.src)}
+              alt="Vista ampliada"
+              className="max-h-[85vh] w-auto max-w-full object-contain rounded-xl shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        </div>
+      )}
     </section>
   );
 };
