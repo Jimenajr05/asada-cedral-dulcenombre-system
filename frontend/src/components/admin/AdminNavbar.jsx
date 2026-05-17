@@ -1,4 +1,4 @@
-import { LogOut } from "lucide-react";
+import { LogOut, Menu } from "lucide-react";
 import logo from "../../assets/logo.png";
 
 function AdminNavbar({ user, onLogout, onToggleSidebar }) {
