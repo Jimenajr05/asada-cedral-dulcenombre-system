@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { FiTrash2 } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
+import { FiTrash2, FiAlertTriangle } from "react-icons/fi";
 import {
   obtenerGestionAgua,
   actualizarGestionAgua,
@@ -225,7 +226,9 @@ function ParameterPreview({ parametro }) {
 
 /* ========================= COMPONENTE PRINCIPAL ========================= */
 function AdminGestionAgua() {
+  const navigate = useNavigate();
   const [form, setForm] = useState(null);
+  const [confirmacionNavegacion, setConfirmacionNavegacion] = useState(null);
   const [loading, setLoading] = useState(true);
   const [toasts, setToasts] = useState([]);
 
@@ -235,6 +238,10 @@ function AdminGestionAgua() {
     useState(false);
   const [subiendoFoto, setSubiendoFoto] = useState(false);
   const [nuevaImagen, setNuevaImagen] = useState(null);
+
+  const [hasUnsavedParametros, setHasUnsavedParametros] = useState(false);
+  const [hasUnsavedAforos, setHasUnsavedAforos] = useState(false);
+  const [hasUnsavedInfraestructura, setHasUnsavedInfraestructura] = useState(false);
 
   const removeToast = (id) =>
     setToasts((prev) => prev.filter((t) => t.id !== id));
@@ -271,6 +278,78 @@ function AdminGestionAgua() {
     cargarDatos();
   }, []);
 
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (hasUnsavedParametros || hasUnsavedAforos || hasUnsavedInfraestructura) {
+        e.preventDefault();
+        e.returnValue = "Tienes cambios sin guardar. ¿Seguro que deseas salir?";
+        return e.returnValue;
+      }
+    };
+
+    const handleGlobalClick = (e) => {
+      const isDirty = hasUnsavedParametros || hasUnsavedAforos || hasUnsavedInfraestructura;
+      if (!isDirty) return;
+
+      let target = e.target;
+      while (target && target !== document.body) {
+        const isLink = target.tagName === "A";
+        const isButtonInHeaderOrSidebar = target.tagName === "BUTTON" && (target.closest("header") || target.closest("aside"));
+
+        if (isLink || isButtonInHeaderOrSidebar) {
+          let href = "";
+          let isLogout = false;
+
+          if (isLink) {
+            href = target.getAttribute("href") || target.getAttribute("to");
+            if (href && (href.startsWith("#") || href === window.location.pathname)) {
+              break;
+            }
+          } else {
+            isLogout = true;
+          }
+
+          e.preventDefault();
+          e.stopPropagation();
+
+          setConfirmacionNavegacion({
+            onConfirm: () => {
+              setConfirmacionNavegacion(null);
+              setHasUnsavedParametros(false);
+              setHasUnsavedAforos(false);
+              setHasUnsavedInfraestructura(false);
+
+              if (isLogout) {
+                if (target.click) {
+                  setTimeout(() => {
+                    target.click();
+                  }, 50);
+                } else {
+                  window.location.href = "/admin/login";
+                }
+              } else if (href) {
+                navigate(href);
+              }
+            },
+            onCancel: () => {
+              setConfirmacionNavegacion(null);
+            }
+          });
+          break;
+        }
+        target = target.parentElement;
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    document.addEventListener("click", handleGlobalClick, true);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      document.removeEventListener("click", handleGlobalClick, true);
+    };
+  }, [hasUnsavedParametros, hasUnsavedAforos, hasUnsavedInfraestructura]);
+
   const cargarDatos = async () => {
     try {
       const data = await obtenerGestionAgua();
@@ -290,6 +369,9 @@ function AdminGestionAgua() {
           fotos: data.analisisCalidadAgua?.fotos || [],
         },
       });
+      setHasUnsavedParametros(false);
+      setHasUnsavedAforos(false);
+      setHasUnsavedInfraestructura(false);
     } catch (error) {
       showError("Error al cargar gestión del agua");
     } finally {
@@ -309,6 +391,7 @@ function AdminGestionAgua() {
       });
 
       await cargarDatos();
+      setHasUnsavedParametros(false);
       showSuccess("Parámetros guardados correctamente");
     } catch (error) {
       showError("Error al guardar parámetros");
@@ -326,6 +409,7 @@ function AdminGestionAgua() {
       });
 
       await cargarDatos();
+      setHasUnsavedAforos(false);
       showSuccess("Aforos guardados correctamente");
     } catch (error) {
       showError("Error al guardar aforos");
@@ -343,6 +427,7 @@ function AdminGestionAgua() {
       });
 
       await cargarDatos();
+      setHasUnsavedInfraestructura(false);
       showSuccess("Infraestructura guardada correctamente");
     } catch (error) {
       showError("Error al guardar infraestructura");
@@ -355,13 +440,16 @@ function AdminGestionAgua() {
     const nuevos = [...form.parametros];
     nuevos[index][campo] = valor;
     setForm((prev) => ({ ...prev, parametros: nuevos }));
+    setHasUnsavedParametros(true);
   };
 
-  const agregarParametro = () =>
+  const agregarParametro = () => {
     setForm((prev) => ({
       ...prev,
       parametros: [...prev.parametros, crearParametroVacio()],
     }));
+    setHasUnsavedParametros(true);
+  };
 
   const eliminarParametro = async (index) => {
     const confirmed = await showConfirm(
@@ -373,6 +461,7 @@ function AdminGestionAgua() {
     const nuevos = [...form.parametros];
     nuevos.splice(index, 1);
     setForm((prev) => ({ ...prev, parametros: nuevos }));
+    setHasUnsavedParametros(true);
   };
 
   const handleSubirImagen = async (e) => {
@@ -417,7 +506,7 @@ function AdminGestionAgua() {
     }
   };
 
-  const handleAforoChange = (campo, valor) =>
+  const handleAforoChange = (campo, valor) => {
     setForm((prev) => ({
       ...prev,
       aforos: {
@@ -425,6 +514,8 @@ function AdminGestionAgua() {
         [campo]: valor,
       },
     }));
+    setHasUnsavedAforos(true);
+  };
 
   const handleAforoRegistroChange = (index, campo, valor) => {
     const nuevos = [...form.aforos.registros];
@@ -437,9 +528,10 @@ function AdminGestionAgua() {
         registros: nuevos,
       },
     }));
+    setHasUnsavedAforos(true);
   };
 
-  const agregarAforo = () =>
+  const agregarAforo = () => {
     setForm((prev) => ({
       ...prev,
       aforos: {
@@ -447,6 +539,8 @@ function AdminGestionAgua() {
         registros: [...prev.aforos.registros, crearAforoVacio()],
       },
     }));
+    setHasUnsavedAforos(true);
+  };
 
   const eliminarAforo = async (index) => {
     const confirmed = await showConfirm(
@@ -465,6 +559,7 @@ function AdminGestionAgua() {
         registros: nuevos,
       },
     }));
+    setHasUnsavedAforos(true);
   };
 
   const handleInfraTituloChange = (index, valor) => {
@@ -475,6 +570,7 @@ function AdminGestionAgua() {
       ...prev,
       infraestructura: nuevas,
     }));
+    setHasUnsavedInfraestructura(true);
   };
 
   const handleInfraItemChange = (infraIndex, itemIndex, valor) => {
@@ -485,13 +581,16 @@ function AdminGestionAgua() {
       ...prev,
       infraestructura: nuevas,
     }));
+    setHasUnsavedInfraestructura(true);
   };
 
-  const agregarBloqueInfraestructura = () =>
+  const agregarBloqueInfraestructura = () => {
     setForm((prev) => ({
       ...prev,
       infraestructura: [...prev.infraestructura, crearInfraestructuraVacia()],
     }));
+    setHasUnsavedInfraestructura(true);
+  };
 
   const eliminarBloqueInfraestructura = async (index) => {
     const confirmed = await showConfirm(
@@ -507,6 +606,7 @@ function AdminGestionAgua() {
       ...prev,
       infraestructura: nuevas,
     }));
+    setHasUnsavedInfraestructura(true);
   };
 
   const agregarItemInfraestructura = (index) => {
@@ -517,6 +617,7 @@ function AdminGestionAgua() {
       ...prev,
       infraestructura: nuevas,
     }));
+    setHasUnsavedInfraestructura(true);
   };
 
   const eliminarItemInfraestructura = async (infraIndex, itemIndex) => {
@@ -533,6 +634,7 @@ function AdminGestionAgua() {
       ...prev,
       infraestructura: nuevas,
     }));
+    setHasUnsavedInfraestructura(true);
   };
 
   if (loading) return <p className="p-6 text-slate-800">Cargando...</p>;
@@ -577,6 +679,17 @@ function AdminGestionAgua() {
             </ActionButton>
           }
         >
+          {hasUnsavedParametros && (
+            <div className="mb-5 flex items-center justify-between gap-4 rounded-2xl bg-amber-50 border border-amber-200 p-4 text-sm text-amber-800 animate-fade-in">
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-2.5 w-2.5 shrink-0">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
+                </span>
+                <span>Tienes <strong>cambios sin guardar</strong> en los parámetros. Presiona el botón verde de arriba para guardarlos de forma permanente.</span>
+              </div>
+            </div>
+          )}
           <div className="mb-5 flex justify-start">
             <ActionButton variant="primary" onClick={agregarParametro}>
               + Agregar parámetro
@@ -765,6 +878,17 @@ function AdminGestionAgua() {
             </ActionButton>
           }
         >
+          {hasUnsavedAforos && (
+            <div className="mb-5 flex items-center justify-between gap-4 rounded-2xl bg-amber-50 border border-amber-200 p-4 text-sm text-amber-800 animate-fade-in">
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-2.5 w-2.5 shrink-0">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
+                </span>
+                <span>Tienes <strong>cambios sin guardar</strong> en la tabla de aforos. Presiona el botón verde de arriba para guardarlos de forma permanente.</span>
+              </div>
+            </div>
+          )}
           <div className="mb-5 flex justify-start">
             <ActionButton variant="primary" onClick={agregarAforo}>
               + Agregar registro
@@ -873,6 +997,17 @@ function AdminGestionAgua() {
             </ActionButton>
           }
         >
+          {hasUnsavedInfraestructura && (
+            <div className="mb-5 flex items-center justify-between gap-4 rounded-2xl bg-amber-50 border border-amber-200 p-4 text-sm text-amber-800 animate-fade-in">
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-2.5 w-2.5 shrink-0">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
+                </span>
+                <span>Tienes <strong>cambios sin guardar</strong> en la infraestructura. Presiona el botón verde de arriba para guardarlos de forma permanente.</span>
+              </div>
+            </div>
+          )}
           <div className="mb-5 flex justify-start">
             <ActionButton variant="primary" onClick={agregarBloqueInfraestructura}>
               + Agregar bloque
@@ -955,6 +1090,38 @@ function AdminGestionAgua() {
           </div>
         </SectionCard>
       </div>
+
+      {confirmacionNavegacion && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm animate-fade-in">
+          <div className="w-full max-w-md scale-95 overflow-hidden rounded-3xl border border-slate-100 bg-white p-6 shadow-2xl transition-all animate-scale-up">
+            <div className="flex flex-col items-center text-center">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-100 text-amber-600 mb-4">
+                <FiAlertTriangle className="h-7 w-7" />
+              </div>
+              <h3 className="text-xl font-bold text-slate-900">¿Salir sin guardar los cambios?</h3>
+              <p className="mt-2 text-sm text-slate-500">
+                Tienes modificaciones pendientes en esta sección. Si sales ahora, perderás todos tus cambios en la gestión del agua de forma permanente.
+              </p>
+            </div>
+            <div className="mt-6 flex flex-col gap-2 sm:flex-row">
+              <button
+                type="button"
+                onClick={confirmacionNavegacion.onCancel}
+                className="flex-1 rounded-2xl bg-slate-100 py-3.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-200 active:scale-[0.98] cursor-pointer"
+              >
+                Permanecer aquí
+              </button>
+              <button
+                type="button"
+                onClick={confirmacionNavegacion.onConfirm}
+                className="flex-1 rounded-2xl bg-amber-600 py-3.5 text-sm font-semibold text-white transition hover:bg-amber-700 active:scale-[0.98] shadow-lg shadow-amber-100 cursor-pointer"
+              >
+                Salir sin guardar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
