@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { useState, useEffect } from "react";
-import logo from "../../assets/logo.jpeg";
+import logo from "../../assets/logo.png";
 
 const links = [
   { to: "/", label: "Inicio" },
@@ -39,7 +39,7 @@ export default function Navbar() {
           <img
             src={logo}
             alt="ASADA Cedral y Dulce Nombre"
-            className="h-14 w-33 object-cover object-center"
+            className="h-12 w-auto object-contain"
           />
         </NavLink>
 
