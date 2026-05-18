@@ -3,7 +3,7 @@
  * @description Servicios de cliente API para gestionar la autenticación de administradores, comunicación con backend y cookies de sesión.
  */
 
-const API_URL = "http://localhost:4000/api/auth";
+const API_URL = `${import.meta.env.VITE_API_URL || "http://localhost:4000"}/api/auth`;
 
 /**
  * Registra un nuevo usuario administrador.
