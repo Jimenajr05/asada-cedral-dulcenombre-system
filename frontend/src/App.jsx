@@ -1,10 +1,15 @@
+/**
+ * @file App.jsx
+ * @description Componente principal de la aplicación React. Orquesta las rutas de navegación pública y el enrutamiento protegido del panel administrativo.
+ */
+
 import { Routes, Route, useLocation } from "react-router-dom";
 
 import Navbar from "./components/public/Navbar";
 import Footer from "./components/public/Footer";
 import ScrollToTop from "./components/public/ScrollToTop";
 
-// PÁGINAS PÚBLICAS
+// Páginas públicas
 import HomePage from "./pages/public/Home/HomePage";
 import AboutPage from "./pages/public/About/AboutPage";
 import AvisosPage from "./pages/public/Avisos/AvisosPage";
@@ -15,7 +20,7 @@ import TransparenciaPage from "./pages/public/Transparencia/TransparenciaPage";
 import TramitesPage from "./pages/public/Tramites/TramitesPage";
 import ProyectosPage from "./pages/public/Proyectos/ProyectosPage";
 
-// PÁGINAS ADMIN
+// Páginas Admin
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminRegister from "./pages/admin/AdminRegister";
 import AdminPanel from "./pages/admin/AdminPanel";
@@ -27,10 +32,14 @@ import AdminTramites from "./pages/admin/AdminTramites";
 import AdminTransparencia from "./pages/admin/AdminTranspariencia";
 import AdminProyectos from "./pages/admin/AdminProyectos";
 
-// COMPONENTES ADMIN
+// Componentes Admin
 import ProtectedRoute from "./components/admin/ProtectedRoute";
 import AdminLayout from "./components/admin/AdminLayout";
 
+/**
+ * App - Componente Raíz de enrutamiento y estructura condicional de Layouts.
+ * @component
+ */
 function App() {
   const location = useLocation();
   const esRutaAdmin = location.pathname.startsWith("/admin");
@@ -42,7 +51,7 @@ function App() {
       {!esRutaAdmin && <Navbar />}
 
       <Routes>
-        {/* PÚBLICAS */}
+        {/* Páginas públicas */}
         <Route path="/" element={<HomePage />} />
         <Route path="/sobre-nosotros" element={<AboutPage />} />
         <Route path="/avisos" element={<AvisosPage />} />
@@ -53,11 +62,11 @@ function App() {
         <Route path="/tramites" element={<TramitesPage />} />
         <Route path="/proyectos" element={<ProyectosPage />} />
 
-        {/* AUTH ADMIN */}
+        {/* Auth admin */}
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin/register" element={<AdminRegister />} />
 
-        {/* ADMIN PROTEGIDO */}
+        {/* Admin protegido */}
         <Route path="/admin/panel" element={<ProtectedRoute><AdminLayout><AdminPanel /></AdminLayout></ProtectedRoute>} />
         <Route path="/admin/avisos" element={<ProtectedRoute><AdminLayout><AdminAvisos /></AdminLayout></ProtectedRoute>} />
         <Route path="/admin/sobre-nosotros" element={<ProtectedRoute><AdminLayout><AdminSobreNosotros /></AdminLayout></ProtectedRoute>} />

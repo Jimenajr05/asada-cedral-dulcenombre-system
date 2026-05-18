@@ -1,3 +1,8 @@
+/**
+ * @file AdminTranspariencia.jsx
+ * @description Página de administración para la sección "Transparencia". Permite registrar enlaces institucionales a documentos oficiales, programar las próximas reuniones de Junta Directiva (con paginación y buscador) y subir certificados del acueducto.
+ */
+
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Pencil, Trash2, Upload, CalendarDays, Image as ImageIcon, Link as LinkIcon, Search, AlertTriangle } from "lucide-react";
@@ -32,7 +37,6 @@ const saveLink = async (id, label, url) => {
   return res.json();
 };
 
-/* ========================= TOAST ========================= */
 function Toast({ toasts, removeToast }) {
   return (
     <div className="fixed top-6 right-4 sm:right-6 z-50 flex flex-col gap-3 w-[calc(100vw-2rem)] sm:w-80 md:w-96">
@@ -77,7 +81,6 @@ function Toast({ toasts, removeToast }) {
   );
 }
 
-/* ========================= COMPONENTE PRINCIPAL ========================= */
 function AdminTransparencia() {
   const navigate = useNavigate();
   const [confirmacionNavegacion, setConfirmacionNavegacion] = useState(null);
@@ -150,7 +153,6 @@ function AdminTransparencia() {
     }
   }, [totalPaginasCerts, paginaCertActual]);
 
-  // ── Toast helpers ──
   const removeToast = (id) => setToasts((prev) => prev.filter((t) => t.id !== id));
   const addToast = (type, message, extra = {}) => {
     const id = Date.now();
@@ -277,7 +279,6 @@ function AdminTransparencia() {
     };
   }, [linkUrl, linkLabel, nuevoLinkUrl, nuevoLinkLabel, linkEditando, reunionForm, editandoReunion, certForm, editandoCert]);
 
-  // ── Links ──
   const handleEditarLink = (link) => {
     setLinkEditando(link._id);
     setLinkLabel(link.label || "");
@@ -373,7 +374,6 @@ function AdminTransparencia() {
     }
   };
 
-  // ── Reuniones ──
   const formatDateToYYYYMMDD = (date) => {
     if (!date) return "";
     const d = new Date(date);
@@ -442,7 +442,6 @@ function AdminTransparencia() {
     }
   };
 
-  // ── Certificados ──
   const limpiarCertForm = () => {
     setCertForm({ titulo: "", file: null, preview: null });
     setEditandoCert(null);
@@ -621,7 +620,7 @@ function AdminTransparencia() {
         </div>
       </section>
 
-      {/* REUNIONES */}
+      {/* Fechas de Reuniones de Junta Directiva */}
       <section ref={reunionFormRef} className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 scroll-mt-6">
         <div className="mb-6 flex flex-col sm:flex-row sm:items-center gap-3">
           <CalendarDays className="h-6 w-6 text-blue-600" />
@@ -678,7 +677,7 @@ function AdminTransparencia() {
             )}
           </div>
         </form>
-        {/* BUSCADOR DE REUNIONES */}
+        {/* Buscador de reuniones */}
         <div className="mt-8 mb-6 flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm md:flex-row md:items-center md:justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">Resultados</p>
@@ -738,7 +737,7 @@ function AdminTransparencia() {
           )}
         </div>
 
-        {/* PAGINACIÓN DE REUNIONES */}
+        {/* Paginación de reuniones */}
         {totalPaginasReuniones > 1 && (
           <div className="mt-6 flex justify-center">
             <div className="flex items-center gap-1 rounded-2xl bg-white/80 backdrop-blur px-2 py-2 shadow-sm border border-slate-200">
@@ -784,7 +783,7 @@ function AdminTransparencia() {
         )}
       </section>
 
-      {/* CERTIFICADOS */}
+      {/* Certificados */}
       <section ref={certFormRef} className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
         <div className="mb-6 flex flex-col sm:flex-row sm:items-center gap-3">
           <ImageIcon className="h-6 w-6 text-blue-600" />
@@ -869,7 +868,7 @@ function AdminTransparencia() {
             )}
           </div>
         </form>
-        {/* BUSCADOR DE CERTIFICADOS */}
+        {/* Buscador de certificados */}
         <div className="mt-8 mb-6 flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm md:flex-row md:items-center md:justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">Resultados</p>
@@ -921,7 +920,7 @@ function AdminTransparencia() {
           )}
         </div>
 
-        {/* PAGINACIÓN DE CERTIFICADOS */}
+        {/* Paginación de certificados */}
         {totalPaginasCerts > 1 && (
           <div className="mt-6 flex justify-center">
             <div className="flex items-center gap-1 rounded-2xl bg-white/80 backdrop-blur px-2 py-2 shadow-sm border border-slate-200">

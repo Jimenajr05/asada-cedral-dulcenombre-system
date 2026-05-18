@@ -1,3 +1,14 @@
+/**
+ * @file TramitesData.js
+ * @description Datos estáticos para la sección pública de "Trámites y Servicios", incluyendo consideraciones legales sobre autenticación de firmas, catálogo de formas de pago (SINPE Móvil, Banco Nacional, etc.), instrucciones para pagos SINPE, y enlaces para consulta externa de recibos de agua.
+ */
+
+/**
+ * Contenido principal de la sección Hero (título y subtítulo).
+ * @type {Object}
+ * @property {string} title - Título del banner.
+ * @property {string} subtitle - Subtítulo descriptivo.
+ */
 export const hero = {
   title: "Trámites y Servicios",
   subtitle:

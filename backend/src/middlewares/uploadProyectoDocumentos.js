@@ -1,18 +1,31 @@
+/**
+ * @file uploadProyectoDocumentos.js
+ * @description Configuración de Multer para la carga de documentos técnicos y de seguimiento de proyectos (PDF, Word, Excel, PowerPoint).
+ */
+
 const multer = require("multer");
-const path   = require("path");
-const fs     = require("fs");
+const path = require("path");
+const fs = require("fs");
 
 const carpetaDestino = path.join(__dirname, "../../uploads/proyectos/documentos");
+
+// Crea el directorio de almacenamiento si no existe
 if (!fs.existsSync(carpetaDestino)) fs.mkdirSync(carpetaDestino, { recursive: true });
 
+/**
+ * Almacenamiento local para los documentos del proyecto.
+ */
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, carpetaDestino),
-  filename:    (req, file, cb) => {
+  filename: (req, file, cb) => {
     const nombre = Date.now() + "-" + Math.round(Math.random() * 1e9) + path.extname(file.originalname);
     cb(null, nombre);
   },
 });
 
+/**
+ * Filtro de tipos de archivos admitidos (documentos de ofimática y PDF).
+ */
 const fileFilter = (req, file, cb) => {
   const ext = path.extname(file.originalname).toLowerCase();
   const valido = /\.(pdf|doc|docx|xls|xlsx|ppt|pptx)$/.test(ext);

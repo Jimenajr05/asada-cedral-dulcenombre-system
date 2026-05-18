@@ -1,3 +1,8 @@
+/**
+ * @file AdminPanel.jsx
+ * @description Panel principal o Dashboard administrativo (Dashboard). Ofrece estadísticas consolidadas del sistema (avisos, proyectos, trámites), accesos rápidos a las rutas CRUD y la bitácora interactiva de tareas pendientes de la junta directiva.
+ */
+
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -10,12 +15,11 @@ import { getTramitesAdmin } from "../../services/tramiteService";
 import { getTareas, crearTarea, toggleTarea, eliminarTarea } from "../../services/tareaService";
 
 const prioridadConfig = {
-  alta:  { color: "bg-red-50 border-l-4 border-red-500",    badge: "bg-red-100 text-red-600",    label: "Alta" },
+  alta: { color: "bg-red-50 border-l-4 border-red-500", badge: "bg-red-100 text-red-600", label: "Alta" },
   media: { color: "bg-amber-50 border-l-4 border-amber-500", badge: "bg-amber-100 text-amber-600", label: "Media" },
-  baja:  { color: "bg-blue-50 border-l-4 border-blue-500",  badge: "bg-blue-100 text-blue-600",  label: "Baja" },
+  baja: { color: "bg-blue-50 border-l-4 border-blue-500", badge: "bg-blue-100 text-blue-600", label: "Baja" },
 };
 
-/* ========================= TOAST ========================= */
 function Toast({ toasts, removeToast }) {
   return (
     <div className="fixed top-4 right-4 left-4 sm:top-6 sm:right-6 sm:left-auto z-50 flex flex-col gap-3 w-auto sm:w-[380px]">
@@ -27,7 +31,7 @@ function Toast({ toasts, removeToast }) {
             className={`flex items-start gap-3 rounded-2xl border px-4 py-3 sm:px-5 sm:py-4 shadow-2xl backdrop-blur-md
               ${isSuccess ? "bg-emerald-50 border-emerald-200 text-emerald-800"
                 : isConfirm ? "bg-amber-50 border-amber-200 text-amber-800"
-                : "bg-red-50 border-red-200 text-red-800"}`}
+                  : "bg-red-50 border-red-200 text-red-800"}`}
             style={{ animation: "slideIn 0.3s ease" }}>
             <div className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-white text-sm font-bold
               ${isSuccess ? "bg-emerald-500" : isConfirm ? "bg-amber-500" : "bg-red-500"}`}>
@@ -52,17 +56,16 @@ function Toast({ toasts, removeToast }) {
 }
 
 export default function AdminPanel() {
-  const [avisos,    setAvisos]    = useState([]);
+  const [avisos, setAvisos] = useState([]);
   const [proyectos, setProyectos] = useState([]);
-  const [tramites,  setTramites]  = useState([]);
-  const [tareas,    setTareas]    = useState([]);
-  const [loading,   setLoading]   = useState(true);
-  const [toasts,    setToasts]    = useState([]);
+  const [tramites, setTramites] = useState([]);
+  const [tareas, setTareas] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [toasts, setToasts] = useState([]);
 
-  const [nuevaTarea,     setNuevaTarea]     = useState("");
+  const [nuevaTarea, setNuevaTarea] = useState("");
   const [prioridadNueva, setPrioridadNueva] = useState("media");
 
-  // ── Toast helpers ──
   const removeToast = (id) => setToasts((p) => p.filter((t) => t.id !== id));
   const addToast = (type, message, extra = {}) => {
     const id = Date.now();
@@ -71,11 +74,11 @@ export default function AdminPanel() {
     return id;
   };
   const showSuccess = (msg) => addToast("success", msg);
-  const showError   = (msg) => addToast("error", msg);
+  const showError = (msg) => addToast("error", msg);
   const showConfirm = (msg) => new Promise((resolve) => {
     const id = addToast("confirm", msg, {
       onConfirm: () => { removeToast(id); resolve(true); },
-      onCancel:  () => { removeToast(id); resolve(false); },
+      onCancel: () => { removeToast(id); resolve(false); },
     });
   });
 
@@ -127,13 +130,12 @@ export default function AdminPanel() {
     } catch (e) { showError(e.message); }
   };
 
-  // Stats calculadas
-  const avisosPublicados  = avisos.filter((a) => a.estado === "publicado").length;
-  const avisosUrgentes    = avisos.filter((a) => a.tipo === "urgente").length;
-  const proyectosActivos  = proyectos.filter((p) => p.estado === "En progreso").length;
+  const avisosPublicados = avisos.filter((a) => a.estado === "publicado").length;
+  const avisosUrgentes = avisos.filter((a) => a.tipo === "urgente").length;
+  const proyectosActivos = proyectos.filter((p) => p.estado === "En progreso").length;
   const tareasCompletadas = tareas.filter((t) => t.completada).length;
-  const tareasPendientes  = tareas.filter((t) => !t.completada);
-  // Novedades combinadas (últimos 5 avisos/proyectos ordenados por fecha de creación)
+  const tareasPendientes = tareas.filter((t) => !t.completada);
+
   const novedades = [
     ...avisos.map((a) => ({ ...a, tipoNovedad: "aviso" })),
     ...proyectos.map((p) => ({ ...p, tipoNovedad: "proyecto" })),
@@ -142,19 +144,19 @@ export default function AdminPanel() {
     .slice(0, 5);
 
   const stats = [
-    { label: "Avisos publicados",  value: avisosPublicados, icon: Bell,       color: "bg-blue-500",    sub: `${avisosUrgentes} urgente${avisosUrgentes !== 1 ? "s" : ""}` },
-    { label: "Proyectos activos",  value: proyectosActivos, icon: Hammer,     color: "bg-indigo-500",  sub: `${proyectos.length} en total` },
-    { label: "Trámites",           value: tramites.length,  icon: FolderOpen, color: "bg-emerald-500", sub: "disponibles" },
-    { label: "Tareas completadas", value: tareasCompletadas,icon: Check,      color: "bg-amber-500",   sub: `${tareas.length} en total` },
+    { label: "Avisos publicados", value: avisosPublicados, icon: Bell, color: "bg-blue-500", sub: `${avisosUrgentes} urgente${avisosUrgentes !== 1 ? "s" : ""}` },
+    { label: "Proyectos activos", value: proyectosActivos, icon: Hammer, color: "bg-indigo-500", sub: `${proyectos.length} en total` },
+    { label: "Trámites", value: tramites.length, icon: FolderOpen, color: "bg-emerald-500", sub: "disponibles" },
+    { label: "Tareas completadas", value: tareasCompletadas, icon: Check, color: "bg-amber-500", sub: `${tareas.length} en total` },
   ];
 
   const accesosRapidos = [
-    { label: "Nuevo aviso",    icon: Bell,       path: "/admin/avisos",         color: "bg-blue-50 text-blue-600 hover:bg-blue-100" },
-    { label: "Nuevo proyecto", icon: Hammer,     path: "/admin/proyectos",      color: "bg-indigo-50 text-indigo-600 hover:bg-indigo-100" },
-    { label: "Gestión Agua",   icon: Droplets,   path: "/admin/gestion-agua",   color: "bg-cyan-50 text-cyan-600 hover:bg-cyan-100" },
-    { label: "Sostenibilidad", icon: Leaf,       path: "/admin/sostenibilidad", color: "bg-emerald-50 text-emerald-600 hover:bg-emerald-100" },
-    { label: "Trámites",       icon: FolderOpen, path: "/admin/tramites",       color: "bg-orange-50 text-orange-600 hover:bg-orange-100" },
-    { label: "Transparencia",  icon: ShieldCheck,path: "/admin/transparencia",  color: "bg-purple-50 text-purple-600 hover:bg-purple-100" },
+    { label: "Nuevo aviso", icon: Bell, path: "/admin/avisos", color: "bg-blue-50 text-blue-600 hover:bg-blue-100" },
+    { label: "Nuevo proyecto", icon: Hammer, path: "/admin/proyectos", color: "bg-indigo-50 text-indigo-600 hover:bg-indigo-100" },
+    { label: "Gestión Agua", icon: Droplets, path: "/admin/gestion-agua", color: "bg-cyan-50 text-cyan-600 hover:bg-cyan-100" },
+    { label: "Sostenibilidad", icon: Leaf, path: "/admin/sostenibilidad", color: "bg-emerald-50 text-emerald-600 hover:bg-emerald-100" },
+    { label: "Trámites", icon: FolderOpen, path: "/admin/tramites", color: "bg-orange-50 text-orange-600 hover:bg-orange-100" },
+    { label: "Transparencia", icon: ShieldCheck, path: "/admin/transparencia", color: "bg-purple-50 text-purple-600 hover:bg-purple-100" },
   ];
 
   if (loading) return (
@@ -269,7 +271,7 @@ export default function AdminPanel() {
           </div>
         </div>
 
-        {/* Columna derecha — Tareas */}
+        {/* Tareas */}
         <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
           <h2 className="mb-5 text-xl font-bold text-slate-900" style={{ fontFamily: "var(--font-display)" }}>Tareas Pendientes</h2>
 

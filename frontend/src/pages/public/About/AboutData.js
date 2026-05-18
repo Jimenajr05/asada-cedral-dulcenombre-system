@@ -1,3 +1,14 @@
+/**
+ * @file AboutData.js
+ * @description Datos estáticos para la página "Sobre Nosotros", incluyendo los contenidos del banner hero, misión, visión, lista de valores institucionales e hitos históricos de la ASADA.
+ */
+
+/**
+ * Contenido principal de la sección Hero (título y subtítulo).
+ * @type {Object}
+ * @property {string} title - Título del banner.
+ * @property {string} subtitle - Subtítulo descriptivo.
+ */
 export const heroContent = {
   title: "Sobre Nosotros",
   subtitle:

@@ -1,10 +1,22 @@
+/**
+ * @file loginController.js
+ * @description Controlador para el inicio de sesión de usuarios administradores, incluyendo control de intentos fallidos y bloqueo temporal.
+ */
+
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 
 const MAX_FAILED_ATTEMPTS = 5;
-const LOCK_TIME_MS = 15 * 60 * 1000; // 15 minutos
+const LOCK_TIME_MS = 15 * 60 * 1000;
 
+/**
+ * Autentica un usuario administrador en el sistema.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express con email y password.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el resultado del inicio de sesión y cookie HTTP-only con el token JWT.
+ */
 const loginController = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -19,14 +31,12 @@ const loginController = async (req, res) => {
       "+password +failedLoginAttempts +lockUntil"
     );
 
-    // Mensaje genérico para no revelar si el email existe
     if (!user) {
       return res.status(401).json({
         message: "Credenciales inválidas",
       });
     }
 
-    // Verificar bloqueo temporal
     if (user.lockUntil && user.lockUntil > Date.now()) {
       const mins = Math.ceil((user.lockUntil - Date.now()) / 60000);
       return res.status(423).json({
@@ -37,7 +47,6 @@ const loginController = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      // Incrementar intentos fallidos
       user.failedLoginAttempts = (user.failedLoginAttempts || 0) + 1;
 
       if (user.failedLoginAttempts >= MAX_FAILED_ATTEMPTS) {
@@ -52,7 +61,6 @@ const loginController = async (req, res) => {
       });
     }
 
-    // Login exitoso — resetear intentos
     user.failedLoginAttempts = 0;
     user.lockUntil = null;
     await user.save();
@@ -67,12 +75,11 @@ const loginController = async (req, res) => {
       { expiresIn: "8h" }
     );
 
-    // Enviar token en cookie httpOnly
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 8 * 60 * 60 * 1000, // 8 horas
+      maxAge: 8 * 60 * 60 * 1000,
     });
 
     return res.status(200).json({

@@ -1,13 +1,22 @@
+/**
+ * @file uploadSostenibilidad.js
+ * @description Configuración de Multer para la carga de imágenes en las galerías de sostenibilidad (Cultura Hídrica, Mantenimiento e Hidrantes).
+ */
+
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 
 const uploadDir = path.join(__dirname, "../../uploads/sostenibilidad");
 
+// Crea el directorio de almacenamiento si no existe
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
+/**
+ * Almacenamiento local para imágenes de sostenibilidad.
+ */
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, uploadDir);
@@ -18,6 +27,9 @@ const storage = multer.diskStorage({
   },
 });
 
+/**
+ * Filtro de validación para extensiones y tipos MIME de imágenes.
+ */
 const fileFilter = (req, file, cb) => {
   const allowedExt = /jpg|jpeg|png|webp/;
   const ext = path.extname(file.originalname).toLowerCase();
@@ -37,6 +49,9 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
+/**
+ * Instancia de Multer configurada con límite de 5MB por imagen.
+ */
 module.exports = multer({
   storage,
   fileFilter,

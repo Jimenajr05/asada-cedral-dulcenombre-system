@@ -1,3 +1,14 @@
+/**
+ * @file ContactoData.js
+ * @description Datos estáticos para la sección de Contacto, incluyendo la información de ubicación física, números telefónicos institucionales, WhatsApp, correos electrónicos, horarios oficiales, teléfonos de emergencias por fugas y opciones del formulario de consulta.
+ */
+
+/**
+ * Contenido principal de la sección Hero (título y subtítulo).
+ * @type {Object}
+ * @property {string} title - Título del banner.
+ * @property {string} subtitle - Subtítulo descriptivo.
+ */
 export const hero = {
   title: "Contacto",
   subtitle: "Estamos aquí para ayudarte.",

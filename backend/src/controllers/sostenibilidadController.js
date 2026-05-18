@@ -1,5 +1,16 @@
+/**
+ * @file sostenibilidadController.js
+ * @description Controlador para la gestión de la sostenibilidad ambiental y la red de hidrantes de la ASADA.
+ */
+
 const Sostenibilidad = require("../models/sostenibilidad");
 
+/**
+ * Obtiene el documento único de Sostenibilidad de la base de datos o lo crea si no existe.
+ * @async
+ * @function getDocumento
+ * @returns {Promise<Object>} El documento de sostenibilidad.
+ */
 const getDocumento = async () => {
   let doc = await Sostenibilidad.findOne();
 
@@ -10,6 +21,13 @@ const getDocumento = async () => {
   return doc;
 };
 
+/**
+ * Obtiene la información pública de sostenibilidad.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el documento de sostenibilidad.
+ */
 exports.getSostenibilidad = async (req, res) => {
   try {
     const data = await getDocumento();
@@ -19,6 +37,13 @@ exports.getSostenibilidad = async (req, res) => {
   }
 };
 
+/**
+ * Obtiene la información de sostenibilidad para el panel administrativo.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el documento de sostenibilidad.
+ */
 exports.getSostenibilidadAdmin = async (req, res) => {
   try {
     const data = await getDocumento();
@@ -28,6 +53,13 @@ exports.getSostenibilidadAdmin = async (req, res) => {
   }
 };
 
+/**
+ * Actualiza el número total de hidrantes instalados y operativos.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express con el total en req.body.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el documento actualizado.
+ */
 exports.updateTotalHidrantes = async (req, res) => {
   try {
     const { total } = req.body;
@@ -52,6 +84,13 @@ exports.updateTotalHidrantes = async (req, res) => {
   }
 };
 
+/**
+ * Agrega una nueva imagen a una galería específica de sostenibilidad (por ejemplo, 'hidrantes' o 'reforestacion').
+ * @async
+ * @param {import('express').Request} req - Objeto de petición con parámetro galeria, alt en req.body y req.file.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el documento actualizado.
+ */
 exports.addImagenGaleria = async (req, res) => {
   try {
     const { galeria } = req.params;
@@ -79,6 +118,13 @@ exports.addImagenGaleria = async (req, res) => {
   }
 };
 
+/**
+ * Actualiza la información (alt) o reemplaza la foto de una imagen existente en una galería de sostenibilidad.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición con parámetros galeria e index, alt en req.body y opcional req.file.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el documento actualizado.
+ */
 exports.updateImagenGaleria = async (req, res) => {
   try {
     const { galeria, index } = req.params;
@@ -109,6 +155,13 @@ exports.updateImagenGaleria = async (req, res) => {
   }
 };
 
+/**
+ * Elimina una imagen específica de una galería por su índice.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express con parámetros galeria e index.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el documento de sostenibilidad actualizado.
+ */
 exports.deleteImagenGaleria = async (req, res) => {
   try {
     const { galeria, index } = req.params;

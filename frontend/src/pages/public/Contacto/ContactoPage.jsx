@@ -1,3 +1,8 @@
+/**
+ * @file ContactoPage.jsx
+ * @description Página pública de "Contacto". Muestra los canales oficiales de atención al abonado (ubicación, teléfonos, correos oficiales, horarios), acceso rápido a emergencias telefónicas y por WhatsApp, un formulario que genera y abre un mensaje precargado en WhatsApp Web, y un mapa interactivo embebido de Google Maps.
+ */
+
 import { useState } from "react";
 import {
   FiMapPin,
@@ -10,6 +15,10 @@ import { hero, contactInfo, formOptions } from "./ContactoData";
 
 const WHATSAPP_NUMBER = "50684976556";
 
+/**
+ * Fondo decorativo animado con formas de gotas de agua.
+ * @component
+ */
 const WaterDropBg = () => (
   <svg className="absolute inset-0 w-full h-full opacity-[0.05]" viewBox="0 0 800 400">
     <circle cx="660" cy="70" r="200" fill="white" />
@@ -63,6 +72,11 @@ function ContactItem({ icon, title, items }) {
   );
 }
 
+/**
+ * Componente de página pública de "Contacto".
+ * Proporciona canales de atención al abonado y un formulario directo de WhatsApp.
+ * @component
+ */
 export default function ContactoPage() {
   const [form, setForm] = useState({
     nombre: "",
@@ -115,7 +129,7 @@ export default function ContactoPage() {
 
   return (
     <main className="bg-slate-50 text-slate-900">
-      {/* HERO */}
+      {/* Hero */}
       <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-sky-950 to-slate-900">
         <WaterDropBg />
 
@@ -157,23 +171,23 @@ export default function ContactoPage() {
         </div>
       </section>
 
-      {/* CONTENIDO */}
+      {/* Contenido */}
       <section className="mx-auto max-w-7xl px-4 py-10 sm:py-16 sm:px-6 lg:px-8">
         <div className="grid gap-8 lg:grid-cols-[405px_minmax(0,1fr)] lg:items-start">
 
-          {/* IZQUIERDA */}
+          {/* Izquierda */}
           <div className="space-y-6">
 
-            {/* CONTACTO */}
+            {/* Contacto */}
             <div className="relative flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 shadow-sm">
 
-              {/* decorativo MUY suave */}
+              {/* Decorativo */}
               <div className="pointer-events-none absolute -top-10 -right-10 h-32 w-32 rounded-full bg-slate-100 blur-2xl" />
               <div className="pointer-events-none absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-slate-100 blur-2xl" />
 
               <div className="relative">
 
-                {/* TÍTULO */}
+                {/* Título */}
                 <div className="ml-2 sm:ml-4">
                   <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">
                     Información de Contacto
@@ -184,10 +198,10 @@ export default function ContactoPage() {
                   </p>
                 </div>
 
-                {/* divider */}
+                {/* Divider */}
                 <div className="my-5 h-px w-full bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
 
-                {/* ITEMS */}
+                {/* Items */}
                 <div className="mt-4 space-y-3 flex-1">
 
                   <ContactItem
@@ -218,7 +232,7 @@ export default function ContactoPage() {
               </div>
             </div>
 
-            {/* EMERGENCIA (DENTRO DE IZQUIERDA) */}
+            {/* Emergencia */}
             <div className="rounded-2xl border border-blue-200 bg-blue-50 p-4 sm:p-6 shadow-sm">
               <h3 className="mb-3 text-2xl font-bold text-slate-900">
                 {contactInfo.emergencia.titulo}
@@ -250,7 +264,7 @@ export default function ContactoPage() {
 
           </div>
 
-          {/* DERECHA */}
+          {/* Derecha */}
           <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 shadow-sm">
             <h2 className="mb-2 text-2xl sm:text-3xl font-bold text-slate-900">
               Envíanos un mensaje
@@ -359,7 +373,7 @@ export default function ContactoPage() {
         </div>
       </section>
 
-      {/* MAPA */}
+      {/* Mapa */}
       <section className="pb-16 sm:pb-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="overflow-hidden rounded-2xl border border-slate-200 shadow-sm">

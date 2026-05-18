@@ -1,79 +1,94 @@
 <div align="center">
   <h1>Frontend - ASADA Cedral y Dulce Nombre</h1>
-  <p><i>Interfaz de Usuario, Experiencia y Consumo de API (UI/UX)</i></p>
+  <p><i>Interfaz de Usuario Responsiva, Experiencia de Navegación y Consumo de API REST (UI/UX)</i></p>
 
-  <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
+  <img src="https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
   <img src="https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E" alt="Vite" />
-  <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS_4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind" />
 </div>
 
 <br />
 
-## Descripcion General
+## Descripción General
 
-El directorio `frontend` contiene el cliente web de la aplicacion, estructurado como una **Single Page Application (SPA)**. Esta capa del sistema se enfoca en proveer a los operarios y administradores de la ASADA una herramienta digital rapida, accesible e interactiva. Mediante esta plataforma, los usuarios pueden ingresar al sistema, navegar fluidamente entre modulos (sin recargar la pagina) y realizar toda la gestion operativa.
+El directorio `frontend` aloja el cliente SPA (Single Page Application) del sistema, desarrollado sobre **React 19** y compilado mediante **Vite**. La aplicación está dividida en dos grandes ámbitos de navegación:
+1. **Portal Público**: Diseñado con un estilo visual premium que wowea a primera vista, utilizando degradados fluidos, animaciones sutiles y total adaptabilidad en móviles para que los abonados consulten los datos de la ASADA cómodamente.
+2. **Panel del Administrador (Backoffice)**: Un panel protegido que ofrece formularios, tablas interactivas, bitácoras de registro e inventario de archivos multimedia para la autogestión total de la información desplegada al público.
+
+---
 
 ## Estructura de Directorios
 
-La estructura interna de la aplicacion se ha organizado para fomentar la escalabilidad y la reutilizacion de codigo:
+La organización del código fuente del frontend sigue buenas prácticas de modularidad de componentes:
 
 ```text
 frontend/
 ├── src/
-│   ├── assets/          # Recursos estaticos como imagenes e iconos.
-│   ├── components/      # Componentes de React reutilizables (Botones, Modales, Tarjetas).
-│   ├── pages/           # Vistas completas de la aplicacion, divididas por modulos:
-│   │   ├── admin/       # Vistas protegidas para administradores (Panel, Usuarios, etc).
-│   │   └── public/      # Vistas de acceso libre (Login).
-│   ├── services/        # Archivos encargados de hacer peticiones HTTP al Backend con Axios.
-│   ├── App.jsx          # Componente raiz y configuracion del enrutador.
-│   └── main.jsx         # Punto de entrada de React que renderiza la aplicacion en el DOM.
-├── package.json         # Dependencias y scripts del frontend.
-├── vite.config.js       # Configuracion del empaquetador Vite.
-└── eslint.config.js     # Reglas y configuraciones del Linter para calidad de codigo.
+│   ├── assets/          # Recursos gráficos locales y logotipos de la asociación.
+│   ├── components/      # Componentes web globales y de estructura de navegación:
+│   │   ├── admin/       # Elementos exclusivos de administración (Navbar, Sidebar, Layout, ProtectedRoute).
+│   │   └── public/      # Elementos del portal público (Navbar, Footer, ScrollToTop).
+│   ├── pages/           # Páginas completas del portal:
+│   │   ├── admin/       # Vistas de gestión de datos (Panel, Avisos, Agua, Proyectos, Sostenibilidad, Trámites, Transparencia).
+│   │   └── public/      # Secciones públicas de libre acceso (Home, Sobre Nosotros, Avisos, Trámites, Calidad, Proyectos, Contacto).
+│   ├── services/        # Clientes HTTP estructurados por módulo (utilizan Axios para llamadas al Backend).
+│   ├── App.css          # Estilos adicionales personalizados y microanimaciones de interfaz.
+│   ├── index.css        # Importación de Tailwind CSS 4 y variables HSL globales.
+│   ├── App.jsx          # Enrutamiento jerárquico público/protegido con React Router DOM.
+│   └── main.jsx         # Punto de arranque de React.
+├── vite.config.js       # Configuración del servidor de desarrollo y empaquetador de producción.
+├── eslint.config.js     # Reglas del Linter de Javascript para la calidad del código.
+└── package.json         # Dependencias del proyecto.
 ```
 
-## Dependencias y Librerias Principales
+---
 
-- **react y react-dom (v19):** Motor principal de la interfaz visual.
-- **react-router-dom:** Manejo de rutas del lado del cliente, permitiendo crear enlaces y redirecciones.
-- **axios:** Cliente HTTP basado en Promesas para interactuar con la API REST del backend de manera sencilla.
-- **tailwindcss (v4):** Framework CSS de bajo nivel que agiliza los diseños mediante clases utilitarias.
-- **daisyui:** Plugin para Tailwind que provee componentes semanticos pre-diseñados.
-- **lucide-react / react-icons:** Bibliotecas de iconos vectoriales ligeros y escalables.
-- **react-datepicker:** Componente especializado para la seleccion de fechas.
-- **vite:** Herramienta de compilacion y servidor de desarrollo con caracteristicas avanzadas de HMR.
-- **eslint:** Herramienta de analisis de codigo estatico para detectar patrones problematicos en el codigo fuente.
+## Componentes y Páginas Destacadas
 
-## Configuracion e Instalacion
+### 🌐 Portal Público (`src/pages/public/`)
+* **Home (`Home/`)**: Página de entrada con accesos directos llamativos, noticias destacadas fijadas por junta directiva y pilares organizacionales.
+* **Sobre Nosotros (`About/`)**: Reseña histórica interactiva, misión, visión y carrusel de miembros de la Junta Directiva.
+* **Avisos (`Avisos/`)**: Búsqueda interactiva y filtrado de alertas comunitarias urgentes, informativas o completadas, junto con apertura de imágenes adjuntas en modal.
+* **Gestión del Agua (`GestionAgua/`)**: Bitácoras detalladas de los aforos de nacientes y visualización gráfica de los parámetros físico-químicos.
+* **Proyectos (`Proyectos/`)**: Acordeones dinámicos que muestran el avance de obras hídricas, descarga de planos técnicos e histórico de avances.
+* **Sostenibilidad (`Sostenibilidad/`)**: Tres galerías fotográficas independientes de Cultura Hídrica, Mantenimiento e Hidrantes.
+* **Trámites (`Tramites/`)**: Catálogo con motor de búsqueda para descargar formularios en PDF y guías detalladas para realizar transferencias.
+* **Transparencia (`Transparencia/`)**: Calendario y actas de reuniones de Junta Directiva ordinarias o extraordinarias y visualización de certificados ecológicos.
+* **Contacto (`Contacto/`)**: Datos oficiales de contacto directo de emergencia y formulario de contacto que genera un mensaje pre-cargado hacia WhatsApp Web.
 
-### 1. Variables de Entorno (Opcional)
-Si el backend no corre en el puerto por defecto, se recomienda crear un archivo `.env` en el raiz del `frontend` para especificar la URL del servidor, asi Axios la utilizara automaticamente.
+### 🔐 Panel Administrativo (`src/pages/admin/`)
+* **AdminPanel**: Tablero de control central con accesos directos de gestión de recursos y un tablero Kanban interno de administración de tareas del acueducto (`AdminTareas`).
+* **Módulos de Gestión**: Vistas homólogas diseñadas para crear, editar, eliminar y adjuntar archivos multimedia/PDF a cada una de las secciones públicas descritas.
+
+---
+
+## Configuración e Instalación
+
+### 1. Enlace con el Servidor Backend
+Crea un archivo `.env` en la raíz de `frontend/` indicando la URL raíz de tu servidor de backend:
 
 ```env
-VITE_API_URL=http://localhost:3000/api
+VITE_API_URL=http://localhost:4000/api
 ```
 
-### 2. Instalacion de Dependencias
-Abra su terminal apuntando a la carpeta `frontend` y proceda a instalar todos los paquetes declarados en `package.json`:
-
+### 2. Instalación de Dependencias
+Asegúrate de estar en el directorio `frontend/` en tu terminal y ejecuta:
 ```bash
 npm install
 ```
 
-### 3. Ejecucion en Desarrollo
-Para iniciar la plataforma en un entorno local y verla en tiempo real:
-
+### 3. Servidor de Desarrollo
+Para arrancar el sitio en modo de desarrollo local en tiempo real con HMR (Hot Module Replacement):
 ```bash
 npm run dev
 ```
+*(Generalmente estará disponible en la dirección local `http://localhost:5173`)*
 
-Esto desplegara un servidor local. Visite en su navegador web la direccion provista en la consola (por defecto suele ser `http://localhost:5173`).
-
-### 4. Scripts de Compilacion y Mantenimiento
-- **Generar Compilacion (Build):** `npm run build` crea una version optima para produccion dentro de una carpeta `dist`.
-- **Previsualizar Compilacion:** `npm run preview` simula un servidor estatico de produccion localmente.
-- **Validar Calidad del Codigo:** `npm run lint` revisa el codigo buscando errores de sintaxis y buenas practicas segun ESLint.
+### 4. Compilar para Producción
+Para compilar la Single Page Application a código de producción optimizado (HTML/JS/CSS plano en el directorio `dist`):
+```bash
+npm run build
+```
 
 ---
 

@@ -1,6 +1,17 @@
+/**
+ * @file avisoController.js
+ * @description Controlador para la gestión de avisos informativos y notificaciones de la ASADA.
+ */
+
 const Aviso = require("../models/aviso");
 
-// Crear aviso
+/**
+ * Crea un nuevo aviso en el sistema.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el aviso creado.
+ */
 const crearAviso = async (req, res) => {
   try {
     const { titulo, descripcion, tipo, estado, fijado, imagen, fecha } = req.body;
@@ -43,7 +54,13 @@ const crearAviso = async (req, res) => {
   }
 };
 
-// Obtener todos los avisos
+/**
+ * Obtiene la lista completa de avisos ordenados por fijado y fecha de creación.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el listado de avisos.
+ */
 const obtenerAvisos = async (req, res) => {
   try {
     const avisos = await Aviso.find().sort({ fijado: -1, createdAt: -1 });
@@ -58,7 +75,13 @@ const obtenerAvisos = async (req, res) => {
   }
 };
 
-// Obtener un aviso por id
+/**
+ * Obtiene un aviso específico por su ID.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express con parámetro id.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el aviso encontrado.
+ */
 const obtenerAvisoPorId = async (req, res) => {
   try {
     const aviso = await Aviso.findById(req.params.id);
@@ -79,7 +102,13 @@ const obtenerAvisoPorId = async (req, res) => {
   }
 };
 
-// Editar aviso
+/**
+ * Actualiza los campos de un aviso específico por su ID.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express con parámetros de ruta y cuerpo.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el aviso actualizado.
+ */
 const actualizarAviso = async (req, res) => {
   try {
     const { titulo, descripcion, tipo, estado, fijado, imagen, fecha } = req.body;
@@ -119,7 +148,13 @@ const actualizarAviso = async (req, res) => {
   }
 };
 
-// Eliminar aviso
+/**
+ * Elimina permanentemente un aviso específico por su ID.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express con parámetro id.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON indicando el éxito de la operación.
+ */
 const eliminarAviso = async (req, res) => {
   try {
     const aviso = await Aviso.findById(req.params.id);

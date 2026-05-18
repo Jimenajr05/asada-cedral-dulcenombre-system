@@ -1,9 +1,17 @@
+/**
+ * @file SostenibilidadPage.jsx
+ * @description Página pública de "Sostenibilidad". Muestra los pilares ambientales (Sello de Calidad Sanitaria, Cultura Hídrica, Mantenimiento), junto con tres galerías fotográficas dinámicas e independientes (con deslizamiento horizontal táctil y modal de zoom para las imágenes) obtenidas del backend.
+ */
+
 import { useEffect, useRef, useState } from "react";
 import { hero, compromiso, pilares } from "./SostenibilidadData";
 import { getSostenibilidad } from "../../../services/sostenibilidadService";
 import { FiZoomIn, FiX } from "react-icons/fi";
 
-/* ─── Íconos ─────────────────────────────────────────── */
+/**
+ * Icono de escudo de calidad sanitaria.
+ * @component
+ */
 const IconShield = () => (
   <svg
     viewBox="0 0 24 24"
@@ -87,7 +95,6 @@ const IconChevronRight = () => (
   </svg>
 );
 
-/* ─── Fondo animado ───────────────────────────────────── */
 const FloatingBg = () => (
   <div className="absolute inset-0 overflow-hidden pointer-events-none">
     <div className="absolute -left-20 top-32 h-72 w-72 rounded-full bg-white/10 animate-floatSlow" />
@@ -180,20 +187,19 @@ const GallerySection = ({ title, description, images = [], total = null }) => {
 
           <div
             ref={scrollRef}
-            className={`flex gap-4 sm:gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-4 scrollbar-hide ${
-              images.length <= 2
-                ? "md:justify-center"
-                : images.length === 3
+            className={`flex gap-4 sm:gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-4 scrollbar-hide ${images.length <= 2
+              ? "md:justify-center"
+              : images.length === 3
                 ? "lg:justify-center"
                 : ""
-            }`}
+              }`}
           >
             {images.map((image, index) => (
               <div
                 key={`${image.alt || "imagen"}-${index}`}
                 className="min-w-[240px] sm:min-w-[320px] md:min-w-[340px] snap-start group/card overflow-hidden rounded-2xl bg-white border border-slate-100 shadow-sm flex-shrink-0 flex flex-col"
               >
-                {/* IMAGEN */}
+                {/* Imagen */}
                 <button
                   type="button"
                   onClick={() => openModal(image)}
@@ -215,7 +221,7 @@ const GallerySection = ({ title, description, images = [], total = null }) => {
                   </div>
                 </button>
 
-                {/* TEXTO */}
+                {/* Texto */}
                 {image.alt && image.alt !== "Imagen de galería" && (
                   <div className="p-4 border-t border-slate-50">
                     <p className="text-sm text-slate-600 leading-snug break-words whitespace-normal">
@@ -229,7 +235,7 @@ const GallerySection = ({ title, description, images = [], total = null }) => {
         </div>
       </div>
 
-      {/* MODAL */}
+      {/* Modal */}
       {modalOpen && activeImage && (
         <div
           className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/80 p-4 backdrop-blur-sm"
@@ -257,6 +263,11 @@ const GallerySection = ({ title, description, images = [], total = null }) => {
   );
 };
 
+/**
+ * Componente de página pública de "Sostenibilidad".
+ * Administra las galerías fotográficas de conservación ambiental de la ASADA.
+ * @component
+ */
 export default function SustainabilityPage() {
   const [galeriasData, setGaleriasData] = useState({
     culturaHidrica: {

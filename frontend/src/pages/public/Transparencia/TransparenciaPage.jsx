@@ -1,10 +1,18 @@
+/**
+ * @file TransparenciaPage.jsx
+ * @description Página pública de "Transparencia". Despliega los accesos directos externos a documentos de interés institucional (asambleas, tarifas, informes financieros), la programación de próximas sesiones ordinarias y extraordinarias de la Junta Directiva (con buscador integrado y scrollbar fino), y las imágenes de acreditaciones y certificados oficiales con zoom interactivo.
+ */
+
 import { useEffect, useMemo, useState } from "react";
 import { hero } from "./TransparenciaData";
 import { FiZoomIn, FiX, FiSearch } from "react-icons/fi";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
-// ── Iconos ────────────────────────────────────────────────────────────────────
+/**
+ * Icono de archivo / acta para enlaces institucionales.
+ * @component
+ */
 const IconFile = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-6 h-6" aria-hidden="true">
     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -58,8 +66,6 @@ const WaterDropBg = () => (
   </svg>
 );
 
-// ── Mapeo de estilo por label ─────────────────────────────────────────────────
-// Asigna icono y color según el nombre del link guardado en BD
 const getLinkEstilo = (label = "") => {
   const l = label.toLowerCase();
   if (l.includes("asamblea")) return { Icon: IconFile, color: "blue" };
@@ -80,7 +86,6 @@ const SectionLabel = ({ children }) => (
   </span>
 );
 
-// ── Sub-componentes ───────────────────────────────────────────────────────────
 function EnlaceCard({ link }) {
   const { Icon, color } = getLinkEstilo(link.label);
   const colors = colorMap[color];
@@ -136,7 +141,6 @@ function ReunionCard({ reunion }) {
   );
 }
 
-/* ───────── CARD ───────── */
 function CertificadoCard({ cert }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -148,7 +152,7 @@ function CertificadoCard({ cert }) {
     <>
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden transition hover:shadow-md">
 
-        {/* IMAGEN */}
+        {/* Imagen */}
         <button
           type="button"
           onClick={() => setIsModalOpen(true)}
@@ -172,7 +176,7 @@ function CertificadoCard({ cert }) {
           </div>
         </button>
 
-        {/* TEXTO */}
+        {/* Texto */}
         {cert.titulo && (
           <div className="p-4">
             <p className="text-sm font-semibold text-slate-700 leading-snug break-words whitespace-normal">
@@ -182,7 +186,7 @@ function CertificadoCard({ cert }) {
         )}
       </div>
 
-      {/* MODAL */}
+      {/* Modal */}
       {isModalOpen && (
         <div
           className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/80 p-4 backdrop-blur-sm"
@@ -210,7 +214,11 @@ function CertificadoCard({ cert }) {
   );
 }
 
-// ── Página principal ──────────────────────────────────────────────────────────
+/**
+ * Componente de página pública de "Transparencia".
+ * Gestiona el calendario de asambleas, actas de junta directiva y certificados oficiales.
+ * @component
+ */
 export default function TransparenciaPage() {
   const [enlaces, setEnlaces] = useState([]);
   const [reuniones, setReuniones] = useState([]);
@@ -269,7 +277,7 @@ export default function TransparenciaPage() {
 
   return (
     <div className="bg-slate-50">
-      {/* HERO */}
+      {/* Hero */}
       <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-sky-950 to-slate-900">
         <WaterDropBg />
         <div className="pointer-events-none absolute -top-32 left-1/4 h-96 w-96 rounded-full bg-sky-500/15 blur-[100px]" />
@@ -294,7 +302,7 @@ export default function TransparenciaPage() {
         </div>
       </section>
 
-      {/* ENLACES */}
+      {/* Enlaces */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 lg:py-20">
         <div className="text-center mb-10">
           <SectionLabel>Documentos institucionales</SectionLabel>
@@ -340,7 +348,7 @@ export default function TransparenciaPage() {
               </svg>
             </button>
 
-            {/* CONTENEDOR */}
+            {/* Contenedor */}
             <div
               id="scrollEnlaces"
               className={`flex gap-5 overflow-x-auto pb-4 scroll-smooth snap-x snap-mandatory scrollbar-hide ${enlaces.length <= 2
@@ -360,7 +368,7 @@ export default function TransparenciaPage() {
         )}
       </section>
 
-      {/* REUNIONES */}
+      {/* Reuniones */}
       <section className="bg-white py-10 sm:py-16 lg:py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
@@ -423,7 +431,7 @@ export default function TransparenciaPage() {
         </div>
       </section>
 
-      {/* CERTIFICADOS */}
+      {/* Certificados */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 lg:py-20">
         <div className="text-center mb-10">
           <SectionLabel>Acreditaciones</SectionLabel>
@@ -476,7 +484,7 @@ export default function TransparenciaPage() {
               </div>
             </button>
 
-            {/* CONTENEDOR */}
+            {/* Contenedor */}
             <div
               id="scrollCertificados"
               className={`flex gap-5 overflow-x-auto pb-4 scroll-smooth snap-x snap-mandatory scrollbar-hide ${certificados.length <= 2

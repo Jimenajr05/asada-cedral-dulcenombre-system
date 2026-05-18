@@ -1,3 +1,8 @@
+/**
+ * @file AdminGestionAgua.jsx
+ * @description Panel de control administrativo para la gestión del agua. Permite definir parámetros de calidad, registrar bitácoras de aforos de nacientes, configurar bloques de infraestructura y subir fotografías de reportes químicos acreditados.
+ */
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiTrash2, FiAlertTriangle } from "react-icons/fi";
@@ -9,7 +14,6 @@ import {
   BASE_URL,
 } from "../../services/gestionAguaService";
 
-/* ========================= UTILIDADES ========================= */
 const crearParametroVacio = () => ({
   nombre: "",
   valor: "",
@@ -37,7 +41,6 @@ const normalizarPorcentaje = (valor) => {
   return `${numero}%`;
 };
 
-/* ========================= TOAST ========================= */
 function Toast({ toasts, removeToast }) {
   return (
     <div
@@ -116,7 +119,6 @@ function Toast({ toasts, removeToast }) {
   );
 }
 
-/* ========================= COMPONENTES UI ========================= */
 function SectionCard({ title, subtitle, children, actions }) {
   return (
     <section className="rounded-2xl border border-slate-200 bg-white shadow-sm">
@@ -239,7 +241,6 @@ function ParameterPreview({ parametro }) {
   );
 }
 
-/* ========================= COMPONENTE PRINCIPAL ========================= */
 function AdminGestionAgua() {
   const navigate = useNavigate();
   const [form, setForm] = useState(null);
@@ -934,7 +935,7 @@ function AdminGestionAgua() {
             </div>
           </div>
 
-          {/* Vista Móvil: Tarjetas (visible solo en pantallas pequeñas) */}
+          {/* Tarjetas (visible solo en pantallas pequeñas) */}
           <div className="block md:hidden space-y-4 max-h-[550px] overflow-y-auto pr-1 custom-scrollbar">
             {form.aforos.registros.length === 0 ? (
               <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 text-sm text-slate-500 text-center">
@@ -997,7 +998,7 @@ function AdminGestionAgua() {
             )}
           </div>
 
-          {/* Vista Escritorio: Tabla (oculta en pantallas móviles) */}
+          {/* Tabla */}
           <div className="hidden md:block max-h-[550px] overflow-auto rounded-2xl border border-slate-200 custom-scrollbar">
             <table className="w-full min-w-[700px] border-collapse">
               <thead className="bg-slate-100">

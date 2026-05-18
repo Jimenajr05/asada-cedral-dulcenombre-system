@@ -1,5 +1,16 @@
+/**
+ * @file sobreNosotrosController.js
+ * @description Controlador para gestionar la sección "Sobre Nosotros", incluyendo la junta directiva y estadísticas de cobertura de la ASADA.
+ */
+
 const SobreNosotros = require("../models/sobreNosotros");
 
+/**
+ * Obtiene el documento único de "Sobre Nosotros" de la base de datos o lo crea si no existe.
+ * @async
+ * @function getDocumento
+ * @returns {Promise<Object>} El documento "Sobre Nosotros".
+ */
 const getDocumento = async () => {
   let documento = await SobreNosotros.findOne();
 
@@ -14,7 +25,13 @@ const getDocumento = async () => {
   return documento;
 };
 
-// OBTENER TODO
+/**
+ * Obtiene la información completa de "Sobre Nosotros".
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el documento.
+ */
 const getSobreNosotros = async (req, res) => {
   try {
     const documento = await getDocumento();
@@ -27,7 +44,13 @@ const getSobreNosotros = async (req, res) => {
   }
 };
 
-// ACTUALIZAR PERIODO
+/**
+ * Actualiza el período de gestión actual de la junta directiva.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express con el período en req.body.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el documento actualizado.
+ */
 const updateSobreNosotros = async (req, res) => {
   try {
     const documento = await getDocumento();
@@ -48,7 +71,13 @@ const updateSobreNosotros = async (req, res) => {
   }
 };
 
-// AGREGAR MIEMBRO
+/**
+ * Agrega un nuevo miembro a la junta directiva.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express con nombre, cargo y req.file.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el documento actualizado.
+ */
 const addMiembro = async (req, res) => {
   try {
     const { nombre, cargo } = req.body;
@@ -81,7 +110,13 @@ const addMiembro = async (req, res) => {
   }
 };
 
-// ACTUALIZAR MIEMBRO
+/**
+ * Actualiza la información de un miembro específico de la junta directiva.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express con parámetro index y campos actualizados.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el documento actualizado.
+ */
 const updateMiembro = async (req, res) => {
   try {
     const { index } = req.params;
@@ -117,7 +152,13 @@ const updateMiembro = async (req, res) => {
   }
 };
 
-// ELIMINAR MIEMBRO
+/**
+ * Elimina a un miembro de la junta directiva por su índice.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express con parámetro index.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el documento actualizado.
+ */
 const deleteMiembro = async (req, res) => {
   try {
     const { index } = req.params;
@@ -144,7 +185,13 @@ const deleteMiembro = async (req, res) => {
   }
 };
 
-// AGREGAR COBERTURA
+/**
+ * Agrega un nuevo dato estadístico de cobertura.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express con valor y descripción.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el documento actualizado.
+ */
 const addCobertura = async (req, res) => {
   try {
     const { valor, descripcion } = req.body;
@@ -176,7 +223,13 @@ const addCobertura = async (req, res) => {
   }
 };
 
-// ACTUALIZAR COBERTURA
+/**
+ * Actualiza un dato estadístico de cobertura por su índice.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express con parámetro index y campos en req.body.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el documento actualizado.
+ */
 const updateCobertura = async (req, res) => {
   try {
     const { index } = req.params;
@@ -208,7 +261,13 @@ const updateCobertura = async (req, res) => {
   }
 };
 
-// ELIMINAR COBERTURA
+/**
+ * Elimina un dato estadístico de cobertura por su índice.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express con parámetro index.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el documento actualizado.
+ */
 const deleteCobertura = async (req, res) => {
   try {
     const { index } = req.params;

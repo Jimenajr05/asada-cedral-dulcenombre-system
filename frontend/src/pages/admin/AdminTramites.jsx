@@ -1,3 +1,8 @@
+/**
+ * @file AdminTramites.jsx
+ * @description Página de administración para la gestión de trámites de la ASADA. Permite crear y editar trámites, detallar su lista de requisitos y asociarles formularios oficiales descargables en formato PDF.
+ */
+
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FileText, Pencil, Trash2, Plus, Upload, X, Search, AlertTriangle } from "lucide-react";
@@ -7,7 +12,6 @@ import {
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
-/* ========================= TOAST ========================= */
 function Toast({ toasts, removeToast }) {
   return (
     <div className="fixed top-6 right-6 z-50 flex flex-col gap-3" style={{ minWidth: 300, maxWidth: 400 }}>
@@ -57,7 +61,6 @@ function Toast({ toasts, removeToast }) {
   );
 }
 
-/* ========================= COMPONENTE PRINCIPAL ========================= */
 function AdminTramites() {
   const navigate = useNavigate();
   const [confirmacionNavegacion, setConfirmacionNavegacion] = useState(null);
@@ -69,7 +72,6 @@ function AdminTramites() {
   const [toasts, setToasts] = useState([]);
   const [form, setForm] = useState({ titulo: "", requisitosTexto: "", archivo: null });
 
-  // ── Toast helpers ──
   const removeToast = (id) => setToasts((prev) => prev.filter((t) => t.id !== id));
   const addToast = (type, message, extra = {}) => {
     const id = Date.now();

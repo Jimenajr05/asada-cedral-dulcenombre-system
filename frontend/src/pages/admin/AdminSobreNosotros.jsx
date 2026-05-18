@@ -1,3 +1,8 @@
+/**
+ * @file AdminSobreNosotros.jsx
+ * @description Página de administración para la sección "Sobre Nosotros". Permite configurar el período activo de la Junta Directiva, gestionar su lista de miembros (nombre, cargo, fotografía) y definir métricas de cobertura del acueducto.
+ */
+
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Pencil, Trash2, Upload, Users, BarChart3, AlertTriangle } from "lucide-react";
@@ -327,7 +332,7 @@ function AdminSobreNosotros() {
         <p className="mt-2 text-sm sm:text-base md:text-lg text-slate-700">Administra la junta directiva y la sección de cobertura y alcance.</p>
       </div>
 
-      {/* PERÍODO */}
+      {/* Período */}
       <section className="rounded-2xl border border-slate-200 bg-white p-6">
         <h2 className="mb-4 text-2xl font-bold text-slate-900">Período de Junta Directiva</h2>
         {editandoPeriodo ? (

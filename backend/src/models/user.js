@@ -1,5 +1,20 @@
+/**
+ * @file user.js
+ * @description Esquema de Mongoose para representar los usuarios administradores autorizados.
+ */
+
 const mongoose = require("mongoose");
 
+/**
+ * Esquema de Mongoose para el Usuario Administrador.
+ * @typedef {Object} User
+ * @property {string} nombre - Nombre completo del administrador.
+ * @property {string} email - Correo electrónico único para inicio de sesión.
+ * @property {string} password - Contraseña cifrada con bcrypt.
+ * @property {"admin"} role - Rol dentro del sistema (solo se permite "admin").
+ * @property {number} failedLoginAttempts - Intentos fallidos consecutivos de login para mitigación de fuerza bruta.
+ * @property {Date|null} lockUntil - Timestamp hasta el cual la cuenta está temporalmente bloqueada.
+ */
 const userSchema = new mongoose.Schema(
   {
     nombre: {

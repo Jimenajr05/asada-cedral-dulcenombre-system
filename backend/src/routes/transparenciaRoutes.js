@@ -1,6 +1,11 @@
-const express    = require("express");
-const router     = express.Router();
-const auth       = require("../middlewares/authMiddleware");
+/**
+ * @file transparenciaRoutes.js
+ * @description Rutas de la API para la sección de transparencia institucional, actas de reuniones y galardones.
+ */
+
+const express = require("express");
+const router = express.Router();
+const auth = require("../middlewares/authMiddleware");
 const uploadCert = require("../middlewares/uploadCertificados");
 
 const {
@@ -13,17 +18,25 @@ const {
   deleteCertificado,
 } = require("../controllers/transparenciaController");
 
-// ── Público ──────────────────────────────────────────────────────────────────
+// Obtener toda la información de transparencia (público)
 router.get("/", getTransparencia);
 
-// ── Reuniones (protegido) ────────────────────────────────────────────────────
-router.post("/reuniones",     auth, addReunion);
-router.put("/reuniones/:id",  auth, updateReunion);
+// Agregar una reunión/asamblea en transparencia (requiere autenticación)
+router.post("/reuniones", auth, addReunion);
+
+// Actualizar los datos de una reunión/asamblea por ID (requiere autenticación)
+router.put("/reuniones/:id", auth, updateReunion);
+
+// Eliminar una reunión/asamblea de la lista por su ID (requiere autenticación)
 router.delete("/reuniones/:id", auth, deleteReunion);
 
-// ── Certificados (protegido) ─────────────────────────────────────────────────
-router.post("/certificados",      auth, uploadCert.single("imagen"), addCertificado);
-router.put("/certificados/:id",   auth, uploadCert.single("imagen"), updateCertificado);
+// Agregar un certificado o galardón con imagen (requiere autenticación)
+router.post("/certificados", auth, uploadCert.single("imagen"), addCertificado);
+
+// Actualizar título o reemplazar la imagen de un certificado por ID (requiere autenticación)
+router.put("/certificados/:id", auth, uploadCert.single("imagen"), updateCertificado);
+
+// Eliminar un certificado de la base de datos por su ID (requiere autenticación)
 router.delete("/certificados/:id", auth, deleteCertificado);
 
 module.exports = router;

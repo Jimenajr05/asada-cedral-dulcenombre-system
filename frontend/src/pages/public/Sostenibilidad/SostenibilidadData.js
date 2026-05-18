@@ -1,3 +1,14 @@
+/**
+ * @file SostenibilidadData.js
+ * @description Datos estáticos para la sección pública de "Sostenibilidad", detallando el manifiesto de compromiso ambiental de la ASADA y sus pilares estratégicos de gestión (Sello de Calidad Sanitaria, Cultura Hídrica, y Mantenimiento de Estructuras).
+ */
+
+/**
+ * Contenido principal de la sección Hero (título y subtítulo).
+ * @type {Object}
+ * @property {string} title - Título del banner.
+ * @property {string} subtitle - Subtítulo descriptivo.
+ */
 export const hero = {
   title: "Sostenibilidad",
   subtitle:

@@ -1,6 +1,17 @@
+/**
+ * @file tramiteController.js
+ * @description Controlador para gestionar trámites administrativos (solicitudes, requisitos, descargas de formularios).
+ */
+
 const Tramite = require("../models/tramite");
 
-// CREAR
+/**
+ * Crea un nuevo trámite con sus respectivos requisitos y archivo adjunto (formulario).
+ * @async
+ * @param {import('express').Request} req - Objeto de petición con titulo, requisitos (JSON o Array) en req.body y req.file.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el trámite creado.
+ */
 const crearTramite = async (req, res) => {
   try {
     const { titulo, requisitos, buttonText } = req.body;
@@ -20,8 +31,8 @@ const crearTramite = async (req, res) => {
 
         requisitosParseados = Array.isArray(requisitosArray)
           ? requisitosArray
-              .filter((item) => item && item.trim() !== "")
-              .map((item) => ({ texto: item.trim() }))
+            .filter((item) => item && item.trim() !== "")
+            .map((item) => ({ texto: item.trim() }))
           : [];
       } catch (error) {
         return res.status(400).json({
@@ -51,7 +62,13 @@ const crearTramite = async (req, res) => {
   }
 };
 
-// OBTENER TODOS
+/**
+ * Obtiene todos los trámites activos para la vista pública (ordenados del más reciente al más antiguo).
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el listado de trámites activos.
+ */
 const getTramites = async (req, res) => {
   try {
     const tramites = await Tramite.find({ activo: true }).sort({ createdAt: -1 });
@@ -65,7 +82,13 @@ const getTramites = async (req, res) => {
   }
 };
 
-// OBTENER TODOS ADMIN
+/**
+ * Obtiene todos los trámites para la vista administrativa (activos e inactivos).
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el listado de todos los trámites.
+ */
 const getTramitesAdmin = async (req, res) => {
   try {
     const tramites = await Tramite.find().sort({ createdAt: -1 });
@@ -79,7 +102,13 @@ const getTramitesAdmin = async (req, res) => {
   }
 };
 
-// OBTENER POR ID
+/**
+ * Obtiene la información de un trámite por su ID.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express con parámetro id.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el trámite encontrado.
+ */
 const getTramiteById = async (req, res) => {
   try {
     const tramite = await Tramite.findById(req.params.id);
@@ -99,7 +128,13 @@ const getTramiteById = async (req, res) => {
   }
 };
 
-// ACTUALIZAR
+/**
+ * Actualiza los campos, requisitos o archivo adjunto de un trámite específico por su ID.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición con parámetro id, campos en req.body y req.file opcional.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el trámite actualizado.
+ */
 const updateTramite = async (req, res) => {
   try {
     const tramite = await Tramite.findById(req.params.id);
@@ -122,8 +157,8 @@ const updateTramite = async (req, res) => {
 
         tramite.requisitos = Array.isArray(requisitosArray)
           ? requisitosArray
-              .filter((item) => item && item.trim() !== "")
-              .map((item) => ({ texto: item.trim() }))
+            .filter((item) => item && item.trim() !== "")
+            .map((item) => ({ texto: item.trim() }))
           : [];
       } catch (error) {
         return res.status(400).json({
@@ -150,7 +185,13 @@ const updateTramite = async (req, res) => {
   }
 };
 
-// ELIMINAR
+/**
+ * Elimina permanentemente un trámite de la base de datos por su ID.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express con parámetro id.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON indicando el éxito de la operación.
+ */
 const deleteTramite = async (req, res) => {
   try {
     const tramite = await Tramite.findById(req.params.id);

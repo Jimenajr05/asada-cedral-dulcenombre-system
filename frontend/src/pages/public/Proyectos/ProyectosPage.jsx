@@ -1,8 +1,16 @@
+/**
+ * @file ProyectosPage.jsx
+ * @description Página pública de "Proyectos". Carga los proyectos comunitarios y de infraestructura desde la API, ofrece un buscador dinámico por título/descripción, e implementa acordeones desplegables por proyecto que contienen galerías de fotos con zoom, listas de planos/documentos descargables y bitácoras detalladas sobre el avance cronológico del proyecto.
+ */
+
 import { useEffect, useState } from "react";
 import { FileText, ChevronDown, ChevronUp, FolderOpen, Image as ImageIcon, Clock, Activity, Search } from "lucide-react";
 import { getProyectosPublico, BASE_URL } from "../../../services/proyectoService";
 import { FiZoomIn, FiX } from "react-icons/fi";
 
+/**
+ * Mapeo de estados del proyecto hacia estilos CSS e indicadores visuales.
+ */
 const estadoConfig = {
   "En progreso": { color: "bg-blue-100 text-blue-700 border-blue-200", dot: "bg-blue-500" },
   "Completado": { color: "bg-emerald-100 text-emerald-700 border-emerald-200", dot: "bg-emerald-500" },
@@ -28,6 +36,11 @@ function StatChip({ icon: Icon, count, label }) {
   );
 }
 
+/**
+ * Componente de página pública de "Proyectos".
+ * Carga la lista de obras y mejoras del acueducto con búsqueda y paginación.
+ * @component
+ */
 export default function ProyectosPage() {
   const [proyectos, setProyectos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -67,7 +80,7 @@ export default function ProyectosPage() {
 
   return (
     <main className="bg-slate-50 text-slate-900">
-      {/* HERO */}
+      {/* Hero */}
       <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-sky-950 to-slate-900">
         <WaterDropBg />
         <div className="pointer-events-none absolute -top-32 left-1/4 h-96 w-96 rounded-full bg-sky-500/15 blur-[100px]" />
@@ -92,7 +105,7 @@ export default function ProyectosPage() {
         </div>
       </section>
 
-      {/* CONTENIDO */}
+      {/* Contenido */}
       <section className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
         {!loading && (
           <div className="mb-8 flex flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm md:flex-row md:items-center md:justify-between">
@@ -232,7 +245,7 @@ export default function ProyectosPage() {
                                   key={foto._id}
                                   className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
                                 >
-                                  {/* IMAGEN CON LUPA */}
+                                  {/* Imagen con lupa */}
                                   <button
                                     type="button"
                                     onClick={() => setImagenActiva(src)}
@@ -359,7 +372,7 @@ export default function ProyectosPage() {
                         key={page}
                         onClick={() => setPaginaActual(page)}
                         className={`min-w-[36px] h-9 rounded-xl text-sm font-semibold transition-all duration-200
-              ${active
+                          ${active
                             ? "bg-blue-600 text-white shadow-md scale-105"
                             : "bg-transparent text-slate-600 hover:bg-slate-100"
                           }`}
@@ -382,7 +395,7 @@ export default function ProyectosPage() {
               </div>
             )}
 
-            {/* MODAL IMAGEN */}
+            {/* Modal de Imagen */}
             {imagenActiva && (
               <div
                 className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/80 p-4 backdrop-blur-sm"

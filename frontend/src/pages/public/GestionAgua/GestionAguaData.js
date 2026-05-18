@@ -1,3 +1,14 @@
+/**
+ * @file GestionAguaData.js
+ * @description Datos estáticos para la sección pública de "Gestión del Agua", detallando los pasos del proceso de potabilización (captación, tratamiento, almacenamiento, distribución), garantías de calidad, y consejos prácticos de ahorro de agua en el hogar y jardín.
+ */
+
+/**
+ * Contenido principal de la sección Hero (título y subtítulo).
+ * @type {Object}
+ * @property {string} title - Título del banner.
+ * @property {string} subtitle - Subtítulo descriptivo.
+ */
 export const hero = {
   title: "Gestión del Agua",
   subtitle:
