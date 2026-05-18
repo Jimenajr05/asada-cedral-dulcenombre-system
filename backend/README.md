@@ -1,6 +1,6 @@
 <div align="center">
-  <h1>Backend - ASADA Cedral y Dulce Nombre</h1>
-  <p><i>API RESTful, Seguridad y Lógica de Negocio</i></p>
+  <h1>Servidor Backend - ASADA Cedral y Dulce Nombre</h1>
+  <p><i>API RESTful, Seguridad, Subida de Archivos y Persistencia de Datos</i></p>
 
   <img src="https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white" alt="Node.js" />
   <img src="https://img.shields.io/badge/Express.js-404D59?style=for-the-badge" alt="Express" />
@@ -10,83 +10,91 @@
 
 <br />
 
-## Descripcion General
+## Descripción General
 
-El directorio `backend` aloja el servidor central del sistema. Su objetivo principal es proveer una **API RESTful** segura, eficiente y robusta que actua como el puente de comunicacion entre la interfaz de usuario (Frontend) y la base de datos (MongoDB).
+El directorio `backend` contiene el servidor y la capa lógica de datos de la plataforma. Provee una **API RESTful** robusta y estructurada bajo el patrón MVC (Modelo-Controlador-Ruta) que se comunica directamente con la base de datos NoSQL MongoDB mediante esquemas estrictos de Mongoose.
 
-El servidor gestiona reglas de negocio criticas como:
-- Autenticacion de administradores y control de sesiones.
-- Operaciones CRUD (Crear, Leer, Actualizar, Borrar) sobre abonados y propiedades.
-- Registro y validacion de lecturas de medidores de agua.
-- Procesamiento y calculo matematico para la facturacion mensual.
-- Recepcion y almacenamiento de archivos mediante multipart/form-data.
+El servidor asume tareas operativas vitales:
+* **Seguridad y Autenticación**: Gestión de sesiones de directivos mediante tokens JWT y cifrado de claves con `bcryptjs`.
+* **Procesamiento de Archivos**: Almacenamiento seguro de imágenes y archivos en formato PDF (planos de proyectos, formularios de trámites, certificados ecológicos) utilizando la biblioteca `multer`.
+* **Lógica del Acueducto (Gestión de Agua)**: Almacenamiento de bitácoras físicas de aforos de nacientes e indicadores químicos mensuales del acueducto.
+* **Bitácoras y Actividades**: Registro e histórico de hitos y proyectos de infraestructura.
+
+---
 
 ## Estructura de Directorios
 
-El codigo fuente sigue el patron de diseño MVC (Modelo-Vista-Controlador) adaptado a APIs, organizando las responsabilidades de la siguiente manera:
+El backend está organizado de la siguiente manera:
 
 ```text
 backend/
+├── uploads/             # Directorio físico donde se almacenan las imágenes y PDFs subidos por Multer.
 ├── src/
-│   ├── config/          # Configuraciones globales (Conexion a BD, constantes).
-│   ├── controllers/     # Logica de negocio y procesamiento de peticiones.
-│   ├── middlewares/     # Funciones intermedias (Autenticacion, manejo de errores).
-│   ├── models/          # Esquemas y modelos de datos de Mongoose.
-│   ├── routes/          # Definicion de los endpoints de la API.
-│   └── app.js           # Configuracion principal de la aplicacion Express.
-├── uploads/             # Directorio para archivos subidos localmente.
-├── server.js            # Punto de entrada de la aplicacion que levanta el servidor HTTP.
-├── package.json         # Gestor de dependencias y scripts de Node.js.
-└── seedLinks.js         # Script auxiliar para inicializar datos (Seeding).
+│   ├── config/          # Configuración global del servidor y conexión a base de datos (db.js).
+│   ├── controllers/     # Controladores que contienen la lógica de negocio y procesamiento de peticiones.
+│   ├── middlewares/     # Interceptores de peticiones (Autenticación JWT, subida de archivos específicos Multer).
+│   ├── models/          # Modelos y esquemas definidos con Mongoose.
+│   ├── routes/          # Definición y mapeo de los endpoints del API RESTful.
+│   └── app.js           # Inicialización y configuración de middlewares globales Express (CORS, JSON parser).
+├── server.js            # Punto de entrada para iniciar el servidor HTTP en el puerto configurado.
+├── seedLinks.js         # Script auxiliar para poblar inicialmente los enlaces institucionales (Links).
+└── package.json         # Gestor de dependencias de Node.js y scripts de arranque.
 ```
 
-## Dependencias y Librerias Principales
+---
 
-- **express (v5):** Framework base para el manejo del servidor web y enrutamiento.
-- **mongoose:** ODM para interactuar, consultar y modelar los datos en MongoDB.
-- **bcrypt / bcryptjs:** Para la encriptacion unidireccional y salting de las contraseñas de los usuarios.
-- **jsonwebtoken (JWT):** Generacion de tokens seguros para mantener la sesion de los usuarios sin estado (stateless).
-- **multer:** Middleware especifico para la gestion de carga (upload) de archivos.
-- **cors:** Habilita el intercambio de recursos de origen cruzado, permitiendo que el Frontend consuma la API.
-- **dotenv:** Carga las variables de entorno desde un archivo oculto `.env` hacia el objeto `process.env`.
-- **nodemon:** (Dependencia de Desarrollo) Reinicia automaticamente el servidor al guardar cambios en el codigo.
+## Modelos y Esquemas de Mongoose
 
-## Configuracion e Instalacion
+1. **User (`user.js`)**: Información y credenciales de administradores y operarios del sistema.
+2. **Aviso (`aviso.js`)**: Novedades y avisos para abonados con campos de título, descripción, tipo (urgente, info, completado), imagen adjunta y booleano para fijar en el banner principal.
+3. **GestionAgua (`gestionAgua.js`)**: Reportes de cloro residual, turbidez, nacientes, histórico de aforos de caudal y galería de análisis oficiales.
+4. **Proyecto (`proyecto.js`)**: Proyectos comunitarios con campos de título, descripción, estado (En progreso, Completado, Pausado, Planificado), fotos adjuntas con alt, documentos descargables en PDF y actualizaciones de bitácora.
+5. **Sostenibilidad (`sostenibilidad.js`)**: Gestión ambiental de la ASADA, guardando las galerías dinámicas de Cultura Hídrica, Mantenimiento de Estructuras e Hidrantes instalados (conteo).
+6. **Tramite (`tramite.js`)**: Trámites del acueducto, asociando requisitos individuales y archivos PDF de solicitud.
+7. **Transparencia (`transparencia.js`)**: Calendario de sesiones de Junta Directiva ordinarias/extraordinarias y listado de certificados oficiales/acreditaciones ecológicas.
+8. **Link (`link.js`)**: Enlaces rápidos y externos a asambleas de accionistas, tarifas y actas externas.
+9. **Tarea (`tarea.js`)**: Control interno Kanban para directores, clasificando tareas en pendiente, en proceso y completadas.
 
-### 1. Variables de Entorno (.env)
-Debe crear un archivo `.env` en la raiz del directorio `backend` con las variables criticas del sistema. Un ejemplo de la estructura es:
+---
+
+## Configuración y Puesta en Marcha
+
+### 1. Crear el Archivo de Configuración (.env)
+Crea un archivo `.env` en la raíz del directorio `backend/` con las siguientes variables:
 
 ```env
-# Puerto en el que correra el servidor local
-PORT=3000
+# Puerto donde correrá el servidor local
+PORT=4000
 
-# Cadena de conexion a la base de datos MongoDB (Local o Atlas)
-MONGODB_URI=mongodb://localhost:27017/asada_cedral_db
+# URI de conexión a la base de datos de MongoDB
+MONGODB_URI=mongodb://localhost:27017/asada-cedral-dulcenombre
 
-# Clave secreta para firmar los JSON Web Tokens (Debe ser una cadena larga y compleja)
-JWT_SECRET=super_secret_key_asada_2026
+# Clave secreta para firmar los JSON Web Tokens
+JWT_SECRET=super_clave_secreta
 ```
 
-### 2. Instalacion de Dependencias
-Asegurese de estar ubicado en la carpeta `backend` en su terminal e instale los modulos ejecutando:
-
+### 2. Instalación de Dependencias
+Asegúrate de estar en el directorio `backend` y ejecuta:
 ```bash
 npm install
 ```
 
-### 3. Ejecucion del Servidor
-Para iniciar el servidor en modo de desarrollo con recarga automatica:
-
+### 3. Población Inicial de Enlaces (Opcional)
+Para insertar los primeros accesos directos institucionales en la base de datos:
 ```bash
-npm run dev
+npm run seed
+# o bien: node seedLinks.js
 ```
 
-Si desea correr el servidor sin recarga automatica (modo produccion):
-```bash
-npm start
-# o: node server.js
-```
-El sistema mostrara mensajes indicando que el servidor se esta ejecutando y el estado de la conexion con MongoDB.
+### 4. Arrancar el Servidor
+* **Modo Desarrollo (con reinicio automático al guardar):**
+  ```bash
+  npm run dev
+  ```
+* **Modo Producción:**
+  ```bash
+  npm start
+  ```
 
 ---
 
