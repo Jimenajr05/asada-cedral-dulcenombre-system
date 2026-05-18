@@ -5,8 +5,8 @@
 
 import axios from "axios";
 
-const API_URL = "http://localhost:4000/api/gestion-agua";
-export const BASE_URL = "http://localhost:4000";
+const API_URL = `${import.meta.env.VITE_API_URL || "http://localhost:4000"}/api/gestion-agua`;
+export const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 axios.defaults.withCredentials = true;
 
 /**

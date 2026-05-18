@@ -10,6 +10,12 @@ lerna-debug.log*
 # Directorio de dependencias del proyecto
 node_modules
 
+# Variables de entorno con credenciales sensibles (nunca subir al repositorio)
+.env
+.env.local
+.env.production
+# .env.example sí se sube (no contiene secretos reales)
+
 # Entregables de compilación de producción (dist)
 dist
 dist-ssr
