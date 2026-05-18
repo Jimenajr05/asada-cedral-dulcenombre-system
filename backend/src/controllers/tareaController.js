@@ -1,5 +1,17 @@
+/**
+ * @file tareaController.js
+ * @description Controlador para administrar la lista de tareas internas (to-do list) de los administradores.
+ */
+
 const Tarea = require("../models/tarea");
 
+/**
+ * Obtiene todas las tareas creadas por el administrador autenticado.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express (con req.user).
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con la lista de tareas.
+ */
 const obtenerTareas = async (req, res) => {
   try {
     const tareas = await Tarea.find({ creadoPor: req.user._id }).sort({ createdAt: -1 });
@@ -9,6 +21,13 @@ const obtenerTareas = async (req, res) => {
   }
 };
 
+/**
+ * Crea una nueva tarea asignada al administrador autenticado.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express con texto y prioridad opcional.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con la tarea creada.
+ */
 const crearTarea = async (req, res) => {
   try {
     const { texto, prioridad } = req.body;
@@ -27,6 +46,13 @@ const crearTarea = async (req, res) => {
   }
 };
 
+/**
+ * Alterna (toggle) el estado de completado de una tarea específica del administrador.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express con parámetro id.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con la tarea actualizada.
+ */
 const toggleCompletada = async (req, res) => {
   try {
     const tarea = await Tarea.findOne({ _id: req.params.id, creadoPor: req.user._id });
@@ -40,6 +66,13 @@ const toggleCompletada = async (req, res) => {
   }
 };
 
+/**
+ * Elimina permanentemente una tarea específica del administrador.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express con parámetro id.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON indicando el éxito de la operación.
+ */
 const eliminarTarea = async (req, res) => {
   try {
     const tarea = await Tarea.findOneAndDelete({ _id: req.params.id, creadoPor: req.user._id });

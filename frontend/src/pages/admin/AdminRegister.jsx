@@ -1,16 +1,25 @@
+/**
+ * @file AdminRegister.jsx
+ * @description Página de registro para nuevos administradores. Cuenta con un medidor interactivo de fortaleza de contraseña y requiere una clave especial de registro institucional.
+ */
+
 import { useState, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { registerAdmin } from "../../services/authService";
 
-/* ── Toast ──────────────────────────────────── */
+/**
+ * Toast de alerta emergente para el registro de cuenta.
+ * @component
+ * @param {Object} props
+ * @param {Object} props.toast - Objeto que describe el mensaje de error o éxito.
+ */
 function Toast({ toast }) {
   if (!toast) return null;
   const ok = toast.type === "success";
   return (
     <div
-      className={`fixed top-4 right-4 left-4 sm:top-6 sm:right-6 sm:left-auto z-50 flex items-start gap-3 rounded-2xl px-4 py-3 sm:px-5 sm:py-4 shadow-2xl border animate-slide-right w-auto sm:w-[380px] ${
-        ok ? "bg-emerald-50 border-emerald-200 text-emerald-800" : "bg-red-50 border-red-200 text-red-800"
-      }`}
+      className={`fixed top-4 right-4 left-4 sm:top-6 sm:right-6 sm:left-auto z-50 flex items-start gap-3 rounded-2xl px-4 py-3 sm:px-5 sm:py-4 shadow-2xl border animate-slide-right w-auto sm:w-[380px] ${ok ? "bg-emerald-50 border-emerald-200 text-emerald-800" : "bg-red-50 border-red-200 text-red-800"
+        }`}
     >
       <div className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-white text-sm font-bold ${ok ? "bg-emerald-500" : "bg-red-500"}`}>
         {ok ? "✓" : "✕"}
@@ -23,7 +32,6 @@ function Toast({ toast }) {
   );
 }
 
-/* ── Indicador de fuerza ─────────────────────── */
 function PasswordStrength({ password }) {
   const checks = useMemo(() => [
     { label: "Mínimo 8 caracteres", ok: password.length >= 8 },
@@ -39,17 +47,17 @@ function PasswordStrength({ password }) {
 
   const color =
     pct <= 20 ? "bg-red-500" :
-    pct <= 40 ? "bg-orange-500" :
-    pct <= 60 ? "bg-amber-500" :
-    pct <= 80 ? "bg-lime-500" :
-    "bg-emerald-500";
+      pct <= 40 ? "bg-orange-500" :
+        pct <= 60 ? "bg-amber-500" :
+          pct <= 80 ? "bg-lime-500" :
+            "bg-emerald-500";
 
   const label =
     pct <= 20 ? "Muy débil" :
-    pct <= 40 ? "Débil" :
-    pct <= 60 ? "Regular" :
-    pct <= 80 ? "Fuerte" :
-    "Muy fuerte";
+      pct <= 40 ? "Débil" :
+        pct <= 60 ? "Regular" :
+          pct <= 80 ? "Fuerte" :
+            "Muy fuerte";
 
   if (!password) return null;
 
@@ -63,9 +71,8 @@ function PasswordStrength({ password }) {
             style={{ width: `${pct}%` }}
           />
         </div>
-        <span className={`text-xs font-semibold min-w-[70px] text-right ${
-          pct <= 40 ? "text-red-600" : pct <= 60 ? "text-amber-600" : "text-emerald-600"
-        }`}>
+        <span className={`text-xs font-semibold min-w-[70px] text-right ${pct <= 40 ? "text-red-600" : pct <= 60 ? "text-amber-600" : "text-emerald-600"
+          }`}>
           {label}
         </span>
       </div>
@@ -87,7 +94,6 @@ function PasswordStrength({ password }) {
   );
 }
 
-/* ── Componente principal ────────────────────── */
 function AdminRegister() {
   const navigate = useNavigate();
   const [form, setForm] = useState({ nombre: "", email: "", password: "", registerKey: "" });

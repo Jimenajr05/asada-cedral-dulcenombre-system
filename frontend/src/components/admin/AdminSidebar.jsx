@@ -1,3 +1,8 @@
+/**
+ * @file AdminSidebar.jsx
+ * @description Barra lateral de navegación (Sidebar) para el panel de administración, conteniendo enlaces a todas las secciones CRUD y regreso al sitio público.
+ */
+
 import { Link, useLocation } from "react-router-dom";
 import {
   LayoutGrid,
@@ -12,6 +17,9 @@ import {
   X,
 } from "lucide-react";
 
+/**
+ * Listado de opciones del menú con sus respectivos iconos y rutas.
+ */
 const menuItems = [
   { name: "Dashboard", icon: LayoutGrid, path: "/admin/panel" },
   { name: "Avisos", icon: Bell, path: "/admin/avisos" },
@@ -23,12 +31,18 @@ const menuItems = [
   { name: "Proyectos", icon: Hammer, path: "/admin/proyectos" },
 ];
 
+/**
+ * AdminSidebar - Navegación lateral adaptable a dispositivos móviles.
+ * @component
+ * @param {Object} props
+ * @param {boolean} props.isOpen - Determina si el menú lateral está desplegado en móviles.
+ * @param {function} props.onClose - Callback para cerrar el menú desplegable.
+ */
 function AdminSidebar({ isOpen, onClose }) {
   const location = useLocation();
 
   return (
     <>
-      {/* Backdrop for mobile */}
       {isOpen && (
         <div
           onClick={onClose}
@@ -37,11 +51,9 @@ function AdminSidebar({ isOpen, onClose }) {
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex h-full w-72 flex-col border-r border-slate-200 bg-gradient-to-b from-white via-sky-50/30 to-white transition-transform duration-300 ease-in-out lg:sticky lg:top-[68px] lg:z-40 lg:h-[calc(100vh-68px)] lg:translate-x-0 ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className={`fixed inset-y-0 left-0 z-50 flex h-full w-72 flex-col border-r border-slate-200 bg-gradient-to-b from-white via-sky-50/30 to-white transition-transform duration-300 ease-in-out lg:sticky lg:top-[68px] lg:z-40 lg:h-[calc(100vh-68px)] lg:translate-x-0 ${isOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
       >
-        {/* Header for mobile */}
         <div className="flex items-center justify-between border-b border-slate-100 p-4 lg:hidden">
           <span className="font-bold text-slate-800">Menú Administrativo</span>
           <button
@@ -65,8 +77,8 @@ function AdminSidebar({ isOpen, onClose }) {
                 to={item.path}
                 onClick={onClose}
                 className={`group relative flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition-all duration-200 ${active
-                    ? "bg-sky-600 text-white shadow-md shadow-sky-100"
-                    : "text-slate-600 hover:bg-white hover:text-sky-700 hover:shadow-sm"
+                  ? "bg-sky-600 text-white shadow-md shadow-sky-100"
+                  : "text-slate-600 hover:bg-white hover:text-sky-700 hover:shadow-sm"
                   }`}
               >
                 {active && (
@@ -75,8 +87,8 @@ function AdminSidebar({ isOpen, onClose }) {
 
                 <span
                   className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-colors ${active
-                      ? "bg-white/20 text-white"
-                      : "bg-slate-100 text-slate-500 group-hover:bg-sky-100 group-hover:text-sky-700"
+                    ? "bg-white/20 text-white"
+                    : "bg-slate-100 text-slate-500 group-hover:bg-sky-100 group-hover:text-sky-700"
                     }`}
                 >
                   <Icon className="h-4.5 w-4.5" strokeWidth={2.2} />

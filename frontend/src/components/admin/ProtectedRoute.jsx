@@ -1,18 +1,31 @@
+/**
+ * @file ProtectedRoute.jsx
+ * @description Guardia de ruta (Router Guard) para proteger accesos al panel administrativo verificando la sesión activa con el backend.
+ */
+
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { getProfile } from "../../services/authService";
 
+/**
+ * ProtectedRoute - Componente wrapper para restringir rutas privadas.
+ * @component
+ * @param {Object} props
+ * @param {React.ReactNode} props.children - Componentes o páginas hijas autorizadas.
+ */
 function ProtectedRoute({ children }) {
-  const [status, setStatus] = useState("loading"); // loading | ok | unauthorized
+  const [status, setStatus] = useState("loading");
 
   useEffect(() => {
     let cancelled = false;
 
+    /**
+     * Realiza una consulta al endpoint de perfil para verificar la autenticidad de la cookie JWT.
+     */
     const verify = async () => {
       try {
         const data = await getProfile();
         if (!cancelled) {
-          // Sincronizar datos del usuario en localStorage para la UI
           localStorage.setItem("user", JSON.stringify(data.user));
           setStatus(data.user?.role === "admin" ? "ok" : "unauthorized");
         }

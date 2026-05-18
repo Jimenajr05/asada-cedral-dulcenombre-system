@@ -1,6 +1,19 @@
+/**
+ * @file AdminNavbar.jsx
+ * @description Barra de navegación superior para el panel de administración, que muestra el logotipo de la ASADA, detalles del usuario y el botón de salida.
+ */
+
 import { LogOut, Menu } from "lucide-react";
 import logo from "../../assets/logo.png";
 
+/**
+ * AdminNavbar - Encabezado superior administrativo.
+ * @component
+ * @param {Object} props
+ * @param {Object} props.user - Objeto del usuario autenticado (nombre, email).
+ * @param {function} props.onLogout - Callback para ejecutar el cierre de sesión.
+ * @param {function} props.onToggleSidebar - Callback para alternar la barra lateral en pantallas pequeñas.
+ */
 function AdminNavbar({ user, onLogout, onToggleSidebar }) {
   return (
     <header className="sticky top-0 z-50 h-[68px] bg-white border-b border-slate-200 px-4 sm:px-6 flex items-center justify-between shadow-sm">
@@ -21,7 +34,7 @@ function AdminNavbar({ user, onLogout, onToggleSidebar }) {
 
         <div className="hidden sm:block">
           <p className="text-xs font-semibold uppercase tracking-widest text-sky-600">
-            Panel Administrativo
+             Panel Administrativo
           </p>
           <p className="text-xs text-slate-400">
             ASADA Cedral y Dulce Nombre

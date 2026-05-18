@@ -1,24 +1,28 @@
+/* ==========================================================================
+   index.css
+   Estilos globales, variables de diseño y personalizaciones avanzadas
+   para el sistema del acueducto ASADA Cedral y Dulce Nombre.
+   ========================================================================== */
+
 @import "tailwindcss";
 @plugin "daisyui";
 
-/* ── FUENTES ───────────────────────────────────────────────── */
 :root {
+  /* Tipografías */
   --font-body: "Inter", system-ui, sans-serif;
   --font-display: "Outfit", system-ui, sans-serif;
 
-  /* Paleta de colores ASADA */
+  /* Paleta de Colores de Identidad (Agua e Hidrantes) */
   --color-water-50: #f0f9ff;
   --color-water-100: #e0f2fe;
   --color-water-500: #0ea5e9;
   --color-water-600: #0284c7;
   --color-water-700: #0369a1;
   --color-water-900: #0c4a6e;
-
   --color-teal-500: #14b8a6;
   --color-teal-600: #0d9488;
 }
 
-/* ── BASE ──────────────────────────────────────────────────── */
 *,
 *::before,
 *::after {
@@ -46,7 +50,6 @@ h6 {
   letter-spacing: -0.02em;
 }
 
-/* ── SCROLLBAR ──────────────────────────────────────────────── */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -88,7 +91,6 @@ h6 {
   background: #cbd5e1;
 }
 
-/* ── ANIMACIONES ───────────────────────────────────────────── */
 @keyframes fade-up {
   from {
     opacity: 0;
@@ -153,9 +155,6 @@ h6 {
   animation: pulse-slow 4s ease-in-out infinite;
 }
 
-/* ── UTILIDADES ─────────────────────────────────────────────── */
-
-/* Glassmorphism */
 .glass {
   backdrop-filter: blur(14px) saturate(1.4);
   -webkit-backdrop-filter: blur(14px) saturate(1.4);
@@ -170,7 +169,6 @@ h6 {
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* Tarjeta premium */
 .card-hover {
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
@@ -180,7 +178,6 @@ h6 {
   box-shadow: 0 20px 48px -8px rgba(14, 165, 233, 0.15), 0 8px 24px -4px rgba(0, 0, 0, 0.08);
 }
 
-/* Botón premium */
 .btn-glow {
   position: relative;
   overflow: hidden;
@@ -196,7 +193,6 @@ h6 {
   transform: translateY(0);
 }
 
-/* Gradiente de texto agua */
 .text-gradient-water {
   background: linear-gradient(135deg, #0ea5e9 0%, #14b8a6 100%);
   -webkit-background-clip: text;
@@ -204,7 +200,6 @@ h6 {
   background-clip: text;
 }
 
-/* Sección badge */
 .section-badge {
   display: inline-block;
   font-size: 0.7rem;
@@ -215,7 +210,6 @@ h6 {
   border-radius: 99px;
 }
 
-/* Línea decorativa */
 .section-line::before {
   content: '';
   display: inline-block;
@@ -227,7 +221,6 @@ h6 {
   margin-right: 0.75rem;
 }
 
-/* Esconder scrollbar pero mantener scroll */
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -237,7 +230,6 @@ h6 {
   display: none;
 }
 
-/* Input focus ring unificado */
 .input-field {
   width: 100%;
   border-radius: 0.875rem;
@@ -260,7 +252,6 @@ h6 {
   color: #94a3b8;
 }
 
-/* ── PRETTIER REACT-DATEPICKER OVERRIDES ───────────────────────── */
 .react-datepicker-wrapper {
   width: 100%;
 }
@@ -358,7 +349,6 @@ h6 {
   border-color: #0f172a !important;
 }
 
-/* Ocultar el triángulo por defecto */
 .react-datepicker__triangle {
   display: none !important;
 }

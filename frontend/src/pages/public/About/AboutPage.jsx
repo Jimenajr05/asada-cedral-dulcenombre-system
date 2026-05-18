@@ -1,3 +1,8 @@
+/**
+ * @file AboutPage.jsx
+ * @description Página pública "Sobre Nosotros". Muestra la misión, visión, valores institucionales, línea de tiempo histórica del acueducto, lista de miembros vigentes de la Junta Directiva (con carousel horizontal táctil en móvil) y estadísticas de cobertura.
+ */
+
 import { useEffect, useState } from "react";
 import {
   heroContent,
@@ -8,6 +13,10 @@ import {
 } from "./AboutData";
 import { getSobreNosotros } from "../../../services/sobreNosotrosService";
 
+/**
+ * Icono de objetivo (Target) para la sección de Misión.
+ * @component
+ */
 const IconTarget = () => (
   <svg
     viewBox="0 0 24 24"
@@ -95,6 +104,12 @@ const SectionLabel = ({ children, light = false }) => (
   </span>
 );
 
+
+/**
+ * Componente de página pública "Sobre Nosotros".
+ * Provee la misión, visión, historia y lista de miembros de junta directiva.
+ * @component
+ */
 export default function AboutPage() {
   const [juntaDirectiva, setJuntaDirectiva] = useState({
     periodo: "",
@@ -132,7 +147,7 @@ export default function AboutPage() {
 
   return (
     <div className="bg-slate-50">
-      {/* HERO */}
+      {/* Hero */}
       <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-sky-950 to-slate-900">
         <WaterDropBg />
         <div className="pointer-events-none absolute -top-32 left-1/4 h-96 w-96 rounded-full bg-sky-500/15 blur-[100px]" />
@@ -157,7 +172,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* QUIÉNES SOMOS */}
+      {/* Quiénes somos */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
         <div className="text-center mb-12">
           <SectionLabel>Identidad institucional</SectionLabel>
@@ -166,10 +181,10 @@ export default function AboutPage() {
           </h2>
         </div>
 
-        {/* FILA 1 */}
+        {/* Fila 1 */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
 
-          {/* MISIÓN */}
+          {/* Misión */}
           <div className="group bg-white rounded-2xl border border-slate-200 p-7 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
 
             <div className="flex items-center gap-3 mb-4">
@@ -186,7 +201,7 @@ export default function AboutPage() {
             </p>
           </div>
 
-          {/* VISIÓN */}
+          {/* Visión */}
           <div className="group bg-white rounded-2xl border border-slate-200 p-7 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
 
             <div className="flex items-center gap-3 mb-4">
@@ -204,7 +219,7 @@ export default function AboutPage() {
           </div>
         </div>
 
-        {/* FILA 2 */}
+        {/* Fila 2 */}
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8 hover:shadow-lg transition-all duration-300">
 
           <div className="flex items-center gap-3 mb-6">
@@ -216,7 +231,7 @@ export default function AboutPage() {
             </h3>
           </div>
 
-          {/* GRID DE VALORES */}
+          {/* Grid de valores */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {valores.map((v) => (
               <div
@@ -236,7 +251,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* RESEÑA HISTÓRICA */}
+      {/* Reseña histórica */}
       <section className="bg-white py-16 lg:py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
@@ -283,7 +298,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* JUNTA DIRECTIVA */}
+      {/* Junta directiva */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
         <div className="text-center mb-10">
           <SectionLabel>Gobierno institucional</SectionLabel>
@@ -329,7 +344,7 @@ export default function AboutPage() {
             </svg>
           </button>
 
-          {/* CONTENEDOR */}
+          {/* Contenedor */}
           <div
             id="scrollJunta"
             className="flex gap-4 overflow-x-auto pb-4 scroll-smooth snap-x snap-mandatory scrollbar-hide"
@@ -347,7 +362,7 @@ export default function AboutPage() {
                     key={i}
                     className="snap-start min-w-[200px] max-w-[200px] bg-white rounded-xl border border-slate-200 px-4 py-5 flex flex-col items-center text-center gap-2 shadow-sm hover:shadow-md transition"
                   >
-                    {/* FOTO */}
+                    {/* Foto */}
                     <div className="w-20 h-20 rounded-full overflow-hidden bg-slate-200 flex items-center justify-center">
                       {m.foto ? (
                         <img
@@ -362,14 +377,14 @@ export default function AboutPage() {
                       )}
                     </div>
 
-                    {/* NOMBRE */}
+                    {/* Nombre */}
                     <div className="w-full text-center">
                       <p className="text-sm font-semibold text-slate-800 leading-tight break-words whitespace-normal px-1 line-clamp-2">
                         {m.nombre}
                       </p>
                     </div>
 
-                    {/* CARGO */}
+                    {/* Cargo */}
                     <span
                       className={`text-xs font-semibold px-3 py-1 rounded-full max-w-full truncate whitespace-nowrap ${cargoBadgeClass[m.cargo] ?? badgeDefault}`}
                       title={m.cargo}
@@ -388,7 +403,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* COBERTURA Y ALCANCE */}
+      {/* Cobertura y alcance */}
       <section
         className="bg-slate-100 py-16 lg:py-20"
         aria-label="Cobertura y Alcance"
@@ -429,7 +444,7 @@ export default function AboutPage() {
               </svg>
             </button>
 
-            {/* CONTENEDOR SCROLL */}
+            {/* Contenedor scroll */}
             <div
               id="scrollCobertura"
               className="flex gap-5 overflow-x-auto pb-4 scroll-smooth snap-x snap-mandatory scrollbar-hide"

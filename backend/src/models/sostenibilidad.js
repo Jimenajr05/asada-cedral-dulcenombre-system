@@ -1,5 +1,16 @@
+/**
+ * @file sostenibilidad.js
+ * @description Esquema de Mongoose para la sección de sostenibilidad (Cultura Hídrica, Mantenimiento e Hidrantes).
+ */
+
 const mongoose = require("mongoose");
 
+/**
+ * Subesquema para almacenar imágenes de las galerías de sostenibilidad.
+ * @typedef {Object} ImagenSostenibilidad
+ * @property {string} src - Ruta del archivo de imagen subido.
+ * @property {string} alt - Texto descriptivo para la imagen.
+ */
 const imagenSchema = new mongoose.Schema(
   {
     src: { type: String, required: true },
@@ -8,6 +19,14 @@ const imagenSchema = new mongoose.Schema(
   { _id: false }
 );
 
+/**
+ * Esquema principal de Sostenibilidad.
+ * @typedef {Object} Sostenibilidad
+ * @property {Object} galerias - Galerías de fotos organizadas por categoría.
+ * @property {Object} galerias.culturaHidrica - Sección de eventos y educación ambiental.
+ * @property {Object} galerias.mantenimiento - Acciones correctivas e inversión en tuberías y tanques.
+ * @property {Object} galerias.hidrantes - Red de hidrantes comunitarios, indicando su cobertura total.
+ */
 const sostenibilidadSchema = new mongoose.Schema(
   {
     galerias: {
@@ -25,7 +44,7 @@ const sostenibilidadSchema = new mongoose.Schema(
         description: {
           type: String,
           default:
-            "Registro visual de acciones de mantenimiento efectuadas en distintas estructuras del sistema de acueducto, como parte del compromiso con la sostenibilidad y el buen funcionamiento.",
+            "Registro visual de acciones de mantenimiento efectuadas en distintas estructuras del sistema de acueducto, como parte del compromiso con la sostenibilidad and el buen funcionamiento.",
         },
         images: { type: [imagenSchema], default: [] },
       },

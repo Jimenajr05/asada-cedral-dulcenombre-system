@@ -1,3 +1,8 @@
+/**
+ * @file main.jsx
+ * @description Punto de entrada (entrypoint) principal para la aplicación React en el navegador. Monta la aplicación bajo React.StrictMode e inicializa el enrutador BrowserRouter.
+ */
+
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";

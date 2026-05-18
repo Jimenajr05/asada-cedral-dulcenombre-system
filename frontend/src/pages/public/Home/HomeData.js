@@ -1,3 +1,12 @@
+/**
+ * @file HomeData.js
+ * @description Datos estáticos para la página principal (Home), incluyendo accesos rápidos destacados (trámites, avisos, contacto y gestión del agua) con sus respectivas rutas, colores y tipos de iconos, y tarjetas de pilares de la misión (calidad, mantenimiento, sostenibilidad y atención).
+ */
+
+/**
+ * Accesos rápidos del panel de inicio.
+ * @type {Array<Object>}
+ */
 export const quickAccess = [
   {
     title: "Trámites",

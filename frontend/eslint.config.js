@@ -1,3 +1,8 @@
+/**
+ * @file eslint.config.js
+ * @description Configuración de ESLint para el proyecto frontend. Define el alcance de los archivos, entornos de ejecución y reglas específicas para React y Vite.
+ */
+
 import js from '@eslint/js'
 import globals from 'globals'
 import reactHooks from 'eslint-plugin-react-hooks'

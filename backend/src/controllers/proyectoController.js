@@ -1,9 +1,19 @@
-const fs      = require("fs");
-const path    = require("path");
+/**
+ * @file proyectoController.js
+ * @description Controlador para gestionar proyectos comunitarios, incluyendo galerías de fotos, documentos adjuntos y su línea de tiempo (actualizaciones).
+ */
+
+const fs = require("fs");
+const path = require("path");
 const Proyecto = require("../models/proyecto");
 
-// ── PROYECTOS ──────────────────────────────────────────────────
-
+/**
+ * Obtiene todos los proyectos para la vista pública (ordenados de más recientes a más antiguos).
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el listado de proyectos.
+ */
 const obtenerProyectosPublico = async (req, res) => {
   try {
     const proyectos = await Proyecto.find().sort({ createdAt: -1 });
@@ -14,6 +24,13 @@ const obtenerProyectosPublico = async (req, res) => {
   }
 };
 
+/**
+ * Obtiene todos los proyectos para el panel de administración.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el listado de proyectos.
+ */
 const obtenerProyectosAdmin = async (req, res) => {
   try {
     const proyectos = await Proyecto.find().sort({ createdAt: -1 });
@@ -23,6 +40,13 @@ const obtenerProyectosAdmin = async (req, res) => {
   }
 };
 
+/**
+ * Crea un nuevo proyecto en la base de datos.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express con titulo, descripcion y estado.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el proyecto creado.
+ */
 const crearProyecto = async (req, res) => {
   try {
     const { titulo, descripcion, estado } = req.body;
@@ -32,27 +56,34 @@ const crearProyecto = async (req, res) => {
     const proyecto = new Proyecto({
       titulo,
       descripcion: descripcion || "",
-      estado:      estado || "En progreso",
-      creadoPor:   req.user._id,
+      estado: estado || "En progreso",
+      creadoPor: req.user._id,
     });
 
     await proyecto.save();
     res.status(201).json({ message: "Proyecto creado correctamente", proyecto });
   } catch (error) {
-    console.error("ERROR AL CREAR PROYECTO:", error); // ← agregá esto
+    console.error("ERROR AL CREAR PROYECTO:", error);
     res.status(500).json({ message: "Error al crear proyecto", error: error.message });
   }
 };
 
+/**
+ * Actualiza la información principal de un proyecto (título, descripción, estado).
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express con parámetro id y cuerpo.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el proyecto actualizado.
+ */
 const actualizarProyecto = async (req, res) => {
   try {
     const proyecto = await Proyecto.findById(req.params.id);
     if (!proyecto) return res.status(404).json({ message: "Proyecto no encontrado" });
 
     const { titulo, descripcion, estado } = req.body;
-    if (titulo)      proyecto.titulo      = titulo;
+    if (titulo) proyecto.titulo = titulo;
     if (descripcion !== undefined) proyecto.descripcion = descripcion;
-    if (estado)      proyecto.estado      = estado;
+    if (estado) proyecto.estado = estado;
 
     await proyecto.save();
     res.status(200).json({ message: "Proyecto actualizado correctamente", proyecto });
@@ -61,18 +92,23 @@ const actualizarProyecto = async (req, res) => {
   }
 };
 
+/**
+ * Elimina un proyecto de forma permanente, incluyendo todos sus archivos físicos asociados (fotos y documentos).
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express con parámetro id.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON indicando el éxito del borrado.
+ */
 const eliminarProyecto = async (req, res) => {
   try {
     const proyecto = await Proyecto.findById(req.params.id);
     if (!proyecto) return res.status(404).json({ message: "Proyecto no encontrado" });
 
-    // Eliminar archivos físicos de fotos
     for (const foto of proyecto.fotos) {
       const ruta = path.join(__dirname, "../../", foto.src.replace(/^\/+/, ""));
       if (fs.existsSync(ruta)) fs.unlinkSync(ruta);
     }
 
-    // Eliminar archivos físicos de documentos
     for (const doc of proyecto.documentos) {
       const ruta = path.join(__dirname, "../../", doc.url.replace(/^\/+/, ""));
       if (fs.existsSync(ruta)) fs.unlinkSync(ruta);
@@ -85,8 +121,13 @@ const eliminarProyecto = async (req, res) => {
   }
 };
 
-// ── FOTOS ──────────────────────────────────────────────────────
-
+/**
+ * Agrega una fotografía a la galería de un proyecto.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición con parámetro id, alt en el cuerpo y req.file.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el proyecto modificado.
+ */
 const agregarFoto = async (req, res) => {
   try {
     const proyecto = await Proyecto.findById(req.params.id);
@@ -106,6 +147,13 @@ const agregarFoto = async (req, res) => {
   }
 };
 
+/**
+ * Elimina una foto específica de la galería del proyecto y borra el archivo del servidor.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición con parámetros id (del proyecto) y fotoId.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el proyecto modificado.
+ */
 const eliminarFoto = async (req, res) => {
   try {
     const proyecto = await Proyecto.findById(req.params.id);
@@ -125,8 +173,13 @@ const eliminarFoto = async (req, res) => {
   }
 };
 
-// ── DOCUMENTOS ─────────────────────────────────────────────────
-
+/**
+ * Adjunta un documento técnico o de seguimiento (ej. PDF) al proyecto.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición con parámetro id, nombre en el cuerpo y req.file.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el proyecto modificado.
+ */
 const agregarDocumento = async (req, res) => {
   try {
     const proyecto = await Proyecto.findById(req.params.id);
@@ -136,7 +189,7 @@ const agregarDocumento = async (req, res) => {
 
     proyecto.documentos.push({
       nombre: req.body.nombre || req.file.originalname,
-      url:    `/uploads/proyectos/documentos/${req.file.filename}`,
+      url: `/uploads/proyectos/documentos/${req.file.filename}`,
     });
 
     await proyecto.save();
@@ -146,6 +199,13 @@ const agregarDocumento = async (req, res) => {
   }
 };
 
+/**
+ * Elimina un documento específico adjunto al proyecto y borra su archivo físico.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición con parámetros id (del proyecto) y docId.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el proyecto modificado.
+ */
 const eliminarDocumento = async (req, res) => {
   try {
     const proyecto = await Proyecto.findById(req.params.id);
@@ -165,8 +225,13 @@ const eliminarDocumento = async (req, res) => {
   }
 };
 
-// ── ACTUALIZACIONES ────────────────────────────────────────────
-
+/**
+ * Agrega una nueva actualización en la línea de tiempo del proyecto.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición con parámetro id y texto de actualización en req.body.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el proyecto modificado.
+ */
 const agregarActualizacion = async (req, res) => {
   try {
     const proyecto = await Proyecto.findById(req.params.id);
@@ -183,6 +248,13 @@ const agregarActualizacion = async (req, res) => {
   }
 };
 
+/**
+ * Edita el texto de una actualización existente en la línea de tiempo.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición con parámetros id (del proyecto) y actId, y nuevo texto en req.body.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el proyecto modificado.
+ */
 const editarActualizacion = async (req, res) => {
   try {
     const proyecto = await Proyecto.findById(req.params.id);
@@ -202,6 +274,13 @@ const editarActualizacion = async (req, res) => {
   }
 };
 
+/**
+ * Elimina una actualización de la línea de tiempo del proyecto.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición con parámetros id (del proyecto) y actId.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el proyecto modificado.
+ */
 const eliminarActualizacion = async (req, res) => {
   try {
     const proyecto = await Proyecto.findById(req.params.id);

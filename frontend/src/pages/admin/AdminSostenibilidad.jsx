@@ -1,3 +1,8 @@
+/**
+ * @file AdminSostenibilidad.jsx
+ * @description Página de administración para iniciativas de sostenibilidad ambiental. Permite gestionar galerías de imágenes de Cultura Hídrica y mantenimiento forestal, así como actualizar el conteo total de hidrantes comunitarios.
+ */
+
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Pencil, Trash2, Upload, ImagePlus, AlertTriangle } from "lucide-react";
@@ -8,7 +13,6 @@ import {
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
-/* ========================= TOAST ========================= */
 function Toast({ toasts, removeToast }) {
   return (
     <div className="fixed top-4 right-4 left-4 sm:top-6 sm:right-6 sm:left-auto z-50 flex flex-col gap-3 w-auto sm:w-[380px]">
@@ -53,7 +57,6 @@ function Toast({ toasts, removeToast }) {
   );
 }
 
-/* ========================= COMPONENTE PRINCIPAL ========================= */
 function AdminSostenibilidad() {
   const navigate = useNavigate();
   const fileInputRefs = useRef({});
@@ -67,7 +70,6 @@ function AdminSostenibilidad() {
   const [editandoImagen, setEditandoImagen] = useState(null);
   const [totalHidrantes, setTotalHidrantes] = useState("");
 
-  // ── Toast helpers ──
   const removeToast = (id) => setToasts((prev) => prev.filter((t) => t.id !== id));
   const addToast = (type, message, extra = {}) => {
     const id = Date.now();

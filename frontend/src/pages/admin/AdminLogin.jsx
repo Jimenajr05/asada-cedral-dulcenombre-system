@@ -1,16 +1,25 @@
+/**
+ * @file AdminLogin.jsx
+ * @description Página de autenticación para administradores. Valida credenciales e interactúa con authService para guardar el usuario en el almacenamiento local y redireccionar al panel principal.
+ */
+
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { loginAdmin } from "../../services/authService";
 
-/* ── Toast ──────────────────────────────────── */
+/**
+ * Toast de alerta emergente para el inicio de sesión.
+ * @component
+ * @param {Object} props
+ * @param {Object} props.toast - Datos del mensaje y tipo de alerta.
+ */
 function Toast({ toast }) {
   if (!toast) return null;
   const ok = toast.type === "success";
   return (
     <div
-      className={`fixed top-4 right-4 left-4 sm:top-6 sm:right-6 sm:left-auto z-50 flex items-start gap-3 rounded-2xl px-4 py-3 sm:px-5 sm:py-4 shadow-2xl border animate-slide-right w-auto sm:w-[380px] ${
-        ok ? "bg-emerald-50 border-emerald-200 text-emerald-800" : "bg-red-50 border-red-200 text-red-800"
-      }`}
+      className={`fixed top-4 right-4 left-4 sm:top-6 sm:right-6 sm:left-auto z-50 flex items-start gap-3 rounded-2xl px-4 py-3 sm:px-5 sm:py-4 shadow-2xl border animate-slide-right w-auto sm:w-[380px] ${ok ? "bg-emerald-50 border-emerald-200 text-emerald-800" : "bg-red-50 border-red-200 text-red-800"
+        }`}
     >
       <div className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-white text-sm font-bold ${ok ? "bg-emerald-500" : "bg-red-500"}`}>
         {ok ? "✓" : "✕"}
@@ -23,7 +32,6 @@ function Toast({ toast }) {
   );
 }
 
-/* ── Componente principal ────────────────────── */
 function AdminLogin() {
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: "", password: "" });
@@ -43,7 +51,6 @@ function AdminLogin() {
     try {
       setLoading(true);
       const data = await loginAdmin(form);
-      // Solo guardamos datos no-sensibles del usuario para la UI
       localStorage.setItem("user", JSON.stringify(data.user));
       showToast("success", "Inicio de sesión exitoso");
       setTimeout(() => navigate("/admin/panel"), 1200);
@@ -60,12 +67,10 @@ function AdminLogin() {
 
       <div className="w-full max-w-5xl overflow-hidden rounded-3xl bg-white shadow-2xl shadow-slate-200/80 grid grid-cols-1 md:grid-cols-2">
 
-        {/* Panel izquierdo — decorativo */}
+        {/* Panel izquierdo */}
         <div className="relative hidden md:flex flex-col justify-between overflow-hidden bg-gradient-to-br from-sky-600 via-sky-700 to-slate-900 p-10 text-white">
-          {/* Glows */}
           <div className="pointer-events-none absolute -top-20 -left-20 h-72 w-72 rounded-full bg-sky-400/20 blur-[80px]" />
           <div className="pointer-events-none absolute -bottom-20 right-0 h-64 w-64 rounded-full bg-teal-400/20 blur-[80px]" />
-          {/* Dot grid */}
           <div className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 0)", backgroundSize: "24px 24px" }} />
 
           <div className="relative z-10">
@@ -93,7 +98,7 @@ function AdminLogin() {
           </div>
         </div>
 
-        {/* Panel derecho — formulario */}
+        {/* Panel derecho */}
         <div className="flex items-center justify-center px-4 py-8 sm:px-8 sm:py-12 md:px-12">
           <div className="w-full max-w-md">
             <div className="mb-6 sm:mb-8">

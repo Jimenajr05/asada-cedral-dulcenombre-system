@@ -1,3 +1,8 @@
+/**
+ * @file AdminProyectos.jsx
+ * @description Página de administración para proyectos de infraestructura. Permite crear y editar proyectos, subir fotografías del progreso, adjuntar documentos técnicos y añadir bitácoras de actualizaciones históricas.
+ */
+
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -12,7 +17,13 @@ import {
   BASE_URL,
 } from "../../services/proyectoService";
 
-/* ========================= TOAST ========================= */
+/**
+ * Componente Toast para alertas flotantes de éxito, error o confirmación de eliminación.
+ * @component
+ * @param {Object} props
+ * @param {Array} props.toasts - Listado de notificaciones flotantes.
+ * @param {Function} props.removeToast - Manejador para retirar un toast específico.
+ */
 function Toast({ toasts, removeToast }) {
   return (
     <div className="fixed top-6 right-4 sm:right-6 z-50 flex flex-col gap-3 w-[calc(100vw-2rem)] sm:w-80 md:w-96">
@@ -60,7 +71,6 @@ const estadoBadge = (estado) => {
   return map[estado] || "bg-slate-100 text-slate-600";
 };
 
-/* ========================= COMPONENTE PRINCIPAL ========================= */
 export default function AdminProyectos() {
   const navigate = useNavigate();
   const [confirmacionNavegacion, setConfirmacionNavegacion] = useState(null);
@@ -70,7 +80,7 @@ export default function AdminProyectos() {
   const [loading, setLoading] = useState(true);
   const [proyectos, setProyectos] = useState([]);
   const [toasts, setToasts] = useState([]);
-  const [expandido, setExpandido] = useState(null); // id del proyecto abierto
+  const [expandido, setExpandido] = useState(null);
   const [paginaActual, setPaginaActual] = useState(1);
   const proyectosPorPagina = 10;
   const [proyectoSearch, setProyectoSearch] = useState("");
@@ -114,7 +124,7 @@ export default function AdminProyectos() {
   const [editandoActId, setEditandoActId] = useState(null);
   const [editandoActTexto, setEditandoActTexto] = useState("");
 
-  // ── Toast helpers ──
+  // Toast helpers 
   const removeToast = (id) => setToasts((p) => p.filter((t) => t.id !== id));
   const addToast = (type, message, extra = {}) => {
     const id = Date.now();
@@ -227,7 +237,6 @@ export default function AdminProyectos() {
     setEditandoId(null); setShowForm(false);
   };
 
-  // ── CRUD Proyecto ──
   const handleSubmitProyecto = async (e) => {
     e.preventDefault();
     if (!proyectoForm.titulo.trim()) { showError("El título es obligatorio"); return; }
@@ -255,7 +264,7 @@ export default function AdminProyectos() {
     catch (e) { showError(e.message); }
   };
 
-  // ── Fotos ──
+  // Fotos
   const handleSubirFoto = async (proyectoId) => {
     if (!fotoFile) { showError("Selecciona una imagen"); return; }
     try {
@@ -276,7 +285,7 @@ export default function AdminProyectos() {
     catch (e) { showError(e.message); }
   };
 
-  // ── Documentos ──
+  // Documentos
   const handleSubirDoc = async (proyectoId) => {
     if (!docFile) { showError("Selecciona un documento"); return; }
     try {
@@ -297,7 +306,7 @@ export default function AdminProyectos() {
     catch (e) { showError(e.message); }
   };
 
-  // ── Actualizaciones ──
+  // Actualizaciones
   const handleAddActualizacion = async (proyectoId) => {
     if (!actTexto.trim()) { showError("Escribe el texto de la actualización"); return; }
     try {
@@ -384,7 +393,7 @@ export default function AdminProyectos() {
       {/* Lista de proyectos */}
       {!showForm && (
         <>
-          {/* BUSCADOR DE PROYECTOS */}
+          {/* Buscador de proyectos */}
           <div className="mb-6 flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm md:flex-row md:items-center md:justify-between">
             <div>
               <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">Resultados</p>
@@ -453,7 +462,7 @@ export default function AdminProyectos() {
                     {abierto && (
                       <div className="border-t border-slate-200 bg-slate-50 p-6 space-y-8">
 
-                        {/* FOTOS */}
+                        {/* Fotos */}
                         <div>
                           <h4 className="mb-4 flex items-center gap-2 text-lg font-bold text-slate-900"><ImageIcon className="h-5 w-5 text-blue-600" /> Fotos del proyecto</h4>
                           <div className="flex flex-col gap-3 md:flex-row mb-4">
@@ -487,7 +496,7 @@ export default function AdminProyectos() {
                           ) : <p className="text-sm text-slate-400">No hay fotos aún.</p>}
                         </div>
 
-                        {/* DOCUMENTOS */}
+                        {/* Documentos */}
                         <div>
                           <h4 className="mb-4 flex items-center gap-2 text-lg font-bold text-slate-900"><FileText className="h-5 w-5 text-blue-600" /> Documentos</h4>
                           <div className="flex flex-col gap-3 md:flex-row mb-4">
@@ -522,7 +531,7 @@ export default function AdminProyectos() {
                           ) : <p className="text-sm text-slate-400">No hay documentos aún.</p>}
                         </div>
 
-                        {/* ACTUALIZACIONES */}
+                        {/* Actualizaciones */}
                         <div>
                           <h4 className="mb-4 flex items-center gap-2 text-lg font-bold text-slate-900"><Pencil className="h-5 w-5 text-blue-600" /> Actualizaciones</h4>
                           <div className="flex gap-3 mb-4">

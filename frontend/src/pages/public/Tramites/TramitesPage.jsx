@@ -1,3 +1,8 @@
+/**
+ * @file TramitesPage.jsx
+ * @description Página pública de "Trámites y Servicios". Muestra las opciones y requisitos detallados para cada solicitud formal (con buscador dinámico), permite la descarga de solicitudes en PDF, provee una guía instructiva paso a paso para pagos mediante SINPE Móvil, desglosa los puntos de cobro autorizados (BN Servicios, Coocique, etc.), e integra accesos directos al portal externo de consulta de recibos.
+ */
+
 import { useEffect, useMemo, useState } from "react";
 import {
   hero,
@@ -9,7 +14,10 @@ import {
 } from "./TramitesData";
 import { getTramites } from "../../../services/tramiteService";
 
-/* ─── Fondo decorativo ───────────────────────── */
+/**
+ * Fondo decorativo animado con formas de gotas de agua.
+ * @component
+ */
 const WaterDropBg = () => (
   <svg
     className="absolute inset-0 h-full w-full pointer-events-none opacity-[0.05]"
@@ -22,7 +30,6 @@ const WaterDropBg = () => (
   </svg>
 );
 
-/* ─── Iconos ─────────────────────────────────── */
 const IconFile = () => (
   <svg
     viewBox="0 0 24 24"
@@ -153,6 +160,11 @@ const paymentIcons = [
   IconCard,
 ];
 
+/**
+ * Componente de página pública de "Trámites".
+ * Administra el catálogo de formularios descargables y métodos de pago oficiales.
+ * @component
+ */
 export default function TramitesPage() {
   const [tramites, setTramites] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -200,7 +212,7 @@ export default function TramitesPage() {
 
   return (
     <div className="bg-slate-50">
-      {/* HERO */}
+      {/* Hero */}
       <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-sky-950 to-slate-900">
         <WaterDropBg />
         {/* Glows */}
@@ -226,7 +238,7 @@ export default function TramitesPage() {
         </div>
       </section>
 
-      {/* TRÁMITES DINÁMICOS */}
+      {/* Trámites Dinámicos */}
       <section className="mx-auto max-w-7xl px-4 py-16">
         <div className="mb-8 text-center">
           <span className="section-badge bg-sky-50 text-sky-600">Catálogo</span>
@@ -341,7 +353,7 @@ export default function TramitesPage() {
         )}
       </section>
 
-      {/* NOTA LEGAL */}
+      {/* Nota Legal */}
       <section className="mx-auto max-w-5xl px-4 pb-8">
         <div className="rounded-xl border border-sky-200 bg-sky-50 p-5 text-sm leading-relaxed text-slate-700">
           <span className="font-semibold text-sky-700">
@@ -351,7 +363,7 @@ export default function TramitesPage() {
         </div>
       </section>
 
-      {/* FORMAS DE PAGO */}
+      {/* Formas de Pago */}
       <section className="mx-auto max-w-6xl px-4 py-16 text-center">
         <h2 className="mb-10 text-3xl font-bold text-slate-800">
           Formas de Pago
@@ -383,7 +395,7 @@ export default function TramitesPage() {
         </div>
       </section>
 
-      {/* SINPE MÓVIL */}
+      {/* Sinpe Móvil */}
       <section className="mx-auto max-w-6xl px-4 pb-16">
         <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm md:p-8">
           <div className="mb-8 text-center">
@@ -411,7 +423,7 @@ export default function TramitesPage() {
         </div>
       </section>
 
-      {/* CONSULTA DE RECIBOS */}
+      {/* Consulta de Recibos */}
       <section className="mx-auto max-w-6xl px-4 py-6">
         <div className="rounded-2xl border border-sky-100 bg-gradient-to-r from-sky-50/50 to-white p-5 sm:p-8 shadow-sm">
           <div className="flex flex-col gap-6 text-left md:flex-row md:items-center md:justify-between">
@@ -444,7 +456,7 @@ export default function TramitesPage() {
         </div>
       </section>
 
-      {/* AYUDA */}
+      {/* Ayuda */}
       <section className="mx-auto max-w-4xl px-4 pb-20 pt-16">
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-sky-500 to-sky-600 px-6 py-10 sm:p-10 text-center text-white shadow-xl shadow-sky-200">
           <WaterDropBg />
@@ -476,7 +488,7 @@ export default function TramitesPage() {
         </div>
       </section>
 
-      {/* RECORDATORIO */}
+      {/* Recordatorio */}
       <section className="mx-auto max-w-6xl px-4 pb-20">
         <div className="flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
           <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-sky-50 text-sky-600">

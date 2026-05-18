@@ -1,3 +1,8 @@
+/**
+ * @file AvisosPage.jsx
+ * @description Página pública de "Avisos Importantes". Carga los avisos del servidor, filtra por categorías (Urgentes, Información, Completados), incluye búsqueda dinámica, paginación, avisos fijados destacados, y un modal responsivo para ampliar imágenes adjuntas.
+ */
+
 import { useEffect, useMemo, useState } from "react";
 import {
   FiBell,
@@ -10,6 +15,10 @@ import {
   FiSearch,
 } from "react-icons/fi";
 
+/**
+ * Fondo decorativo animado con formas de gotas de agua.
+ * @component
+ */
 const WaterDropBg = () => (
   <svg
     className="absolute inset-0 h-full w-full opacity-[0.05]"
@@ -92,7 +101,7 @@ function AvisoCard({ aviso, destacado = false }) {
       >
         <div className="flex flex-col md:flex-row h-full">
 
-          {/* Imagen (Lado Izquierdo, pegada al borde) */}
+          {/* Imagen */}
           {aviso?.imagen && (
             <div className="w-full md:w-1/3 lg:w-[28%] xl:w-1/4 shrink-0">
               <button
@@ -116,7 +125,7 @@ function AvisoCard({ aviso, destacado = false }) {
             </div>
           )}
 
-          {/* Texto y Etiquetas (Lado Derecho, con padding) */}
+          {/* Texto y Etiquetas */}
           <div className="flex-1 flex flex-col justify-center p-6 sm:p-8 lg:p-10">
             <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
               {destacado && (
@@ -182,6 +191,11 @@ function AvisoCard({ aviso, destacado = false }) {
   );
 }
 
+/**
+ * Componente de página pública de "Avisos".
+ * Carga comunicados comunitarios, permitiendo su filtrado y paginación.
+ * @component
+ */
 export default function AvisosPage() {
   const [avisosData, setAvisosData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -324,7 +338,7 @@ export default function AvisosPage() {
       {!loading && !error && (
         <section className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8 lg:py-14">
           <div className="space-y-8">
-            {/* BUSCADOR DE AVISOS */}
+            {/* Buscador de avisos */}
             <div className="flex flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm md:flex-row md:items-center md:justify-between">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">Resultados</p>
@@ -357,7 +371,7 @@ export default function AvisosPage() {
               <div className="flex justify-center items-center mt-10">
                 <div className="flex items-center gap-1 rounded-2xl bg-white/80 backdrop-blur px-2 py-2 shadow-sm border border-slate-200">
 
-                  {/* anterior */}
+                  {/* Anterior */}
                   <button
                     onClick={() => setPaginaActual((p) => Math.max(p - 1, 1))}
                     disabled={paginaActual === 1}
@@ -366,7 +380,7 @@ export default function AvisosPage() {
                     ←
                   </button>
 
-                  {/* páginas */}
+                  {/* Páginas */}
                   {[...Array(totalPaginas)].map((_, i) => {
                     const page = i + 1;
                     const active = paginaActual === page;
@@ -386,7 +400,7 @@ export default function AvisosPage() {
                     );
                   })}
 
-                  {/* siguiente */}
+                  {/* Siguiente */}
                   <button
                     onClick={() => setPaginaActual((p) => Math.min(p + 1, totalPaginas))}
                     disabled={paginaActual === totalPaginas}

@@ -1,3 +1,8 @@
+/**
+ * @file HomePage.jsx
+ * @description Página principal (Landing Page) del portal público del acueducto ASADA Cedral y Dulce Nombre. Presenta un banner interactivo, un menú de accesos rápidos a módulos principales, un slider dinámico de avisos y novedades comunitarias fijadas, la reseña de la misión y valores organizacionales, y accesos rápidos de contacto rápido.
+ */
+
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -12,6 +17,11 @@ import { FiAlertCircle, FiInfo, FiCheckCircle, FiCalendar } from "react-icons/fi
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { quickAccess, missionCards } from "./HomeData";
 
+/**
+ * Retorna el elemento JSX del icono font-awesome correspondiente según el string provisto.
+ * @param {string} icon - Nombre clave del icono.
+ * @returns {JSX.Element|null} Componente de icono react-icons.
+ */
 function getIcon(icon) {
   switch (icon) {
     case "file":
@@ -60,14 +70,19 @@ function tipoConfig(tipo) {
   }
 }
 
+/**
+ * Componente de página principal (Landing Page).
+ * Despliega accesos directos, avisos destacados fijados y valores institucionales.
+ * @component
+ */
 export default function HomePage() {
   const navigate = useNavigate();
-  
+
   const scrollSlider = (direction) => {
     const slider = document.getElementById("notices-slider");
     if (!slider) return;
     const cardWidth = slider.firstElementChild?.offsetWidth || 0;
-    const gap = 24; // gap-6 is 24px
+    const gap = 24;
     const scrollAmount = cardWidth + gap;
     if (direction === "left") {
       slider.scrollBy({ left: -scrollAmount, behavior: "smooth" });
@@ -128,7 +143,7 @@ export default function HomePage() {
 
   return (
     <main className="overflow-x-hidden bg-white text-slate-900" style={{ fontFamily: "var(--font-body)" }}>
-      {/* HERO */}
+      {/* Hero */}
       <section
         className="relative min-h-[520px] bg-cover bg-center lg:min-h-[680px] overflow-hidden"
         style={{
@@ -136,7 +151,6 @@ export default function HomePage() {
             "url('https://images.unsplash.com/photo-1500375592092-40eb2168fd21?q=80&w=1600&auto=format&fit=crop')",
         }}
       >
-        {/* Overlay con gradiente direccional */}
         <div className="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-900/60 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent" />
 
@@ -173,7 +187,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* QUICK ACCESS */}
+      {/* Acceso Rápido */}
       <section className="relative z-10 -mt-12 px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <div className="grid grid-cols-2 gap-3.5 lg:grid-cols-4">
@@ -204,7 +218,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* AVISOS */}
+      {/* Avisos */}
       <section className="px-4 py-20 sm:px-6 lg:px-8">
         <style>{`
           .no-scrollbar::-webkit-scrollbar {
@@ -270,8 +284,8 @@ export default function HomePage() {
                 </button>
               )}
 
-              <div 
-                id="notices-slider" 
+              <div
+                id="notices-slider"
                 className="flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar pb-6"
               >
                 {notices.map((notice, index) => {
@@ -320,7 +334,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* MISIÓN */}
+      {/* Misión */}
       <section className="bg-slate-50 px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto grid max-w-7xl grid-cols-1 gap-14 lg:grid-cols-2 items-center">
           <div>
@@ -367,14 +381,12 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA */}
+      {/* Llamada a la acción */}
       <section className="px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-5xl">
           <div className="relative overflow-hidden rounded-3xl bg-slate-900 px-6 py-12 text-center text-white shadow-2xl sm:px-8 sm:py-16 lg:px-20">
-            {/* Glow blobs */}
             <div className="pointer-events-none absolute -top-20 -left-20 h-64 w-64 rounded-full bg-sky-500/20 blur-[80px]" />
             <div className="pointer-events-none absolute -bottom-20 -right-20 h-64 w-64 rounded-full bg-teal-500/20 blur-[80px]" />
-            {/* Dot pattern */}
             <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 0)", backgroundSize: "28px 28px" }} />
 
             <div className="relative z-10">

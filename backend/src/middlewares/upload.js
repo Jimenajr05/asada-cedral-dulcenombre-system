@@ -1,13 +1,22 @@
+/**
+ * @file upload.js
+ * @description Configuración de Multer para la carga de imágenes generales del sistema (perfiles y junta directiva).
+ */
+
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 
 const uploadPath = path.join(__dirname, "../../uploads/fotos");
 
+// Crea el directorio de almacenamiento si no existe
 if (!fs.existsSync(uploadPath)) {
   fs.mkdirSync(uploadPath, { recursive: true });
 }
 
+/**
+ * Almacenamiento en disco para imágenes subidas.
+ */
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, uploadPath);
@@ -18,6 +27,9 @@ const storage = multer.diskStorage({
   },
 });
 
+/**
+ * Filtro para validar que solo se permitan imágenes (JPG, JPEG, PNG, WEBP).
+ */
 const fileFilter = (req, file, cb) => {
   const extensionesValidas = [".jpg", ".jpeg", ".png", ".webp"];
   const extension = path.extname(file.originalname).toLowerCase();
@@ -38,6 +50,9 @@ const fileFilter = (req, file, cb) => {
   cb(new Error("Solo se permiten imágenes JPG, JPEG, PNG o WEBP"));
 };
 
+/**
+ * Instancia configurada de Multer con límite de 5MB por archivo.
+ */
 const upload = multer({
   storage,
   fileFilter,

@@ -1,7 +1,18 @@
+/**
+ * @file gestionAguaController.js
+ * @description Controlador para administrar la información técnica y de calidad de la gestión del agua.
+ */
+
 const fs = require("fs");
 const path = require("path");
 const GestionAgua = require("../models/gestionAgua");
 
+/**
+ * Crea el documento inicial de gestión del agua con datos semilla si no existe.
+ * @async
+ * @function crearDocumentoInicial
+ * @returns {Promise<Object>} El documento de gestión del agua de MongoDB.
+ */
 const crearDocumentoInicial = async () => {
   let documento = await GestionAgua.findOne();
 
@@ -143,6 +154,13 @@ const crearDocumentoInicial = async () => {
   return documento;
 };
 
+/**
+ * Obtiene los datos de la gestión de agua.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el documento de gestión del agua.
+ */
 const obtenerGestionAgua = async (req, res) => {
   try {
     const documento = await crearDocumentoInicial();
@@ -155,6 +173,13 @@ const obtenerGestionAgua = async (req, res) => {
   }
 };
 
+/**
+ * Actualiza los campos y sub-secciones de la gestión del agua.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express con los datos en req.body.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el documento actualizado.
+ */
 const actualizarGestionAgua = async (req, res) => {
   try {
     const documento = await crearDocumentoInicial();
@@ -199,6 +224,13 @@ const actualizarGestionAgua = async (req, res) => {
   }
 };
 
+/**
+ * Sube una nueva fotografía de análisis físico-químico o bacteriológico de agua.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express con el archivo adjunto req.file.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con la lista de fotos actualizada.
+ */
 const subirFotoAnalisis = async (req, res) => {
   try {
     const documento = await crearDocumentoInicial();
@@ -234,6 +266,13 @@ const subirFotoAnalisis = async (req, res) => {
   }
 };
 
+/**
+ * Elimina una fotografía específica de análisis de calidad del agua y su archivo físico asociado.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express con el parámetro fotoId.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con la lista de fotos actualizada.
+ */
 const eliminarFotoAnalisis = async (req, res) => {
   try {
     const documento = await crearDocumentoInicial();

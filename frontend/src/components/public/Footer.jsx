@@ -1,5 +1,14 @@
+/**
+ * @file Footer.jsx
+ * @description Pie de página (Footer) para la sección pública del sitio web, incluyendo información de contacto, enlaces rápidos y copyright.
+ */
+
 import { Link } from "react-router-dom";
 
+/**
+ * Footer - Pie de página del portal público.
+ * @component
+ */
 export default function Footer() {
   const year = new Date().getFullYear();
 
@@ -48,7 +57,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Navegación (Columnas 3 y 4 combinadas en un grid interno) */}
+          {/* Columnas 3 y 4: Navegación */}
           <div className="col-span-2 lg:col-span-2">
             <h4 className="text-sm font-semibold uppercase tracking-widest text-slate-400 mb-4 sm:mb-5">Navegación</h4>
             <div className="grid grid-cols-2 gap-x-4 gap-y-2.5 text-sm">

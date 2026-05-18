@@ -1,3 +1,8 @@
+/**
+ * @file AdminAvisos.jsx
+ * @description Página de administración para crear, editar, fijar (destacar) y eliminar avisos comunitarios con soporte para imágenes y alerta de cambios sin guardar al navegar.
+ */
+
 import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -11,7 +16,12 @@ import {
   getAvisos, createAviso, updateAviso, deleteAviso,
 } from "../../services/avisoService";
 
-// ── Toast ──────────────────────────────────────────────────────
+/**
+ * Componente Toast para notificaciones emergentes de éxito, error o confirmación.
+ * @component
+ * @param {Object} props
+ * @param {Array} props.toasts - Listado de notificaciones activas.
+ */
 function Toast({ toasts }) {
   return (
     <div className="fixed top-6 right-6 z-50 flex flex-col gap-3" style={{ minWidth: 300, maxWidth: 400 }}>
@@ -102,7 +112,7 @@ function AdminAvisos() {
     estado: "publicado",
     fijado: false,
     fecha: new Date(),
-    imagen: null, // base64 image data (optional)
+    imagen: null,
   });
 
   const addToast = (type, message, extra = {}) => {
@@ -248,7 +258,7 @@ function AdminAvisos() {
         tipo: form.tipo,
         estado: form.estado,
         fijado: modoEdicion ? form.fijado : false,
-        imagen: form.imagen, // optional base64 image
+        imagen: form.imagen,
         fecha: form.fecha,
       };
       if (modoEdicion && avisoEditandoId) {
@@ -339,7 +349,7 @@ function AdminAvisos() {
     <div className="space-y-8">
       <Toast toasts={toasts} />
 
-      {/* ENCABEZADO */}
+      {/* Encabezado */}
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 sm:text-4xl md:text-5xl">Gestión de Avisos</h1>
@@ -351,7 +361,7 @@ function AdminAvisos() {
         </button>
       </div>
 
-      {/* FORMULARIO */}
+      {/* Formulario */}
       {showForm && (
         <div className="mb-6 rounded-2xl border border-slate-200 bg-white p-6">
           <h2 className="mb-6 text-3xl font-bold text-black">{modoEdicion ? "Editar Aviso" : "Nuevo Aviso"}</h2>
@@ -435,7 +445,7 @@ function AdminAvisos() {
         </div>
       )}
 
-      {/* BUSCADOR DE AVISOS */}
+      {/* Buscador de avisos */}
       {!showForm && (
         <div className="mb-6 flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm md:flex-row md:items-center md:justify-between">
           <div>
@@ -463,7 +473,7 @@ function AdminAvisos() {
         </div>
       )}
 
-      {/* TABLA */}
+      {/* Tabla */}
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
         <div className="hidden md:grid md:grid-cols-[1fr_auto_auto_auto_auto] border-b border-slate-200 px-6 py-4 text-xs font-semibold uppercase tracking-wide text-slate-500 gap-4">
           <div>Aviso</div>
@@ -485,7 +495,7 @@ function AdminAvisos() {
               <div className="flex items-start gap-3 min-w-0">
                 <Pin className={`mt-1 h-4 w-4 shrink-0 ${aviso.fijado ? "text-blue-600" : "text-slate-300"}`} />
                 {aviso.imagen && (
-                  <button 
+                  <button
                     type="button"
                     onClick={() => setImagenModal(aviso.imagen)}
                     className="h-16 w-24 shrink-0 overflow-hidden rounded-lg border border-slate-200 shadow-sm relative group focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
@@ -584,14 +594,14 @@ function AdminAvisos() {
         </div>
       )}
 
-      {/* MODAL DE IMAGEN */}
+      {/* Modal de imagen */}
       {imagenModal && (
-        <div 
+        <div
           className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/80 p-4 backdrop-blur-sm transition-opacity"
           onClick={() => setImagenModal(null)}
         >
           <div className="relative max-h-[90vh] max-w-5xl w-full flex flex-col items-center">
-            <button 
+            <button
               type="button"
               className="absolute -top-12 right-0 text-white hover:text-blue-300 p-2 flex items-center gap-2 transition-colors focus:outline-none"
               onClick={() => setImagenModal(null)}

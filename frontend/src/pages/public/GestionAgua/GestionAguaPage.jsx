@@ -1,3 +1,8 @@
+/**
+ * @file GestionAguaPage.jsx
+ * @description Página pública de "Gestión del Agua". Carga y despliega los parámetros de calidad del agua física-química (cloro residual, turbidez, etc.) con sus porcentajes y rangos oficiales, bitácoras de aforos de nacientes por gravedad, bloques de infraestructura de distribución, la galería interactiva de análisis químicos oficiales acreditados por el AyA, y consejos interactivos para la preservación hídrica.
+ */
+
 import { useEffect, useState } from "react";
 import {
   obtenerGestionAgua,
@@ -5,6 +10,10 @@ import {
 } from "../../../services/gestionAguaService";
 import { FiZoomIn, FiX } from "react-icons/fi";
 
+/**
+ * Icono de gota de agua.
+ * @component
+ */
 const IconDrop = () => (
   <svg
     viewBox="0 0 24 24"
@@ -233,10 +242,8 @@ function AnalisisAguaCard({ data }) {
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
 
-            {/* Overlay de gradiente */}
             <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-slate-900/10 to-transparent pointer-events-none" />
 
-            {/* Overlay de lupa */}
             <button
               type="button"
               onClick={() => setModalOpen(true)}
@@ -307,6 +314,11 @@ function AnalisisAguaCard({ data }) {
   );
 }
 
+/**
+ * Componente de página pública de "Gestión del Agua".
+ * Administra la obtención de reportes de calidad, aforos e infraestructura.
+ * @component
+ */
 export default function GestionAguaPage() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -348,7 +360,7 @@ export default function GestionAguaPage() {
 
   return (
     <div className="bg-slate-50">
-      {/* HERO */}
+      {/* Hero */}
       <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-sky-950 to-slate-900">
         <WaterDropBg />
         <div className="pointer-events-none absolute -top-32 left-1/4 h-96 w-96 rounded-full bg-sky-500/15 blur-[100px]" />
@@ -373,7 +385,7 @@ export default function GestionAguaPage() {
         </div>
       </section>
 
-      {/* PROCESO */}
+      {/* Proceso */}
       <section className="max-w-7xl mx-auto px-4 py-16">
         <div className="text-center mb-10">
           <SectionLabel>Proceso</SectionLabel>
@@ -404,7 +416,7 @@ export default function GestionAguaPage() {
         </div>
       </section>
 
-      {/* CALIDAD */}
+      {/* Calidad */}
       <section className="bg-white py-16">
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 px-4">
           <div>
@@ -463,7 +475,7 @@ export default function GestionAguaPage() {
         </div>
       </section>
 
-      {/* ANALISIS */}
+      {/* Análisis */}
       <section className="max-w-7xl mx-auto px-4 py-16">
         <div className="text-center mb-10">
           <SectionLabel>Análisis</SectionLabel>
@@ -475,7 +487,7 @@ export default function GestionAguaPage() {
         <AnalisisAguaCard data={data.analisisCalidadAgua} />
       </section>
 
-      {/* AFOROS */}
+      {/* Aforos */}
       <section className="bg-white py-16">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-10">
@@ -545,7 +557,7 @@ export default function GestionAguaPage() {
         </div>
       </section>
 
-      {/* INFRAESTRUCTURA */}
+      {/* Infraestructura */}
       <section className="max-w-7xl mx-auto px-4 py-16">
         <div className="text-center mb-10">
           <SectionLabel>Infraestructura</SectionLabel>
@@ -586,7 +598,7 @@ export default function GestionAguaPage() {
               </svg>
             </button>
 
-            {/* CONTENEDOR SCROLL */}
+            {/* Contenedor */}
             <div
               id="scrollInfraestructura"
               className="flex gap-5 overflow-x-auto pb-4 scroll-smooth snap-x snap-mandatory scrollbar-hide"
@@ -659,9 +671,8 @@ export default function GestionAguaPage() {
         )}
       </section>
 
-      {/* AHORRO */}
+      {/* Ahorro */}
       <section className="bg-slate-100 py-20 relative overflow-hidden">
-        {/* Soft background glow circles */}
         <div className="pointer-events-none absolute top-10 left-10 h-72 w-72 rounded-full bg-blue-400/5 blur-[80px]" />
         <div className="pointer-events-none absolute bottom-10 right-10 h-72 w-72 rounded-full bg-teal-400/5 blur-[80px]" />
 
@@ -677,7 +688,7 @@ export default function GestionAguaPage() {
           </div>
 
           <div className="grid md:grid-cols-2 gap-8 lg:gap-10">
-            {/* EN EL HOGAR */}
+            {/* En el hogar */}
             <div className="group bg-white/95 backdrop-blur-md rounded-3xl p-4 sm:p-8 shadow-sm hover:shadow-[0_20px_50px_-20px_rgba(59,130,246,0.12)] transition-all duration-500 hover:-translate-y-1.5 border border-slate-200/80 relative overflow-hidden">
               <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-sky-400 to-blue-500" />
 
@@ -707,7 +718,7 @@ export default function GestionAguaPage() {
               </ul>
             </div>
 
-            {/* EN EL JARDÍN */}
+            {/* En el Jardín */}
             <div className="group bg-white/95 backdrop-blur-md rounded-3xl p-4 sm:p-8 shadow-sm hover:shadow-[0_20px_50px_-20px_rgba(16,185,129,0.12)] transition-all duration-500 hover:-translate-y-1.5 border border-slate-200/80 relative overflow-hidden">
               <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-emerald-400 to-teal-500" />
 

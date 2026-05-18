@@ -1,15 +1,29 @@
+/**
+ * @file transparenciaController.js
+ * @description Controlador para gestionar la sección de transparencia institucional (reuniones de junta/asamblea, certificados, galardones y estados financieros).
+ */
+
 const Transparencia = require("../models/transparencia");
 
-// Obtiene (o crea) el documento único de transparencia
+/**
+ * Obtiene el documento único de transparencia o lo crea si no existe.
+ * @async
+ * @function getDocumento
+ * @returns {Promise<Object>} El documento de transparencia.
+ */
 const getDocumento = async () => {
   let doc = await Transparencia.findOne();
   if (!doc) doc = await Transparencia.create({ reuniones: [], certificados: [] });
   return doc;
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
-// GET /api/transparencia  — público
-// ─────────────────────────────────────────────────────────────────────────────
+/**
+ * Obtiene la información completa de la sección de transparencia.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el documento de transparencia.
+ */
 const getTransparencia = async (req, res) => {
   try {
     const doc = await getDocumento();
@@ -19,11 +33,13 @@ const getTransparencia = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
-// REUNIONES
-// ─────────────────────────────────────────────────────────────────────────────
-
-// POST /api/transparencia/reuniones
+/**
+ * Agrega una nueva sesión o reunión de junta directiva / asamblea general.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express con descripcion, fecha y tipo.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el documento actualizado.
+ */
 const addReunion = async (req, res) => {
   try {
     const { descripcion, fecha, tipo } = req.body;
@@ -42,7 +58,13 @@ const addReunion = async (req, res) => {
   }
 };
 
-// PUT /api/transparencia/reuniones/:id
+/**
+ * Actualiza los datos de una reunión específica por su ID.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express con parámetro id y campos opcionales en req.body.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el documento actualizado.
+ */
 const updateReunion = async (req, res) => {
   try {
     const doc = await getDocumento();
@@ -51,8 +73,8 @@ const updateReunion = async (req, res) => {
     if (!reunion) return res.status(404).json({ message: "Reunión no encontrada" });
 
     reunion.descripcion = req.body.descripcion ?? reunion.descripcion;
-    reunion.fecha       = req.body.fecha       ?? reunion.fecha;
-    reunion.tipo        = req.body.tipo        ?? reunion.tipo;
+    reunion.fecha = req.body.fecha ?? reunion.fecha;
+    reunion.tipo = req.body.tipo ?? reunion.tipo;
 
     await doc.save();
     return res.status(200).json({ message: "Reunión actualizada correctamente", transparencia: doc });
@@ -61,7 +83,13 @@ const updateReunion = async (req, res) => {
   }
 };
 
-// DELETE /api/transparencia/reuniones/:id
+/**
+ * Elimina una reunión específica de la lista por su ID.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express con parámetro id.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el documento actualizado.
+ */
 const deleteReunion = async (req, res) => {
   try {
     const doc = await getDocumento();
@@ -78,11 +106,13 @@ const deleteReunion = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
-// CERTIFICADOS
-// ─────────────────────────────────────────────────────────────────────────────
-
-// POST /api/transparencia/certificados  — requiere archivo (multer)
+/**
+ * Agrega un nuevo certificado de calidad, galardón o atestado con su imagen correspondiente.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express con titulo en req.body y req.file.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el documento actualizado.
+ */
 const addCertificado = async (req, res) => {
   try {
     const { titulo } = req.body;
@@ -103,7 +133,13 @@ const addCertificado = async (req, res) => {
   }
 };
 
-// DELETE /api/transparencia/certificados/:id
+/**
+ * Elimina un certificado existente por su ID.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express con parámetro id.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el documento actualizado.
+ */
 const deleteCertificado = async (req, res) => {
   try {
     const doc = await getDocumento();
@@ -120,7 +156,13 @@ const deleteCertificado = async (req, res) => {
   }
 };
 
-// PUT /api/transparencia/certificados/:id
+/**
+ * Actualiza el título o reemplaza la foto de un certificado existente por su ID.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición con parámetro id, titulo en req.body y req.file opcional.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el documento de transparencia actualizado.
+ */
 const updateCertificado = async (req, res) => {
   try {
     const { titulo } = req.body;

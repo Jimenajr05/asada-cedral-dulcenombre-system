@@ -1,5 +1,17 @@
-const Link = require("../models/link"); // ← era "../models/link.model" (incorrecto)
+/**
+ * @file linkController.js
+ * @description Controlador para administrar enlaces de interés institucional y accesos directos.
+ */
 
+const Link = require("../models/link");
+
+/**
+ * Obtiene todos los enlaces activos.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el listado de enlaces activos.
+ */
 const getLinks = async (req, res) => {
   try {
     const links = await Link.find({ estado: true });
@@ -9,6 +21,13 @@ const getLinks = async (req, res) => {
   }
 };
 
+/**
+ * Crea un nuevo enlace de interés.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express con url y label.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el enlace creado.
+ */
 const createLink = async (req, res) => {
   try {
     const nuevo = new Link(req.body);
@@ -19,6 +38,13 @@ const createLink = async (req, res) => {
   }
 };
 
+/**
+ * Actualiza la información de un enlace existente por su ID.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express con el parámetro id y cuerpo.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON con el enlace actualizado.
+ */
 const updateLink = async (req, res) => {
   try {
     const { url, label } = req.body;
@@ -43,6 +69,13 @@ const updateLink = async (req, res) => {
   }
 };
 
+/**
+ * Elimina un enlace por su ID.
+ * @async
+ * @param {import('express').Request} req - Objeto de petición de Express con parámetro id.
+ * @param {import('express').Response} res - Objeto de respuesta de Express.
+ * @returns {Promise<import('express').Response>} Respuesta JSON indicando el éxito del borrado.
+ */
 const deleteLink = async (req, res) => {
   try {
     const eliminado = await Link.findByIdAndDelete(req.params.id);
