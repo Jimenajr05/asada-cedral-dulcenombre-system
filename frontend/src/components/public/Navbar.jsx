@@ -1,15 +1,8 @@
-/**
- * @file Navbar.jsx
- * @description Barra de navegación superior (Header) para el portal público de la ASADA, con soporte responsivo y efecto glassmorphism al hacer scroll.
- */
-
 import { NavLink } from "react-router-dom";
 import { useState, useEffect } from "react";
 import logo from "../../assets/logo.png";
+import logoTexto from "../../assets/logo-texto.png";
 
-/**
- * Enlaces de navegación rápida en el portal público.
- */
 const links = [
   { to: "/", label: "Inicio" },
   { to: "/sobre-nosotros", label: "Sobre Nosotros" },
@@ -22,10 +15,6 @@ const links = [
   { to: "/contacto", label: "Contacto" },
 ];
 
-/**
- * Navbar - Cabecera principal pública con soporte móvil interactivo.
- * @component
- */
 export default function Navbar() {
   const [menuAbierto, setMenuAbierto] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -47,11 +36,16 @@ export default function Navbar() {
       <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
 
         {/* Logo */}
-        <NavLink to="/" className="shrink-0 flex items-center gap-3">
+        <NavLink to="/" className="shrink-0 flex items-center gap-2">
           <img
             src={logo}
             alt="ASADA Cedral y Dulce Nombre"
             className="h-12 w-auto object-contain"
+          />
+          <img
+            src={logoTexto}
+            alt="ASADA"
+            className="h-9 w-auto object-contain"
           />
         </NavLink>
 

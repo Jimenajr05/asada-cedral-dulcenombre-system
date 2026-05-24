@@ -1,40 +1,25 @@
-/**
- * @file AdminNavbar.jsx
- * @description Barra de navegación superior para el panel de administración, que muestra el logotipo de la ASADA, detalles del usuario y el botón de salida.
- */
-
-import { LogOut, Menu } from "lucide-react";
+import { LogOut } from "lucide-react";
 import logo from "../../assets/logo.png";
+import logoTexto from "../../assets/logo-texto.png";
 
-/**
- * AdminNavbar - Encabezado superior administrativo.
- * @component
- * @param {Object} props
- * @param {Object} props.user - Objeto del usuario autenticado (nombre, email).
- * @param {function} props.onLogout - Callback para ejecutar el cierre de sesión.
- * @param {function} props.onToggleSidebar - Callback para alternar la barra lateral en pantallas pequeñas.
- */
-function AdminNavbar({ user, onLogout, onToggleSidebar }) {
+function AdminNavbar({ user, onLogout }) {
   return (
-    <header className="sticky top-0 z-50 h-[68px] bg-white border-b border-slate-200 px-4 sm:px-6 flex items-center justify-between shadow-sm">
-      <div className="flex items-center gap-2 sm:gap-3">
-        <button
-          onClick={onToggleSidebar}
-          className="lg:hidden flex h-10 w-10 items-center justify-center rounded-xl text-slate-600 hover:bg-slate-100 transition-colors"
-          aria-label="Abrir menú"
-        >
-          <Menu className="h-5 w-5" />
-        </button>
-
+    <header className="sticky top-0 z-50 h-[68px] bg-white border-b border-slate-200 px-6 flex items-center justify-between shadow-sm">
+      <div className="flex items-center gap-3">
         <img
           src={logo}
+          alt="ASADA"
+          className="h-10 w-auto object-contain"
+        />
+        <img
+          src={logoTexto}
           alt="ASADA"
           className="h-10 w-auto object-contain"
         />
 
         <div className="hidden sm:block">
           <p className="text-xs font-semibold uppercase tracking-widest text-sky-600">
-             Panel Administrativo
+            Panel Administrativo
           </p>
           <p className="text-xs text-slate-400">
             ASADA Cedral y Dulce Nombre
