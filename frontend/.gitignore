@@ -1,4 +1,4 @@
-# Logs
+# Historiales y logs de error
 logs
 *.log
 npm-debug.log*
@@ -7,12 +7,21 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Directorio de dependencias del proyecto
 node_modules
+
+# Variables de entorno con credenciales sensibles (nunca subir al repositorio)
+.env
+.env.local
+.env.production
+# .env.example sí se sube (no contiene secretos reales)
+
+# Entregables de compilación de producción (dist)
 dist
 dist-ssr
 *.local
 
-# Editor directories and files
+# Configuración de editores y sistemas operativos (VS Code, JetBrains, macOS)
 .vscode/*
 !.vscode/extensions.json
 .idea

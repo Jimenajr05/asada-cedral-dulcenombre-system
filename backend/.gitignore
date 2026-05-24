@@ -1,5 +1,8 @@
-# Dependencias
+# Dependencias instaladas de Node.js
 node_modules/
 
-# Variables de entorno
+# Archivo de entorno local con credenciales sensibles (llaves JWT, URL de DB, claves de registro)
 .env
+
+# Carpeta dinámica de cargas de archivos y fotos (uploads)
+uploads/

@@ -1,0 +1,39 @@
+services:
+  # ----------------------------------------
+  # 1. SERVIDOR BACKEND (API)
+  # ----------------------------------------
+  - type: web
+    name: asada-backend
+    env: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGO_URI
+        sync: false # Deberás llenarlo manualmente en el panel de Render
+      - key: JWT_SECRET
+        sync: false # Deberás llenarlo manualmente en el panel de Render
+      - key: FRONTEND_URL
+        value: https://asadacedraldulcenombre.com
+
+  # ----------------------------------------
+  # 2. APLICACIÓN FRONTEND (Static Site)
+  # ----------------------------------------
+  - type: web
+    name: asada-frontend
+    env: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    # Esta regla asegura que las rutas de React (React Router) funcionen correctamente al recargar la página
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        value: https://asada-backend.onrender.com 

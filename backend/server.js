@@ -1,12 +1,33 @@
-require('dotenv').config();
+/**
+ * @file server.js
+ * @description Punto de entrada principal (entrypoint) del servidor backend. Conecta a la base de datos e inicia la escucha HTTP.
+ */
 
-const app = require('./src/app');
-const conectDB = require('./src/config/db');
+require("dotenv").config();
 
-conectDB();
+const app = require("./src/app");
+const connectDB = require("./src/config/db");
 
 const PORT = process.env.PORT || 4000;
 
-app.listen(PORT, () => {
-    console.log(`Servidor escuchando en el puerto ${PORT}`);
-});
+/**
+ * Conecta la base de datos e inicia la escucha de peticiones HTTP en el puerto configurado.
+ * @async
+ * @function startServer
+ * @returns {Promise<void>}
+ */
+const startServer = async () => {
+  try {
+    await connectDB();
+
+    app.listen(PORT, () => {
+      console.log(`Servidor corriendo en http://localhost:${PORT}`);
+    });
+
+  } catch (error) {
+    console.error("Error al iniciar el servidor:", error.message);
+    process.exit(1);
+  }
+};
+
+startServer();
