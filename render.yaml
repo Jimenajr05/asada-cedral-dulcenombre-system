@@ -29,9 +29,6 @@ services:
     rootDir: frontend
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
-    customDomains:
-      - asadacedraldulcenombre.com
-      - www.asadacedraldulcenombre.com
     # Esta regla asegura que las rutas de React (React Router) funcionen correctamente al recargar la página
     routes:
       - type: rewrite
