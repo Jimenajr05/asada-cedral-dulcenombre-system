@@ -71,7 +71,6 @@ export default function Footer() {
                 { to: "/sostenibilidad", label: "Sostenibilidad" },
                 { to: "/contacto", label: "Contacto" },
                 { to: "/tramites", label: "Trámites" },
-                { to: "/admin/login", label: "Panel Administrativo" },
               ].map(({ to, label }) => (
                 <Link key={to} to={to} className="flex items-center gap-2 text-slate-400 transition-colors duration-200 hover:text-sky-400 group">
                   <span className="h-1 w-1 rounded-full bg-slate-600 transition-colors group-hover:bg-sky-400" />
