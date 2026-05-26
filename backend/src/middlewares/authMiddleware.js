@@ -1,19 +1,6 @@
-/**
- * @file authMiddleware.js
- * @description Middleware para verificar el token de sesión JWT del usuario y adjuntar su información a la petición.
- */
-
 const jwt = require("jsonwebtoken");
-const User = require("../models/user");
+const User = require("../models/user"); 
 
-/**
- * Valida la autenticación del usuario a través de cookies o la cabecera Authorization (Bearer Token).
- * @async
- * @param {import('express').Request} req - Objeto de petición de Express.
- * @param {import('express').Response} res - Objeto de respuesta de Express.
- * @param {import('express').NextFunction} next - Función para continuar con el siguiente middleware/controlador.
- * @returns {Promise<import('express').Response|void>} Continúa al siguiente middleware si es válido, o responde con error 401.
- */
 const authMiddleware = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
@@ -24,27 +11,21 @@ const authMiddleware = async (req, res, next) => {
         : null);
 
     if (!token) {
-      return res.status(401).json({
-        message: "Token no proporcionado",
-      });
+      return res.status(401).json({ message: "No autorizado: Token no proporcionado" });
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    const user = await User.findById(decoded.id);
+    const user = await User.findById(decoded.id).select("-password");
 
     if (!user) {
-      return res.status(401).json({
-        message: "Usuario no válido",
-      });
+      return res.status(401).json({ message: "No autorizado: Usuario no válido" });
     }
 
+    // Como todos son admin, no verificamos el rol. Solo asignamos el usuario a la request.
     req.user = user;
     next();
   } catch (error) {
-    return res.status(401).json({
-      message: "Token inválido o expirado",
-    });
+    return res.status(401).json({ message: "No autorizado: Token inválido o expirado" });
   }
 };
 
