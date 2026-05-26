@@ -1,11 +1,10 @@
 /**
  * @file authRoutes.js
- * @description Rutas de la API para la autenticación, inicio y cierre de sesión de usuarios administradores.
+ * @description Rutas de la API para la autenticación (login, logout, perfil).
  */
 
 const express = require("express");
 const rateLimit = require("express-rate-limit");
-const registerController = require("../controllers/registerController");
 const loginController = require("../controllers/loginController");
 const authMiddleware = require("../middlewares/authMiddleware");
 
@@ -15,15 +14,12 @@ const router = express.Router();
  * Limitador de solicitudes para mitigar ataques de fuerza bruta en el inicio de sesión.
  */
 const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 10,
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: 10, // 10 solicitudes por IP
   message: { message: "Demasiados intentos de inicio de sesión. Intenta de nuevo en 15 minutos." },
   standardHeaders: true,
   legacyHeaders: false,
 });
-
-// Registrar nuevo administrador
-router.post("/register", registerController);
 
 // Iniciar sesión con límite de reintentos
 router.post("/login", loginLimiter, loginController);

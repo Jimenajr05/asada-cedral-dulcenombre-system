@@ -64,9 +64,9 @@ function App() {
 
         {/* Auth admin */}
         <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/admin/register" element={<AdminRegister />} />
 
         {/* Admin protegido */}
+        <Route path="/admin/register" element={<ProtectedRoute><AdminLayout><AdminRegister /></AdminLayout></ProtectedRoute>} />
         <Route path="/admin/panel" element={<ProtectedRoute><AdminLayout><AdminPanel /></AdminLayout></ProtectedRoute>} />
         <Route path="/admin/avisos" element={<ProtectedRoute><AdminLayout><AdminAvisos /></AdminLayout></ProtectedRoute>} />
         <Route path="/admin/sobre-nosotros" element={<ProtectedRoute><AdminLayout><AdminSobreNosotros /></AdminLayout></ProtectedRoute>} />

@@ -11,6 +11,7 @@ const cookieParser = require("cookie-parser");
 
 // Importación de enrutadores
 const authRoutes = require("./routes/authRoutes");
+const userRoutes = require("./routes/userRoutes");
 const avisoRoutes = require("./routes/avisoRoutes");
 const sobreNosotrosRoutes = require("./routes/sobreNosotrosRoutes");
 const tramiteRoutes = require("./routes/tramiteRoutes");
@@ -54,6 +55,7 @@ app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 // Definición de endpoints API
 app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
 app.use("/api/avisos", avisoRoutes);
 app.use("/api/sobre-nosotros", sobreNosotrosRoutes);
 app.use("/api/tramites", tramiteRoutes);

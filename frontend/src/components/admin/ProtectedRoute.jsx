@@ -27,7 +27,7 @@ function ProtectedRoute({ children }) {
         const data = await getProfile();
         if (!cancelled) {
           localStorage.setItem("user", JSON.stringify(data.user));
-          setStatus(data.user?.role === "admin" ? "ok" : "unauthorized");
+          setStatus((data.user?.role === "admin" || data.user?.role === "superadmin") ? "ok" : "unauthorized");
         }
       } catch {
         if (!cancelled) {

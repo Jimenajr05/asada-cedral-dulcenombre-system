@@ -19,11 +19,22 @@ const LOCK_TIME_MS = 15 * 60 * 1000;
  */
 const loginController = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    let { email, password, loginKey } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({
         message: "Email y contraseña son obligatorios",
+      });
+    }
+
+    email = email.trim().toLowerCase();
+    if (loginKey) loginKey = loginKey.trim();
+
+    // Validar clave de seguridad extra si está configurada en .env
+    const ADMIN_LOGIN_KEY = process.env.ADMIN_LOGIN_KEY || process.env.ADMIN_REGISTER_KEY;
+    if (ADMIN_LOGIN_KEY && loginKey !== ADMIN_LOGIN_KEY) {
+      return res.status(401).json({
+        message: "Clave de seguridad del sistema inválida",
       });
     }
 
@@ -35,6 +46,11 @@ const loginController = async (req, res) => {
       return res.status(401).json({
         message: "Credenciales inválidas",
       });
+    }
+
+    // Validar verificación de cuenta (NUEVO)
+    if (!user.isVerified) {
+      return res.status(403).json({ message: "Debes verificar tu cuenta antes de iniciar sesión. Revisa tu correo." });
     }
 
     if (user.lockUntil && user.lockUntil > Date.now()) {
@@ -94,6 +110,7 @@ const loginController = async (req, res) => {
       },
     });
   } catch (error) {
+    console.error("Error en loginController:", error);
     return res.status(500).json({
       message: "Error al iniciar sesión",
       error: error.message,
