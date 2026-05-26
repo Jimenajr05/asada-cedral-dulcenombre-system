@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["admin"],
+      enum: ["admin", "superadmin"],
       default: "admin",
     },
     failedLoginAttempts: {
@@ -45,6 +45,18 @@ const userSchema = new mongoose.Schema(
       default: 0,
     },
     lockUntil: {
+      type: Date,
+      default: null,
+    },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    verificationToken: {
+      type: String,
+      default: null,
+    },
+    verificationTokenExpires: {
       type: Date,
       default: null,
     },
