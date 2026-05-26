@@ -6,6 +6,7 @@ exports.sendVerificationEmail = async (email, token) => {
     // Esto evita problemas si dotenv se inicializa después de importar este archivo
     const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
     const EMAIL_FROM = process.env.EMAIL_FROM;
+    const BACKEND_URL = process.env.BACKEND_URL;
 
     console.log("🛠️ [emailService] Iniciando envío de correo de verificación...");
     console.log("   → Destinatario (to):", email);
@@ -24,7 +25,7 @@ exports.sendVerificationEmail = async (email, token) => {
     sgMail.setApiKey(SENDGRID_API_KEY);
 
     // 4. Preparar el mensaje
-    const verifyUrl = `${process.env.BACKEND_URL || "http://localhost:4000"}/api/users/verify/${token}`;
+    const verifyUrl = `${BACKEND_URL}/api/users/verify/${token}`;
 
     const msg = {
       to: email,
