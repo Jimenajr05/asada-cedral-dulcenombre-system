@@ -3,7 +3,7 @@
  * @description Servicios de cliente API para el CRUD de boletines y avisos de la comunidad.
  */
 
-const API_URL = `${import.meta.env.VITE_API_URL || "http://localhost:4000"}/api/avisos`;
+const API_URL = `${import.meta.env.VITE_API_URL || "https://asada-backend.onrender.com"}/api/avisos`;
 
 const getToken = () => localStorage.getItem("token");
 

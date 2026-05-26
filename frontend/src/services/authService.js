@@ -3,7 +3,7 @@
  * @description Servicios de cliente API para gestionar la autenticación de administradores, comunicación con backend y cookies de sesión.
  */
 
-const API_URL = `${import.meta.env.VITE_API_URL || "http://localhost:4000"}/api/auth`;
+const API_URL = `${import.meta.env.VITE_API_URL || "https://asada-backend.onrender.com"}/api/auth`;
 
 /**
  * Registra un nuevo usuario administrador.
@@ -89,7 +89,14 @@ export const logoutAdmin = async () => {
  * @throws {Error}
  */
 export const getProfile = async () => {
+  const token = localStorage.getItem("token");
+  const headers = {};
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
   const response = await fetch(`${API_URL}/profile`, {
+    headers,
     credentials: "include",
   });
 

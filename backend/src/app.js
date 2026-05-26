@@ -27,8 +27,22 @@ const app = express();
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" },
 }));
+const allowedOrigins = [
+  process.env.CORS_ORIGIN,
+  process.env.FRONTEND_URL,
+  "https://asadacedraldulcenombre.com",
+  "https://asada-cedral-dulcenombre-system.onrender.com",
+  "http://localhost:5173"
+].filter(Boolean);
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || "http://localhost:5173",
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
 }));
 app.use(cookieParser());
@@ -49,6 +63,11 @@ app.use("/api/gestion-agua", gestionAguaRoutes);
 app.use("/api/sostenibilidad", sostenibilidadRoutes);
 app.use("/api/proyectos", proyectoRoutes);
 app.use("/api/tareas", tareaRoutes);
+
+// Middleware para rutas no encontradas (404)
+app.use((req, res, next) => {
+  res.status(404).json({ message: `Ruta no encontrada: ${req.method} ${req.originalUrl}` });
+});
 
 // Middleware de manejo de errores global
 app.use((err, req, res, next) => {

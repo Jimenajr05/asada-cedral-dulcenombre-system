@@ -30,10 +30,11 @@ router.post("/login", loginLimiter, loginController);
 
 // Cerrar sesión y limpiar cookies del navegador
 router.post("/logout", (req, res) => {
+  const isProduction = process.env.NODE_ENV === "production";
   res.clearCookie("token", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
   });
   return res.status(200).json({ message: "Sesión cerrada exitosamente" });
 });

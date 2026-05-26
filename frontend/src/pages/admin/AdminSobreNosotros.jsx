@@ -11,7 +11,7 @@ import {
   deleteMiembro, addCobertura, updateCobertura, deleteCobertura,
 } from "../../services/sobreNosotrosService";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "https://asada-backend.onrender.com";
 
 function Toast({ toasts, removeToast }) {
   return (
