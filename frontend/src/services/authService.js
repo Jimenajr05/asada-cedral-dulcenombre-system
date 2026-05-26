@@ -14,11 +14,18 @@ const API_URL = `${import.meta.env.VITE_API_URL || "https://asada-backend.onrend
  * @throws {Error} Mensaje de error de validación o fallo de servidor.
  */
 export const registerAdmin = async (formData) => {
-  const response = await fetch(`${API_URL}/register`, {
+  const token = localStorage.getItem("token");
+  const headers = {
+    "Content-Type": "application/json",
+  };
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  const USERS_API_URL = `${import.meta.env.VITE_API_URL || "https://asada-backend.onrender.com"}/api/users`;
+  const response = await fetch(`${USERS_API_URL}/register`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers,
     credentials: "include",
     body: JSON.stringify(formData),
   });

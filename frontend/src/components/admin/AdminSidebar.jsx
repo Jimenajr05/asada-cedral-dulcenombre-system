@@ -15,6 +15,7 @@ import {
   ShieldCheck,
   Hammer,
   X,
+  UserPlus,
 } from "lucide-react";
 
 /**
@@ -29,6 +30,7 @@ const menuItems = [
   { name: "Trámites", icon: FolderOpen, path: "/admin/tramites" },
   { name: "Transparencia", icon: ShieldCheck, path: "/admin/transparencia" },
   { name: "Proyectos", icon: Hammer, path: "/admin/proyectos" },
+  { name: "Usuarios", icon: Users, path: "/admin/register" },
 ];
 
 /**
