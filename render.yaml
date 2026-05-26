@@ -16,7 +16,7 @@ services:
       - key: PORT
         value: 10000
 
-      - key: MONGO_URI
+      - key: DATABASE_URL
         sync: false
 
       - key: JWT_SECRET
@@ -36,7 +36,7 @@ services:
         value: 20.18.3
 
       - key: VITE_API_URL
-        value: https://asada-backend-ww5l.onrender.com
+        value: https://asada-backend-enkg.onrender.com
 
     routes:
       - type: rewrite

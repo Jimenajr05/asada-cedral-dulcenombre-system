@@ -64,6 +64,11 @@ app.use("/api/sostenibilidad", sostenibilidadRoutes);
 app.use("/api/proyectos", proyectoRoutes);
 app.use("/api/tareas", tareaRoutes);
 
+// Middleware para rutas no encontradas (404)
+app.use((req, res, next) => {
+  res.status(404).json({ message: `Ruta no encontrada: ${req.method} ${req.originalUrl}` });
+});
+
 // Middleware de manejo de errores global
 app.use((err, req, res, next) => {
   console.error("❌ Error global:", err);
