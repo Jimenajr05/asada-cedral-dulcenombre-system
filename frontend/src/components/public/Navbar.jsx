@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { useState, useEffect } from "react";
-import logo from "../../assets/logo.png";
-import logoTexto from "../../assets/logo-texto.png";
+import logo from "../../assets/Logo.png";
+import logoTexto from "../../assets/Logo-texto.png";
 
 const links = [
   { to: "/", label: "Inicio" },

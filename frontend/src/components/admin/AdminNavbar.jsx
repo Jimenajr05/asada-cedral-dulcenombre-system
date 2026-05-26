@@ -1,6 +1,6 @@
 import { LogOut } from "lucide-react";
-import logo from "../../assets/logo.png";
-import logoTexto from "../../assets/logo-texto.png";
+import logo from "../../assets/Logo.png";
+import logoTexto from "../../assets/Logo-texto.png";
 
 function AdminNavbar({ user, onLogout }) {
   return (
