@@ -34,7 +34,7 @@ function Toast({ toast }) {
 
 function AdminLogin() {
   const navigate = useNavigate();
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [form, setForm] = useState({ email: "", password: "", loginKey: "" });
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -48,6 +48,12 @@ function AdminLogin() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!form.email || !form.password || !form.loginKey) {
+      showToast("error", "Por favor completa todos los campos.");
+      return;
+    }
+
     try {
       setLoading(true);
       const data = await loginAdmin(form);
@@ -114,20 +120,20 @@ function AdminLogin() {
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-5" noValidate>
               <div>
                 <label className="block mb-2 text-sm font-semibold text-slate-700">
-                  Correo electrónico
+                  Correo electrónico:
                 </label>
                 <input
                   type="email" name="email" value={form.email} onChange={handleChange}
-                  placeholder="correo@asada.com" required
+                  required
                   className="input-field"
                 />
               </div>
               <div>
                 <label className="block mb-2 text-sm font-semibold text-slate-700">
-                  Contraseña
+                  Contraseña:
                 </label>
                 <div className="relative">
                   <input
@@ -135,7 +141,6 @@ function AdminLogin() {
                     name="password"
                     value={form.password}
                     onChange={handleChange}
-                    placeholder="••••••••"
                     required
                     className="input-field pr-12"
                   />
@@ -158,6 +163,26 @@ function AdminLogin() {
                   </button>
                 </div>
               </div>
+              <div>
+                <label className="block mb-2 text-sm font-semibold text-slate-700">
+                  Clave de Seguridad:
+                </label>
+                <div className="relative">
+                  <input
+                    type="password"
+                    name="loginKey"
+                    value={form.loginKey}
+                    onChange={handleChange}
+                    required
+                    className="input-field"
+                  />
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
 
               <button
                 type="submit"
@@ -167,19 +192,6 @@ function AdminLogin() {
                 {loading ? "Ingresando..." : "Entrar al sistema"}
               </button>
             </form>
-
-            <div className="mt-8 flex items-center gap-4">
-              <div className="h-px flex-1 bg-slate-100" />
-              <span className="text-xs text-slate-400">o</span>
-              <div className="h-px flex-1 bg-slate-100" />
-            </div>
-
-            <p className="mt-6 text-center text-sm text-slate-500">
-              ¿No tienes una cuenta?{" "}
-              <Link to="/admin/register" className="font-semibold text-sky-600 hover:text-sky-700 hover:underline">
-                Regístrate aquí
-              </Link>
-            </p>
           </div>
         </div>
       </div>
