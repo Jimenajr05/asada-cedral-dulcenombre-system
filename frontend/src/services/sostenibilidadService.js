@@ -3,7 +3,7 @@
  * @description Servicios de cliente API para administrar galerías de Cultura Hídrica, Mantenimiento preventivo e hidrantes.
  */
 
-const API_URL = `${import.meta.env.VITE_API_URL || "http://localhost:4000"}/api/sostenibilidad`;
+const API_URL = `${import.meta.env.VITE_API_URL || "https://asada-backend.onrender.com"}/api/sostenibilidad`;
 
 const getToken = () => localStorage.getItem("token");
 

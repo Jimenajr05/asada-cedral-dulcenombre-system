@@ -7,7 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 import { hero } from "./TransparenciaData";
 import { FiZoomIn, FiX, FiSearch } from "react-icons/fi";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "https://asada-backend.onrender.com";
 
 /**
  * Icono de archivo / acta para enlaces institucionales.

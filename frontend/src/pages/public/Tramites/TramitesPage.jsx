@@ -170,7 +170,7 @@ export default function TramitesPage() {
   const [loading, setLoading] = useState(true);
   const [busqueda, setBusqueda] = useState("");
 
-  const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+  const API_BASE_URL = import.meta.env.VITE_API_URL || "https://asada-backend.onrender.com";
 
   const construirUrlArchivo = (url) => {
     if (!url) return "";
