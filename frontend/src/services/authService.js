@@ -89,7 +89,14 @@ export const logoutAdmin = async () => {
  * @throws {Error}
  */
 export const getProfile = async () => {
+  const token = localStorage.getItem("token");
+  const headers = {};
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
   const response = await fetch(`${API_URL}/profile`, {
+    headers,
     credentials: "include",
   });
 
