@@ -3,7 +3,7 @@
  * @description Servicios de cliente API para administrar información de junta directiva, periodos institucionales y métricas de cobertura.
  */
 
-const API_URL = `${import.meta.env.VITE_API_URL || "http://localhost:4000"}/api/sobre-nosotros`;
+const API_URL = `${import.meta.env.VITE_API_URL || "https://asada-backend.onrender.com"}/api/sobre-nosotros`;
 
 const getToken = () => localStorage.getItem("token");
 

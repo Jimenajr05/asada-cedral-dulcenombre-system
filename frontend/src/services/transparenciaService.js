@@ -3,7 +3,7 @@
  * @description Servicios de cliente API para la gestión de transparencia (actas de asambleas, minutas y certificados/galardones).
  */
 
-const API_URL = `${import.meta.env.VITE_API_URL || "http://localhost:4000"}/api/transparencia`;
+const API_URL = `${import.meta.env.VITE_API_URL || "https://asada-backend.onrender.com"}/api/transparencia`;
 
 const getToken = () => localStorage.getItem("token");
 

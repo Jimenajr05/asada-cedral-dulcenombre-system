@@ -101,7 +101,7 @@ export default function HomePage() {
         setLoadingNotices(true);
         setErrorNotices("");
 
-        const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:4000";
+        const API_BASE = import.meta.env.VITE_API_URL || "https://asada-backend.onrender.com";
         const response = await fetch(`${API_BASE}/api/avisos`);
         const data = await response.json();
 

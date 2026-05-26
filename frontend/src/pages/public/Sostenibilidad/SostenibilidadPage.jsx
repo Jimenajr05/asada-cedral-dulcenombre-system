@@ -111,7 +111,7 @@ const SectionLabel = ({ children }) => (
 
 const pillarIcons = [IconShield, IconDrop, IconWrench];
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "https://asada-backend.onrender.com";
 
 const construirUrlImagen = (url) => {
   if (!url) return "";
