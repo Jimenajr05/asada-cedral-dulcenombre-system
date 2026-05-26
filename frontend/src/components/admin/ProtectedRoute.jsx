@@ -32,6 +32,7 @@ function ProtectedRoute({ children }) {
       } catch {
         if (!cancelled) {
           localStorage.removeItem("user");
+          localStorage.removeItem("token");
           setStatus("unauthorized");
         }
       }

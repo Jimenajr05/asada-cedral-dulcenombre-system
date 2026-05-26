@@ -26,6 +26,7 @@ function AdminLayout({ children }) {
       await logoutAdmin();
     } catch { }
     localStorage.removeItem("user");
+    localStorage.removeItem("token");
     window.location.href = "/admin/login";
   };
 

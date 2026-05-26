@@ -51,6 +51,7 @@ function AdminLogin() {
     try {
       setLoading(true);
       const data = await loginAdmin(form);
+      localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
       showToast("success", "Inicio de sesión exitoso");
       setTimeout(() => navigate("/admin/panel"), 1200);

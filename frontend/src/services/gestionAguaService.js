@@ -11,6 +11,20 @@ const API_URL = `${BASE_URL}/api/gestion-agua`;
 // Configurar axios para enviar cookies automáticamente
 axios.defaults.withCredentials = true;
 
+// Configurar interceptor para enviar token de autorización si existe
+axios.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers["Authorization"] = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 /**
  * Obtiene la información general de gestión del agua (aforos, parámetros, etc.).
  * @async
